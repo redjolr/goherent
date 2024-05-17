@@ -1,4 +1,5 @@
 package internal
 
-const NewLineMessageSeparator = "_NEWLINE_SAPARATOR_"
-const WhitespaceMessageSeparator = "_WHITESPACE_SAPARATOR_"
+const ENCODED_NEWLINE = "_ENCODED_NEWLINE_"
+const ENCODED_WHITESPACE = "_ENCODED_WHITESPACE_"
+const ENCODED_TAB = "_ENCODED_TAB_"
