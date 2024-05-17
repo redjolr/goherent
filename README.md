@@ -70,20 +70,20 @@ func TestSomething(t *testing.T) {
         if output != "expectedValue" {
             t.Errorf("Expected value was incorrect. Received: %s, expected: %s.", output, "expectedValue")
         }
-	}, t)
+    }, t)
 
     // Or even more explicit test messages
     Test(`
         Given that our setupVar is "someValue"
         When we call service.DoSomething()
         Then its output should be "expectedValue"
- 	`, func(t *testing.T) {
+    `, func(t *testing.T) {
         setupVar := "someValue"
         output := service.DoSomething(setupVar)
         if output != "expectedValue" {
             t.Errorf("Expected value was incorrect. Received: %s, expected: %s.", output, "expectedValue")
         }
-	}, t)
+    }, t)
 }
 ```
 
