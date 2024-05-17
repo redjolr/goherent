@@ -90,7 +90,7 @@ func TestSomething(t *testing.T) {
 When we run the tests with the goherent command, we see this beatiful report:
 
 ```
-✅ TestUuid/Doing something
+✅ TestUuid/The expected value should be as expected, if you do something.
 (0.167s)
 
 ✅ TestUuid/
