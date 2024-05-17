@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github/com/redjolr/goherent/internal"
 	"regexp"
 	"testing"
+
+	"github.com/redjolr/goherent/internal"
 )
 
 func Test(message string, fn func(t *testing.T), t *testing.T) {
