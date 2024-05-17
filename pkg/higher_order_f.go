@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/redjolr/goherent/internal"
+	"github.com/redjolr/goherent/pkg/internal"
 )
 
 func Test(message string, testClosure func(t *testing.T), t *testing.T) {
