@@ -65,3 +65,13 @@ type TestContinuedEvent struct {
 	Package string    `json:"Package"`
 	Test    string    `json:"Test"`
 }
+
+type TestEvent struct {
+	TestRunEvent
+	TestOutputEvent
+	TestPassEvent
+	AllTestsInPackagePassedEvent
+	TestSkippedEvent
+	TestEventPaused
+	TestContinuedEvent
+}
