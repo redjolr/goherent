@@ -43,7 +43,7 @@ func Main() int {
 			if err != nil {
 				log.Fatalf("Unable to marshal JSON pass event due to %s", err)
 			}
-			testName := internal.DecodeGoherentTestMessage(passedTestEvent.Test)
+			testName := internal.DecodeGoherentTestName(passedTestEvent.Test)
 			fmt.Printf("✅ %s\n%f\n\n", testName, event.Elapsed)
 		}
 		if event.Action == "fail" {
@@ -52,7 +52,7 @@ func Main() int {
 			if err != nil {
 				log.Fatalf("Unable to marshal JSON failed event due to %s", err)
 			}
-			testName := internal.DecodeGoherentTestMessage(failedTestEvent.Test)
+			testName := internal.DecodeGoherentTestName(failedTestEvent.Test)
 			fmt.Printf("❌ %s\n%f\n\n", testName, event.Elapsed)
 		}
 	}

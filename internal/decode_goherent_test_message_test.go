@@ -2,7 +2,7 @@ package internal
 
 import "testing"
 
-func Test_DecodeGoherentTestMessage(t *testing.T) {
+func Test_DecodeGoherentTestName(t *testing.T) {
 	type TestCase struct {
 		name                    string
 		expectedDecodedTestName string
@@ -124,7 +124,7 @@ func Test_DecodeGoherentTestMessage(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			decoded := DecodeGoherentTestMessage(testCase.encodedGoherentTestName)
+			decoded := DecodeGoherentTestName(testCase.encodedGoherentTestName)
 			if decoded != testCase.expectedDecodedTestName {
 				t.Errorf("Expected `%s`, got `%s`", testCase.expectedDecodedTestName, decoded)
 			}
