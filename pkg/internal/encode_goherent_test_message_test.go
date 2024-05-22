@@ -2,92 +2,92 @@ package internal
 
 import "testing"
 
-func Test_EncodeGoherentTestMessage(t *testing.T) {
+func Test_EncodeGoherentTestName(t *testing.T) {
 	type TestCase struct {
 		name                      string
-		goherentTestMessage       string
+		goherentTestName          string
 		expectedEncodedGoTestName string
 	}
 	testCases := []TestCase{
 		{
 			name:                      "Empty_string",
-			goherentTestMessage:       "",
+			goherentTestName:          "",
 			expectedEncodedGoTestName: "",
 		},
 		{
 			name:                      "Single_alpha_character",
-			goherentTestMessage:       "a",
+			goherentTestName:          "a",
 			expectedEncodedGoTestName: "a",
 		},
 		{
 			name:                      "Multiple_alpha_characters",
-			goherentTestMessage:       "aasdsa",
+			goherentTestName:          "aasdsa",
 			expectedEncodedGoTestName: "aasdsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_trailing_whitespace",
-			goherentTestMessage:       "aasdsa ",
+			goherentTestName:          "aasdsa ",
 			expectedEncodedGoTestName: "aasdsa" + ENCODED_WHITESPACE,
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_leading_whitespace",
-			goherentTestMessage:       " aasdsa",
+			goherentTestName:          " aasdsa",
 			expectedEncodedGoTestName: ENCODED_WHITESPACE + "aasdsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_2trailing_whitespaces",
-			goherentTestMessage:       "aasdsa  ",
+			goherentTestName:          "aasdsa  ",
 			expectedEncodedGoTestName: "aasdsa" + ENCODED_WHITESPACE + ENCODED_WHITESPACE,
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_2leading_whitespaces",
-			goherentTestMessage:       "  aasdsa",
+			goherentTestName:          "  aasdsa",
 			expectedEncodedGoTestName: ENCODED_WHITESPACE + ENCODED_WHITESPACE + "aasdsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_whitespace_in_between",
-			goherentTestMessage:       "aas dsa",
+			goherentTestName:          "aas dsa",
 			expectedEncodedGoTestName: "aas" + ENCODED_WHITESPACE + "dsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_3whitespaces_in_between",
-			goherentTestMessage:       "aas   dsa",
+			goherentTestName:          "aas   dsa",
 			expectedEncodedGoTestName: "aas" + ENCODED_WHITESPACE + ENCODED_WHITESPACE + ENCODED_WHITESPACE + "dsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_whitespaces_in_between_leading_and_traling",
-			goherentTestMessage:       " aas dsa ",
+			goherentTestName:          " aas dsa ",
 			expectedEncodedGoTestName: ENCODED_WHITESPACE + "aas" + ENCODED_WHITESPACE + "dsa" + ENCODED_WHITESPACE,
 		},
 		{
 			name:                      "Newline_only",
-			goherentTestMessage:       "\n",
+			goherentTestName:          "\n",
 			expectedEncodedGoTestName: ENCODED_NEWLINE,
 		},
 		{
 			name: "Newline_only2",
-			goherentTestMessage: `
+			goherentTestName: `
 `,
 			expectedEncodedGoTestName: ENCODED_NEWLINE,
 		},
 		{
 			name:                      "Newline_only3",
-			goherentTestMessage:       "\r\n",
+			goherentTestName:          "\r\n",
 			expectedEncodedGoTestName: ENCODED_NEWLINE,
 		},
 		{
 			name:                      "Multiple_alpha_chars_with_leading_newline",
-			goherentTestMessage:       "asd\n",
+			goherentTestName:          "asd\n",
 			expectedEncodedGoTestName: "asd" + ENCODED_NEWLINE,
 		},
 		{
 			name:                      "Multiple_alpha_chars_with_2leading_newlines_and_2whitespaces",
-			goherentTestMessage:       "asd\n \n ",
+			goherentTestName:          "asd\n \n ",
 			expectedEncodedGoTestName: "asd" + ENCODED_NEWLINE + ENCODED_WHITESPACE + ENCODED_NEWLINE + ENCODED_WHITESPACE,
 		},
 		{
-			name:                "Multiple_alpha_chars_with_leading_trailing_in_between_newlines_and_whitespaces",
-			goherentTestMessage: "\n asd \n \n dsa\n ",
+			name:             "Multiple_alpha_chars_with_leading_trailing_in_between_newlines_and_whitespaces",
+			goherentTestName: "\n asd \n \n dsa\n ",
 			expectedEncodedGoTestName: ENCODED_NEWLINE + ENCODED_WHITESPACE +
 				"asd" +
 				ENCODED_WHITESPACE + ENCODED_NEWLINE + ENCODED_WHITESPACE + ENCODED_NEWLINE + ENCODED_WHITESPACE +
@@ -95,32 +95,32 @@ func Test_EncodeGoherentTestMessage(t *testing.T) {
 		},
 		{
 			name:                      "Single_tab1",
-			goherentTestMessage:       "\t",
+			goherentTestName:          "\t",
 			expectedEncodedGoTestName: ENCODED_TAB,
 		},
 		{
 			name:                      "Single_tab2",
-			goherentTestMessage:       "	",
+			goherentTestName:          "	",
 			expectedEncodedGoTestName: ENCODED_TAB,
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_trailing_tab",
-			goherentTestMessage:       "aasdsa	",
+			goherentTestName:          "aasdsa	",
 			expectedEncodedGoTestName: "aasdsa" + ENCODED_TAB,
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_leading_tab",
-			goherentTestMessage:       "	aasdsa",
+			goherentTestName:          "	aasdsa",
 			expectedEncodedGoTestName: ENCODED_TAB + "aasdsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_tab_in_between",
-			goherentTestMessage:       "aas\tdsa",
+			goherentTestName:          "aas\tdsa",
 			expectedEncodedGoTestName: "aas" + ENCODED_TAB + "dsa",
 		},
 		{
-			name:                "Multiple_alpha_chars_with_newlines_tabs_and_whitespaces",
-			goherentTestMessage: "\t \nasd \t\ndsa\n\t ",
+			name:             "Multiple_alpha_chars_with_newlines_tabs_and_whitespaces",
+			goherentTestName: "\t \nasd \t\ndsa\n\t ",
 			expectedEncodedGoTestName: ENCODED_TAB + ENCODED_WHITESPACE + ENCODED_NEWLINE +
 				"asd" +
 				ENCODED_WHITESPACE + ENCODED_TAB + ENCODED_NEWLINE +
@@ -130,7 +130,7 @@ func Test_EncodeGoherentTestMessage(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			encodedGoTestName := EncodeGoherentTestMessage(testCase.goherentTestMessage)
+			encodedGoTestName := EncodeGoherentTestName(testCase.goherentTestName)
 			if encodedGoTestName != testCase.expectedEncodedGoTestName {
 				t.Errorf("Expected `%s`, got `%s`", testCase.expectedEncodedGoTestName, encodedGoTestName)
 			}

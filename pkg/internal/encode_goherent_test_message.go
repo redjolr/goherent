@@ -5,12 +5,12 @@ import (
 	"strings"
 )
 
-func EncodeGoherentTestMessage(testMessage string) string {
+func EncodeGoherentTestName(testName string) string {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	tabRegex := regexp.MustCompile(`\t`)
-	testMessage = strings.ReplaceAll(testMessage, " ", ENCODED_WHITESPACE)
-	testMessage = newLineRegex.ReplaceAllString(testMessage, ENCODED_NEWLINE)
-	testMessage = tabRegex.ReplaceAllString(testMessage, ENCODED_TAB)
+	testName = strings.ReplaceAll(testName, " ", ENCODED_WHITESPACE)
+	testName = newLineRegex.ReplaceAllString(testName, ENCODED_NEWLINE)
+	testName = tabRegex.ReplaceAllString(testName, ENCODED_TAB)
 
-	return testMessage
+	return testName
 }
