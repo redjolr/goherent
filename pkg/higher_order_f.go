@@ -3,7 +3,7 @@ package goherent
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/pkg/internal"
+	"github.com/redjolr/goherent/internal"
 )
 
 func Test(name string, testClosure func(t *testing.T), t *testing.T) {

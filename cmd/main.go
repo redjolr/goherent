@@ -9,7 +9,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/redjolr/goherent/cmd/internal"
+	"github.com/redjolr/goherent/internal"
 )
 
 func Main() int {
@@ -32,12 +32,29 @@ func Main() int {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		m := scanner.Text()
-		var event internal.TestEvent
+		var event TestEvent
 		err := json.Unmarshal([]byte(m), &event)
 		if err != nil {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
-		fmt.Println(m)
+		if event.Action == "pass" {
+			var passedTestEvent TestPassEvent
+			err := json.Unmarshal([]byte(m), &passedTestEvent)
+			if err != nil {
+				log.Fatalf("Unable to marshal JSON pass event due to %s", err)
+			}
+			testName := internal.DecodeGoherentTestMessage(passedTestEvent.Test)
+			fmt.Printf("✅ %s\n%f\n\n", testName, event.Elapsed)
+		}
+		if event.Action == "fail" {
+			var failedTestEvent TestPassEvent
+			err := json.Unmarshal([]byte(m), &failedTestEvent)
+			if err != nil {
+				log.Fatalf("Unable to marshal JSON failed event due to %s", err)
+			}
+			testName := internal.DecodeGoherentTestMessage(failedTestEvent.Test)
+			fmt.Printf("❌ %s\n%f\n\n", testName, event.Elapsed)
+		}
 	}
 	cmd.Wait()
 	return 0
