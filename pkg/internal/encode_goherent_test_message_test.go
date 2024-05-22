@@ -2,7 +2,7 @@ package internal
 
 import "testing"
 
-func Test_MessageToTestName(t *testing.T) {
+func Test_EncodeGoherentTestMessage(t *testing.T) {
 	type TestCase struct {
 		name                      string
 		goherentTestMessage       string
