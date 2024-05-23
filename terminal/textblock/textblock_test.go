@@ -104,6 +104,20 @@ func TestWrite(t *testing.T) {
 	Test(`
 	Given that there is a Textblock with line "SomeLine"
 	And the cursor is at 0,0
+	When we Write the "7Letter" string
+	Then the textblock should have one line []string{"8Letters"}
+	`, func(t *testing.T) {
+		textBlock := textblock.FromString("SomeLine")
+		textBlock.MoveCursorToOrigin()
+
+		textBlock.Write("7Letter")
+		lines := textBlock.Lines()
+		assert.Equal(lines[0], "7Lettere")
+	}, t)
+
+	Test(`
+	Given that there is a Textblock with line "SomeLine"
+	And the cursor is at 0,0
 	When we Write the "8Letters" string
 	Then the textblock should have one line []string{"8Letters"}
 	`, func(t *testing.T) {
@@ -236,7 +250,6 @@ func TestWrite(t *testing.T) {
 		lines := textBlock.Lines()
 		assert.Equal(lines[0], "SomeLineXY")
 	}, t)
-
 }
 
 func TestMoveCursorTo(t *testing.T) {
