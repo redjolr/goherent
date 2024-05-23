@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"runtime"
+)
 
 func main() {
 	// os.Exit(cmd.Main())
@@ -25,6 +29,8 @@ func main() {
 	\033[K
 	*/
 	fmt.Println("This is a sentence")
+	fmt.Println(os.Getenv("GOMAXPROCS"), runtime.NumCPU())
 	fmt.Print("This is another line")
 	fmt.Print("\033[1D\033[1D✅")
+
 }
