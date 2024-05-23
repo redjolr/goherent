@@ -1,7 +1,6 @@
 package textblock
 
 import (
-	"errors"
 	"regexp"
 	"strings"
 
@@ -35,15 +34,17 @@ func (tb *Textblock) Write(writeStr string) error {
 	y := tb.cursorPosition.Y
 	line := tb.lines[y]
 
-	if line == "" {
-		tb.lines[y] = writeStr
-	} else if x == len(line) {
+	if x == len(line) {
 		tb.lines[y] += writeStr
 	} else {
 		lineChars := strings.Split(tb.lines[y], "")
 		writeChars := strings.Split(writeStr, "")
 		for i, char := range writeChars {
-			lineChars[x+i] = char
+			if x+i < len(lineChars) {
+				lineChars[x+i] = char
+			} else {
+				lineChars = append(lineChars, char)
+			}
 		}
 		tb.lines[y] = strings.Join(lineChars, "")
 	}
@@ -56,11 +57,11 @@ func (tb Textblock) Lines() []string {
 }
 
 func (tb *Textblock) MoveCursorRight(offset int) {
-	tb.cursorPosition = tb.cursorPosition.OffsetX(offset)
+	tb.MoveCursorTo(tb.cursorPosition.X+offset, tb.cursorPosition.Y)
 }
 
 func (tb *Textblock) MoveCursorLeft(offset int) {
-	tb.cursorPosition = tb.cursorPosition.OffsetX(offset)
+	tb.MoveCursorTo(tb.cursorPosition.X-offset, tb.cursorPosition.Y)
 }
 
 func (tb *Textblock) MoveCursorToOrigin() {
@@ -72,15 +73,17 @@ func (tb *Textblock) MoveCursorToOrigin() {
 	tb.cursorPosition.Y = 0
 }
 
-func (tb *Textblock) MoveCursorTo(x int, y int) error {
+func (tb *Textblock) MoveCursorTo(x int, y int) {
 	if x < 0 || y < 0 {
-		return errors.New("Coordinates cannot be negative.")
+		panic("Textblock Coordinates cannot be negative.")
 	}
 	if y >= len(tb.lines) {
-		return errors.New("Cannot move cursor to Y coordinate that is larger than len(lines) - 1.")
+		panic("Textblock cannot move cursor to Y coordinate that is >= len(lines) - 1.")
+	}
+	if x > len(tb.lines[y]) {
+		panic("Textblock cannot move cursor to X coordinate that is > len(lines[y]) - 1.")
 	}
 
 	tb.cursorPosition.X = x
 	tb.cursorPosition.Y = y
-	return nil
 }

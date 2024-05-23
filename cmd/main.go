@@ -47,7 +47,7 @@ func Main() int {
 			fmt.Printf("✅ %s\n%f\n\n", testName, event.Elapsed)
 		}
 		if event.Action == "fail" {
-			var failedTestEvent TestPassEvent
+			var failedTestEvent TestFailEvent
 			err := json.Unmarshal([]byte(m), &failedTestEvent)
 			if err != nil {
 				log.Fatalf("Unable to marshal JSON failed event due to %s", err)
