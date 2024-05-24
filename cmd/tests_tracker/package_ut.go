@@ -19,11 +19,11 @@ func NewPackageUnderTest(name string) PackageUnderTest {
 }
 
 func (packageUt *PackageUnderTest) NewTestRanEvent(evt test_ran_event.TestRanEvent) {
-	testName := evt.Message()
-	if !packageUt.HasCest(testName) {
-		packageUt.cests = append(packageUt.cests, NewCest(testName))
+	cestName := evt.Message()
+	if !packageUt.HasCest(cestName) {
+		packageUt.cests = append(packageUt.cests, NewCest(cestName))
 	}
-	cest := packageUt.Cest(testName)
+	cest := packageUt.Cest(cestName)
 	cest.NewRanEvent(evt)
 }
 
@@ -34,12 +34,12 @@ func (packageUt *PackageUnderTest) HasCest(name string) bool {
 	return indexOfCestWithName != -1
 }
 
-func (packageUt *PackageUnderTest) Cest(name string) Cest {
+func (packageUt *PackageUnderTest) Cest(name string) *Cest {
 	if packageUt.HasCest(name) {
 		indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest Cest) bool {
 			return cest.HasName(name)
 		})
-		return packageUt.cests[indexOfCestWithName]
+		return &packageUt.cests[indexOfCestWithName]
 	}
 	panic("Cest does not exist. Check if it exists, before trying to get it.")
 }

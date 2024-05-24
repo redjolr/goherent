@@ -8,4 +8,5 @@ type Event interface {
 	Timestamp() time.Time
 	HasDuration() bool
 	Duration() float64
+	Equals(evt Event) bool
 }

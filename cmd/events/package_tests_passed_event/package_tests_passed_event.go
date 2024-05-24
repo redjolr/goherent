@@ -39,3 +39,11 @@ func (evt PackageTestsPassedEvent) HasDuration() bool {
 func (evt PackageTestsPassedEvent) Duration() float64 {
 	return evt.elapsed
 }
+
+func (evt PackageTestsPassedEvent) Equals(otherEvt events.Event) bool {
+	return evt.Pictogram() == otherEvt.Pictogram() &&
+		evt.Message() == otherEvt.Message() &&
+		evt.Timestamp() == otherEvt.Timestamp() &&
+		evt.HasDuration() == otherEvt.HasDuration() &&
+		evt.Duration() == otherEvt.Duration()
+}

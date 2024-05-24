@@ -40,3 +40,11 @@ func (evt TestRanEvent) HasDuration() bool {
 func (evt TestRanEvent) Duration() float64 {
 	return 0
 }
+
+func (evt TestRanEvent) Equals(otherEvt events.Event) bool {
+	return evt.Pictogram() == otherEvt.Pictogram() &&
+		evt.Message() == otherEvt.Message() &&
+		evt.Timestamp() == otherEvt.Timestamp() &&
+		evt.HasDuration() == otherEvt.HasDuration() &&
+		evt.Duration() == otherEvt.Duration()
+}

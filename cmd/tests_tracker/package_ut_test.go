@@ -18,16 +18,19 @@ func TestPackageUt(t *testing.T) {
 	When a TestRanEvent is received
 	Then a new Cest should be created that contains that event
 	`, func(t *testing.T) {
-		packageUnderTest := tests_tracker.NewPackageUnderTest("somePackageName")
-		packageUnderTest.NewTestRanEvent(
-			test_ran_event.NewFromJsonTestEvent(
-				events.JsonTestEvent{
-					Time:    time.Now(),
-					Package: "somePackage",
-					Test:    "someTestName",
-				},
-			),
+		testName := "someTestName"
+		packageName := "somePackageName"
+		packageUnderTest := tests_tracker.NewPackageUnderTest(packageName)
+		testRanEvt := test_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: packageName,
+				Test:    testName,
+			},
 		)
-		assert.True(packageUnderTest.HasCest("someTestName"))
+		packageUnderTest.NewTestRanEvent(testRanEvt)
+		assert.True(packageUnderTest.HasCest(testName))
+		cest := packageUnderTest.Cest(testName)
+		assert.True(cest.HasEvent(testRanEvt))
 	}, t)
 }

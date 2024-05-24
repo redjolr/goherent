@@ -1,6 +1,8 @@
 package tests_tracker
 
 import (
+	"slices"
+
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/test_continued_event"
 	"github.com/redjolr/goherent/cmd/events/test_failed_event"
@@ -29,6 +31,12 @@ func (cest *Cest) IsRunning() bool {
 
 func (cest *Cest) HasName(name string) bool {
 	return cest.name == name
+}
+
+func (cest *Cest) HasEvent(evt events.Event) bool {
+	return slices.ContainsFunc(cest.events, func(otherEvt events.Event) bool {
+		return evt.Equals(otherEvt)
+	})
 }
 
 func (cest *Cest) NewRanEvent(evt test_ran_event.TestRanEvent) {
