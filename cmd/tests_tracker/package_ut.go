@@ -8,51 +8,51 @@ import (
 )
 
 type PackageUnderTest struct {
-	name  string
-	cests []Cest
+	name   string
+	ctests []Ctest
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
 	return PackageUnderTest{
-		name:  name,
-		cests: []Cest{},
+		name:   name,
+		ctests: []Ctest{},
 	}
 }
 
-func (packageUt *PackageUnderTest) insertCestIfNew(cest Cest) *Cest {
-	if !packageUt.HasCest(cest) {
-		packageUt.cests = append(packageUt.cests, cest)
+func (packageUt *PackageUnderTest) insertCtestIfNew(ctest Ctest) *Ctest {
+	if !packageUt.HasCtest(ctest) {
+		packageUt.ctests = append(packageUt.ctests, ctest)
 	}
-	return packageUt.Cest(cest.name)
+	return packageUt.Ctest(ctest.name)
 }
 
 func (packageUt *PackageUnderTest) NewTestRanEvent(evt test_ran_event.TestRanEvent) {
-	cest := packageUt.insertCestIfNew(NewCest(evt.Message()))
-	cest.NewRanEvent(evt)
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest.NewRanEvent(evt)
 }
 
 func (packageUt *PackageUnderTest) NewTestPausedEvent(evt test_paused_event.TestPausedEvent) {
-	cest := packageUt.insertCestIfNew(NewCest(evt.Message()))
-	cest.NewPausedEvent(evt)
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest.NewPausedEvent(evt)
 }
 
-func (packageUt *PackageUnderTest) HasCest(cest Cest) bool {
-	indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest Cest) bool {
-		return cest.HasName(cest.name)
+func (packageUt *PackageUnderTest) HasCtest(ctest Ctest) bool {
+	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(ctest Ctest) bool {
+		return ctest.HasName(ctest.name)
 	})
-	return indexOfCestWithName != -1
+	return indexOfCtestWithName != -1
 }
 
-func (packageUt *PackageUnderTest) Cest(name string) *Cest {
-	if packageUt.HasCest(NewCest(name)) {
-		indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest Cest) bool {
-			return cest.HasName(name)
+func (packageUt *PackageUnderTest) Ctest(name string) *Ctest {
+	if packageUt.HasCtest(NewCtest(name)) {
+		indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(ctest Ctest) bool {
+			return ctest.HasName(name)
 		})
-		return &packageUt.cests[indexOfCestWithName]
+		return &packageUt.ctests[indexOfCtestWithName]
 	}
-	panic("Cest does not exist. Check if it exists, before trying to get it.")
+	panic("Ctest does not exist. Check if it exists, before trying to get it.")
 }
 
 func (packageUt *PackageUnderTest) TestCount() int {
-	return len(packageUt.cests)
+	return len(packageUt.ctests)
 }

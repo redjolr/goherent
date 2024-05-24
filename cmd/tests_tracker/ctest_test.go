@@ -16,12 +16,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCestIsRunning(t *testing.T) {
+func TestCtestIsRunning(t *testing.T) {
 	assert := assert.New(t)
 
-	Test("it should return true, if the Cest instance has only a TestRanEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return true, if the Ctest instance has only a TestRanEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -30,12 +30,12 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.True(cest.IsRunning())
+		assert.True(ctest.IsRunning())
 	}, t)
 
-	Test("it should return false, if the Cest instance has a TestRanEvent and a TestPassedEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestPassedEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -44,7 +44,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewPassedEvent(
+		ctest.NewPassedEvent(
 			test_passed_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -54,12 +54,12 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.False(cest.IsRunning())
+		assert.False(ctest.IsRunning())
 	}, t)
 
-	Test("it should return false, if the Cest instance has a TestRanEvent and a TestFailedEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestFailedEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -68,7 +68,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewFailedEvent(
+		ctest.NewFailedEvent(
 			test_failed_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -78,12 +78,12 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.False(cest.IsRunning())
+		assert.False(ctest.IsRunning())
 	}, t)
 
-	Test("it should return false, if the Cest instance has a TestRanEvent and a TestPausedEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestPausedEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -92,7 +92,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewPausedEvent(
+		ctest.NewPausedEvent(
 			test_paused_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -101,12 +101,12 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.False(cest.IsRunning())
+		assert.False(ctest.IsRunning())
 	}, t)
 
-	Test("it should return true, if the Cest instance has TestRanEvent, TestPausedEvent, and TestContinuedEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return true, if the Ctest instance has TestRanEvent, TestPausedEvent, and TestContinuedEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -115,7 +115,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewPausedEvent(
+		ctest.NewPausedEvent(
 			test_paused_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -125,7 +125,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewContinuedEvent(
+		ctest.NewContinuedEvent(
 			test_continued_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -134,12 +134,12 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.True(cest.IsRunning())
+		assert.True(ctest.IsRunning())
 	}, t)
 
-	Test("it should return false, if the Cest instance has a TestRanEvent and a TestSkippedEvent", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
-		cest.NewRanEvent(
+	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestSkippedEvent", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
+		ctest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -148,7 +148,7 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		cest.NewSkippedEvent(
+		ctest.NewSkippedEvent(
 			test_skipped_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
 					Time:    time.Now(),
@@ -158,14 +158,14 @@ func TestCestIsRunning(t *testing.T) {
 				},
 			),
 		)
-		assert.False(cest.IsRunning())
+		assert.False(ctest.IsRunning())
 	}, t)
 }
 
-func TestCestHasEvent(t *testing.T) {
+func TestCtestHasEvent(t *testing.T) {
 	assert := assert.New(t)
-	Test("it should return false, if the Cest instance has no events", func(t *testing.T) {
-		cest := tests_tracker.NewCest("cestName")
+	Test("it should return false, if the Ctest instance has no events", func(t *testing.T) {
+		ctest := tests_tracker.NewCtest("ctestName")
 		evt := test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -173,16 +173,16 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName",
 			},
 		)
-		assert.False(cest.HasEvent(evt))
+		assert.False(ctest.HasEvent(evt))
 	}, t)
 
 	Test(`
-	Given that a Cest instance has a TestRanEvent
-	When we check if the Cest instance has a TestPassedEvent with HasEvent(events.Event)
+	Given that a Ctest instance has a TestRanEvent
+	When we check if the Ctest instance has a TestPassedEvent with HasEvent(events.Event)
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		cest := tests_tracker.NewCest("cestName")
+		ctest := tests_tracker.NewCtest("ctestName")
 		testRanEvt := test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -190,7 +190,7 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName",
 			},
 		)
-		cest.NewRanEvent(testRanEvt)
+		ctest.NewRanEvent(testRanEvt)
 
 		// When
 		checkForTestPassEvt := test_passed_event.NewFromJsonTestEvent(
@@ -201,19 +201,19 @@ func TestCestHasEvent(t *testing.T) {
 				Elapsed: 1.2,
 			},
 		)
-		hasTestPassEvt := cest.HasEvent(checkForTestPassEvt)
+		hasTestPassEvt := ctest.HasEvent(checkForTestPassEvt)
 
 		// Then
 		assert.False(hasTestPassEvt)
 	}, t)
 
 	Test(`
-	Given that a Cest instance has a TestRanEvent
-	When we check if the Cest instance has a TestRanEvt with different fields from the first one
+	Given that a Ctest instance has a TestRanEvent
+	When we check if the Ctest instance has a TestRanEvt with different fields from the first one
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		cest := tests_tracker.NewCest("cestName")
+		ctest := tests_tracker.NewCtest("ctestName")
 		testRanEvt1 := test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -221,7 +221,7 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName",
 			},
 		)
-		cest.NewRanEvent(testRanEvt1)
+		ctest.NewRanEvent(testRanEvt1)
 
 		// When
 		testRanEvt2 := test_ran_event.NewFromJsonTestEvent(
@@ -231,19 +231,19 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName 2",
 			},
 		)
-		hasTestRanEvt2 := cest.HasEvent(testRanEvt2)
+		hasTestRanEvt2 := ctest.HasEvent(testRanEvt2)
 
 		// Then
 		assert.False(hasTestRanEvt2)
 	}, t)
 
 	Test(`
-	Given that a Cest instance has a TestRanEvent
-	When we check if the Cest instance has that same TestRanEvt
+	Given that a Ctest instance has a TestRanEvent
+	When we check if the Ctest instance has that same TestRanEvt
 	Then it should return true.
 	`, func(t *testing.T) {
 		// Given
-		cest := tests_tracker.NewCest("cestName")
+		ctest := tests_tracker.NewCtest("ctestName")
 		testRanEvt1 := test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -251,10 +251,10 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName",
 			},
 		)
-		cest.NewRanEvent(testRanEvt1)
+		ctest.NewRanEvent(testRanEvt1)
 
 		// When
-		hasTestRanEvt := cest.HasEvent(test_ran_event.NewFromJsonTestEvent(
+		hasTestRanEvt := ctest.HasEvent(test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -267,12 +267,12 @@ func TestCestHasEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a Cest instance has a TestPassedEvent
-	When we check if the Cest instance has a TestFailedEvent which has the exact same fields as the TestPassedEvt
+	Given that a Ctest instance has a TestPassedEvent
+	When we check if the Ctest instance has a TestFailedEvent which has the exact same fields as the TestPassedEvt
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		cest := tests_tracker.NewCest("cestName")
+		ctest := tests_tracker.NewCtest("ctestName")
 		testPassedvt := test_passed_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -281,10 +281,10 @@ func TestCestHasEvent(t *testing.T) {
 				Elapsed: 1.2,
 			},
 		)
-		cest.NewPassedEvent(testPassedvt)
+		ctest.NewPassedEvent(testPassedvt)
 
 		// When
-		hasTestFailedEvt := cest.HasEvent(test_failed_event.NewFromJsonTestEvent(
+		hasTestFailedEvt := ctest.HasEvent(test_failed_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -298,12 +298,12 @@ func TestCestHasEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a Cest instance has a TestRanEvt, a TestPausedEvt, a TestContinuedEvt
-	When we check if the Cest instance has the aforementioned events
+	Given that a Ctest instance has a TestRanEvt, a TestPausedEvt, a TestContinuedEvt
+	When we check if the Ctest instance has the aforementioned events
 	Then it should return true for all.
 	`, func(t *testing.T) {
 		// Given
-		cest := tests_tracker.NewCest("cestName")
+		ctest := tests_tracker.NewCtest("ctestName")
 		testRanEvt := test_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -325,14 +325,14 @@ func TestCestHasEvent(t *testing.T) {
 				Test:    "someTestName",
 			},
 		)
-		cest.NewRanEvent(testRanEvt)
-		cest.NewPausedEvent(testPausedEvt)
-		cest.NewContinuedEvent(testContinuedEvt)
+		ctest.NewRanEvent(testRanEvt)
+		ctest.NewPausedEvent(testPausedEvt)
+		ctest.NewContinuedEvent(testContinuedEvt)
 
 		// When
-		hasTestRanEvt := cest.HasEvent(testRanEvt)
-		hasTestPausedEvt := cest.HasEvent(testPausedEvt)
-		hasTestContinuedEvt := cest.HasEvent(testContinuedEvt)
+		hasTestRanEvt := ctest.HasEvent(testRanEvt)
+		hasTestPausedEvt := ctest.HasEvent(testPausedEvt)
+		hasTestContinuedEvt := ctest.HasEvent(testContinuedEvt)
 
 		// Then
 		assert.True(hasTestRanEvt)

@@ -14,9 +14,9 @@ import (
 func TestPackageUt(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
-	Given that we have a PackageUnderTest without Cests
+	Given that we have a PackageUnderTest without Ctests
 	When a TestRanEvent is received
-	Then a new Cest should be created that contains that event
+	Then a new Ctest should be created that contains that event
 	`, func(t *testing.T) {
 		testName := "someTestName"
 		packageName := "somePackageName"
@@ -29,16 +29,16 @@ func TestPackageUt(t *testing.T) {
 			},
 		)
 		packageUnderTest.NewTestRanEvent(testRanEvt)
-		assert.True(packageUnderTest.HasCest(NewCest(testName)))
-		cest := packageUnderTest.Cest(testName)
-		assert.True(cest.HasEvent(testRanEvt))
+		assert.True(packageUnderTest.HasCtest(NewCtest(testName)))
+		ctest := packageUnderTest.Ctest(testName)
+		assert.True(ctest.HasEvent(testRanEvt))
 	}, t)
 
 	Test(`
 	Given that we have a PackageUnderTest
 	And that test has received a TestRanEvent for a test with name "someTestName"
 	When a TestPausedEvent is received for the same test
-	Then the PackageUnderTest should have only one Cest with only those two events.
+	Then the PackageUnderTest should have only one Ctest with only those two events.
 	`, func(t *testing.T) {
 		// Given
 		testName := "someTestName"
@@ -65,9 +65,9 @@ func TestPackageUt(t *testing.T) {
 
 		// Then
 		assert.Equal(packageUnderTest.TestCount(), 1)
-		cest := packageUnderTest.Cest(testName)
-		assert.Equal(cest.EventCount(), 2)
-		assert.True(cest.HasEvent(testRanEvt))
-		assert.True(cest.HasEvent(testPausedEvt))
+		ctest := packageUnderTest.Ctest(testName)
+		assert.Equal(ctest.EventCount(), 2)
+		assert.True(ctest.HasEvent(testRanEvt))
+		assert.True(ctest.HasEvent(testPausedEvt))
 	}, t)
 }
