@@ -1,4 +1,4 @@
-package tests_tracker
+package tests_tracker_test
 
 import (
 	"testing"
@@ -11,6 +11,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/test_paused_event"
 	"github.com/redjolr/goherent/cmd/events/test_ran_event"
 	"github.com/redjolr/goherent/cmd/events/test_skipped_event"
+	"github.com/redjolr/goherent/cmd/tests_tracker"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +20,7 @@ func TestCestIsRunning(t *testing.T) {
 	assert := assert.New(t)
 
 	Test("it should return true, if the Cest instance has only a TestRanEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -33,7 +34,7 @@ func TestCestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Cest instance has a TestRanEvent and a TestPassedEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -57,7 +58,7 @@ func TestCestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Cest instance has a TestRanEvent and a TestFailedEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -81,7 +82,7 @@ func TestCestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Cest instance has a TestRanEvent and a TestPausedEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -104,7 +105,7 @@ func TestCestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return true, if the Cest instance has TestRanEvent, TestPausedEvent, and TestContinuedEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -137,7 +138,7 @@ func TestCestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Cest instance has a TestRanEvent and a TestSkippedEvent", func(t *testing.T) {
-		cest := NewCest("cestName")
+		cest := tests_tracker.NewCest("cestName")
 		cest.NewRanEvent(
 			test_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{

@@ -27,6 +27,10 @@ func (cest *Cest) IsRunning() bool {
 	return cest.isRunning
 }
 
+func (cest *Cest) HasName(name string) bool {
+	return cest.name == name
+}
+
 func (cest *Cest) NewRanEvent(evt test_ran_event.TestRanEvent) {
 	cest.isRunning = true
 	cest.events = append(cest.events, evt)
