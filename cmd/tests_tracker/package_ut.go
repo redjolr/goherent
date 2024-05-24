@@ -8,38 +8,41 @@ import (
 
 type PackageUnderTest struct {
 	name  string
-	cests []Cest
+	cests [](*Cest)
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
 	return PackageUnderTest{
 		name:  name,
-		cests: []Cest{},
+		cests: []*Cest{},
 	}
+}
+
+func (packageUt *PackageUnderTest) insertCestIfNew(cest *Cest) *Cest {
+	if !packageUt.HasCest(cest) {
+		packageUt.cests = append(packageUt.cests, cest)
+	}
+	return cest
 }
 
 func (packageUt *PackageUnderTest) NewTestRanEvent(evt test_ran_event.TestRanEvent) {
-	cestName := evt.Message()
-	if !packageUt.HasCest(cestName) {
-		packageUt.cests = append(packageUt.cests, NewCest(cestName))
-	}
-	cest := packageUt.Cest(cestName)
+	cest := packageUt.insertCestIfNew(NewCest(evt.Message()))
 	cest.NewRanEvent(evt)
 }
 
-func (packageUt *PackageUnderTest) HasCest(name string) bool {
-	indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest Cest) bool {
-		return cest.HasName(name)
+func (packageUt *PackageUnderTest) HasCest(cest *Cest) bool {
+	indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest *Cest) bool {
+		return cest.HasName(cest.name)
 	})
 	return indexOfCestWithName != -1
 }
 
 func (packageUt *PackageUnderTest) Cest(name string) *Cest {
-	if packageUt.HasCest(name) {
-		indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest Cest) bool {
+	if packageUt.HasCest(NewCest(name)) {
+		indexOfCestWithName := slices.IndexFunc(packageUt.cests, func(cest *Cest) bool {
 			return cest.HasName(name)
 		})
-		return &packageUt.cests[indexOfCestWithName]
+		return packageUt.cests[indexOfCestWithName]
 	}
 	panic("Cest does not exist. Check if it exists, before trying to get it.")
 }

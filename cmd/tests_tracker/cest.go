@@ -18,8 +18,8 @@ type Cest struct {
 	isRunning bool
 }
 
-func NewCest(name string) Cest {
-	return Cest{
+func NewCest(name string) *Cest {
+	return &Cest{
 		name:      name,
 		events:    []events.Event{},
 		isRunning: false,
