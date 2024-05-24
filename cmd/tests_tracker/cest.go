@@ -20,8 +20,9 @@ type Cest struct {
 
 func NewCest(name string) Cest {
 	return Cest{
-		name:   name,
-		events: []events.Event{},
+		name:      name,
+		events:    []events.Event{},
+		isRunning: false,
 	}
 }
 

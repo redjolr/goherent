@@ -1,6 +1,7 @@
 package test_paused_event
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/redjolr/goherent/cmd/events"
@@ -46,5 +47,6 @@ func (evt TestPausedEvent) Equals(otherEvt events.Event) bool {
 		evt.Message() == otherEvt.Message() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
 		evt.HasDuration() == otherEvt.HasDuration() &&
-		evt.Duration() == otherEvt.Duration()
+		evt.Duration() == otherEvt.Duration() &&
+		reflect.TypeOf(evt) == reflect.TypeOf(otherEvt)
 }
