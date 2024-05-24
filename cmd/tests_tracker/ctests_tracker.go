@@ -1,5 +1,5 @@
 package tests_tracker
 
-type TestsTracker struct {
+type CtestsTracker struct {
 	packagesUnderTest []PackageUnderTest
 }

@@ -4,12 +4,12 @@ import (
 	"slices"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/test_continued_event"
-	"github.com/redjolr/goherent/cmd/events/test_failed_event"
-	"github.com/redjolr/goherent/cmd/events/test_passed_event"
-	"github.com/redjolr/goherent/cmd/events/test_paused_event"
-	"github.com/redjolr/goherent/cmd/events/test_ran_event"
-	"github.com/redjolr/goherent/cmd/events/test_skipped_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_continued_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_paused_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 )
 
 // Ctest stands for Client Test
@@ -42,32 +42,32 @@ func (ctest *Ctest) HasEvent(evt events.Event) bool {
 	})
 }
 
-func (ctest *Ctest) NewRanEvent(evt test_ran_event.TestRanEvent) {
+func (ctest *Ctest) NewRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	ctest.isRunning = true
 	ctest.events = append(ctest.events, evt)
 }
 
-func (ctest *Ctest) NewPassedEvent(evt test_passed_event.TestPassedEvent) {
+func (ctest *Ctest) NewPassedEvent(evt ctest_passed_event.CtestPassedEvent) {
 	ctest.isRunning = false
 	ctest.events = append(ctest.events, evt)
 }
 
-func (ctest *Ctest) NewFailedEvent(evt test_failed_event.TestFailedEvent) {
+func (ctest *Ctest) NewFailedEvent(evt ctest_failed_event.CtestFailedEvent) {
 	ctest.isRunning = false
 	ctest.events = append(ctest.events, evt)
 }
 
-func (ctest *Ctest) NewPausedEvent(evt test_paused_event.TestPausedEvent) {
+func (ctest *Ctest) NewPausedEvent(evt ctest_paused_event.CtestPausedEvent) {
 	ctest.isRunning = false
 	ctest.events = append(ctest.events, evt)
 }
 
-func (ctest *Ctest) NewSkippedEvent(evt test_skipped_event.TestSkippedEvent) {
+func (ctest *Ctest) NewSkippedEvent(evt ctest_skipped_event.CtestSkippedEvent) {
 	ctest.isRunning = false
 	ctest.events = append(ctest.events, evt)
 }
 
-func (ctest *Ctest) NewContinuedEvent(evt test_continued_event.TestContinuedEvent) {
+func (ctest *Ctest) NewContinuedEvent(evt ctest_continued_event.CtestContinuedEvent) {
 	ctest.isRunning = true
 	ctest.events = append(ctest.events, evt)
 }

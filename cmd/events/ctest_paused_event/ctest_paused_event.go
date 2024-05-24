@@ -1,4 +1,4 @@
-package test_output_event
+package ctest_paused_event
 
 import (
 	"reflect"
@@ -8,43 +8,41 @@ import (
 	"github.com/redjolr/goherent/internal"
 )
 
-type TestOutputEvent struct {
+type CtestPausedEvent struct {
 	time        time.Time
 	packageName string
 	testName    string
-	output      string
 }
 
-func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) TestOutputEvent {
-	return TestOutputEvent{
+func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestPausedEvent {
+	return CtestPausedEvent{
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
 		testName:    internal.DecodeGoherentTestName(jsonEvt.Test),
-		output:      jsonEvt.Output,
 	}
 }
 
-func (evt TestOutputEvent) Pictogram() string {
-	return ""
+func (evt CtestPausedEvent) Pictogram() string {
+	return "⏸️"
 }
 
-func (evt TestOutputEvent) Message() string {
+func (evt CtestPausedEvent) Message() string {
 	return evt.testName
 }
 
-func (evt TestOutputEvent) Timestamp() time.Time {
+func (evt CtestPausedEvent) Timestamp() time.Time {
 	return evt.time
 }
 
-func (evt TestOutputEvent) HasDuration() bool {
+func (evt CtestPausedEvent) HasDuration() bool {
 	return true
 }
 
-func (evt TestOutputEvent) Duration() float64 {
+func (evt CtestPausedEvent) Duration() float64 {
 	return 0
 }
 
-func (evt TestOutputEvent) Equals(otherEvt events.Event) bool {
+func (evt CtestPausedEvent) Equals(otherEvt events.Event) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.Message() == otherEvt.Message() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&

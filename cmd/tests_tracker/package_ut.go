@@ -3,8 +3,8 @@ package tests_tracker
 import (
 	"slices"
 
-	"github.com/redjolr/goherent/cmd/events/test_paused_event"
-	"github.com/redjolr/goherent/cmd/events/test_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_paused_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 )
 
 type PackageUnderTest struct {
@@ -26,12 +26,12 @@ func (packageUt *PackageUnderTest) insertCtestIfNew(ctest Ctest) *Ctest {
 	return packageUt.Ctest(ctest.name)
 }
 
-func (packageUt *PackageUnderTest) NewTestRanEvent(evt test_ran_event.TestRanEvent) {
+func (packageUt *PackageUnderTest) NewTestRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
 	ctest.NewRanEvent(evt)
 }
 
-func (packageUt *PackageUnderTest) NewTestPausedEvent(evt test_paused_event.TestPausedEvent) {
+func (packageUt *PackageUnderTest) NewTestPausedEvent(evt ctest_paused_event.CtestPausedEvent) {
 	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
 	ctest.NewPausedEvent(evt)
 }

@@ -1,4 +1,4 @@
-package test_skipped_event
+package ctest_failed_event
 
 import (
 	"reflect"
@@ -8,15 +8,15 @@ import (
 	"github.com/redjolr/goherent/internal"
 )
 
-type TestSkippedEvent struct {
+type CtestFailedEvent struct {
 	time        time.Time
 	packageName string
 	testName    string
 	elapsed     float64
 }
 
-func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) TestSkippedEvent {
-	return TestSkippedEvent{
+func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestFailedEvent {
+	return CtestFailedEvent{
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
 		testName:    internal.DecodeGoherentTestName(jsonEvt.Test),
@@ -24,27 +24,27 @@ func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) TestSkippedEvent {
 	}
 }
 
-func (evt TestSkippedEvent) Pictogram() string {
-	return "⏭"
+func (evt CtestFailedEvent) Pictogram() string {
+	return "❌"
 }
 
-func (evt TestSkippedEvent) Message() string {
+func (evt CtestFailedEvent) Message() string {
 	return evt.testName
 }
 
-func (evt TestSkippedEvent) Timestamp() time.Time {
+func (evt CtestFailedEvent) Timestamp() time.Time {
 	return evt.time
 }
 
-func (evt TestSkippedEvent) HasDuration() bool {
+func (evt CtestFailedEvent) HasDuration() bool {
 	return true
 }
 
-func (evt TestSkippedEvent) Duration() float64 {
+func (evt CtestFailedEvent) Duration() float64 {
 	return evt.elapsed
 }
 
-func (evt TestSkippedEvent) Equals(otherEvt events.Event) bool {
+func (evt CtestFailedEvent) Equals(otherEvt events.Event) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.Message() == otherEvt.Message() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&

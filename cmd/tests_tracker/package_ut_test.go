@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/test_paused_event"
-	"github.com/redjolr/goherent/cmd/events/test_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_paused_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
@@ -21,7 +21,7 @@ func TestPackageUt(t *testing.T) {
 		testName := "someTestName"
 		packageName := "somePackageName"
 		packageUnderTest := NewPackageUnderTest(packageName)
-		testRanEvt := test_ran_event.NewFromJsonTestEvent(
+		testRanEvt := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: packageName,
@@ -44,7 +44,7 @@ func TestPackageUt(t *testing.T) {
 		testName := "someTestName"
 		packageName := "somePackageName"
 		packageUnderTest := NewPackageUnderTest(packageName)
-		testRanEvt := test_ran_event.NewFromJsonTestEvent(
+		testRanEvt := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: packageName,
@@ -54,7 +54,7 @@ func TestPackageUt(t *testing.T) {
 		packageUnderTest.NewTestRanEvent(testRanEvt)
 
 		// When
-		testPausedEvt := test_paused_event.NewFromJsonTestEvent(
+		testPausedEvt := ctest_paused_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: packageName,

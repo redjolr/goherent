@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/test_failed_event"
-	"github.com/redjolr/goherent/cmd/events/test_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 )
 
 func Main() int {
@@ -41,10 +41,10 @@ func Main() int {
 		}
 		var evt events.Event
 		if jsonEvt.Action == "pass" {
-			evt = test_passed_event.NewFromJsonTestEvent(jsonEvt)
+			evt = ctest_passed_event.NewFromJsonTestEvent(jsonEvt)
 		}
 		if jsonEvt.Action == "fail" {
-			evt = test_failed_event.NewFromJsonTestEvent(jsonEvt)
+			evt = ctest_failed_event.NewFromJsonTestEvent(jsonEvt)
 		}
 		fmt.Printf("%s %s\n%f\n\n", evt.Pictogram(), evt.Message(), evt.Duration())
 
