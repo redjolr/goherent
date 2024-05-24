@@ -9,7 +9,9 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/redjolr/goherent/internal"
+	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/events/test_failed_event"
+	"github.com/redjolr/goherent/cmd/events/test_passed_event"
 )
 
 func Main() int {
@@ -32,29 +34,20 @@ func Main() int {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		m := scanner.Text()
-		var event TestEvent
-		err := json.Unmarshal([]byte(m), &event)
+		var jsonEvt events.JsonTestEvent
+		err := json.Unmarshal([]byte(m), &jsonEvt)
 		if err != nil {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
-		if event.Action == "pass" {
-			var passedTestEvent TestPassEvent
-			err := json.Unmarshal([]byte(m), &passedTestEvent)
-			if err != nil {
-				log.Fatalf("Unable to marshal JSON pass event due to %s", err)
-			}
-			testName := internal.DecodeGoherentTestName(passedTestEvent.Test)
-			fmt.Printf("✅ %s\n%f\n\n", testName, event.Elapsed)
+		var evt events.Event
+		if jsonEvt.Action == "pass" {
+			evt = test_passed_event.NewFromJsonTestEvent(jsonEvt)
 		}
-		if event.Action == "fail" {
-			var failedTestEvent TestFailEvent
-			err := json.Unmarshal([]byte(m), &failedTestEvent)
-			if err != nil {
-				log.Fatalf("Unable to marshal JSON failed event due to %s", err)
-			}
-			testName := internal.DecodeGoherentTestName(failedTestEvent.Test)
-			fmt.Printf("❌ %s\n%f\n\n", testName, event.Elapsed)
+		if jsonEvt.Action == "fail" {
+			evt = test_failed_event.NewFromJsonTestEvent(jsonEvt)
 		}
+		fmt.Printf("%s %s\n%f\n\n", evt.Pictogram(), evt.Message(), evt.Duration())
+
 	}
 	cmd.Wait()
 	return 0

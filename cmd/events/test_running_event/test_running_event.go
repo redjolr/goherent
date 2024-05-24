@@ -1,12 +1,11 @@
-package events
+package test_running_event
 
 import "time"
 
-// {"Time":"2024-05-17T20:33:05.7278673+02:00","Action":"run","Package":"github.com/redjolr/go-iam/src/core/tests","Test":"TestUuid"}
 type TestRunningEvent struct {
-	Time    time.Time
-	Package string `json:"Package"`
-	Test    string `json:"Test"`
+	time        time.Time
+	packageName string
+	testName    string
 }
 
 func (evt TestRunningEvent) Pictogram() string {
@@ -14,11 +13,11 @@ func (evt TestRunningEvent) Pictogram() string {
 }
 
 func (evt TestRunningEvent) Message() string {
-	return evt.Test
+	return evt.testName
 }
 
 func (evt TestRunningEvent) Timestamp() time.Time {
-	return evt.Time
+	return evt.time
 }
 
 func (evt TestRunningEvent) HasDuration() bool {
