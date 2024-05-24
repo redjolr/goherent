@@ -3,6 +3,8 @@ package tests_tracker
 import (
 	"slices"
 
+	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_paused_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 )
@@ -34,6 +36,16 @@ func (packageUt *PackageUnderTest) NewTestRanEvent(evt ctest_ran_event.CtestRanE
 func (packageUt *PackageUnderTest) NewTestPausedEvent(evt ctest_paused_event.CtestPausedEvent) {
 	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
 	ctest.NewPausedEvent(evt)
+}
+
+func (packageUt *PackageUnderTest) NewTestPassedEvent(evt ctest_passed_event.CtestPassedEvent) {
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest.NewPassedEvent(evt)
+}
+
+func (packageUt *PackageUnderTest) NewTestFailedEvent(evt ctest_failed_event.CtestFailedEvent) {
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest.NewFailedEvent(evt)
 }
 
 func (packageUt *PackageUnderTest) HasCtest(ctest Ctest) bool {
