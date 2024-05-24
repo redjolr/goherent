@@ -18,8 +18,8 @@ type Cest struct {
 	isRunning bool
 }
 
-func NewCest(name string) *Cest {
-	return &Cest{
+func NewCest(name string) Cest {
+	return Cest{
 		name:      name,
 		events:    []events.Event{},
 		isRunning: false,
@@ -68,4 +68,8 @@ func (cest *Cest) NewSkippedEvent(evt test_skipped_event.TestSkippedEvent) {
 func (cest *Cest) NewContinuedEvent(evt test_continued_event.TestContinuedEvent) {
 	cest.isRunning = true
 	cest.events = append(cest.events, evt)
+}
+
+func (cest *Cest) EventCount() int {
+	return len(cest.events)
 }
