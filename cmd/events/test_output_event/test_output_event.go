@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/internal"
 )
 
 type TestOutputEvent struct {
@@ -17,7 +18,7 @@ func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) TestOutputEvent {
 	return TestOutputEvent{
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
-		testName:    jsonEvt.Test,
+		testName:    internal.DecodeGoherentTestName(jsonEvt.Test),
 		output:      jsonEvt.Output,
 	}
 }
