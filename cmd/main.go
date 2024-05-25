@@ -34,19 +34,41 @@ func Main() int {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		m := scanner.Text()
-		var jsonEvt events.JsonTestEvent
+		var jsonEvt events.JsonEvent
 		err := json.Unmarshal([]byte(m), &jsonEvt)
 		if err != nil {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
-		var evt events.Event
-		if jsonEvt.Action == "pass" {
-			evt = ctest_passed_event.NewFromJsonTestEvent(jsonEvt)
+		var ctestEvt events.CtestEvent
+		// var packEvt events.PackageEvent
+		if jsonEvt.Test != nil {
+			if jsonEvt.Action == "pass" {
+				ctestEvt = ctest_passed_event.NewFromJsonTestEvent(
+					events.JsonTestEvent{
+						Time:    jsonEvt.Time,
+						Action:  jsonEvt.Action,
+						Package: jsonEvt.Package,
+						Test:    *jsonEvt.Test,
+						Elapsed: jsonEvt.Elapsed,
+						Output:  jsonEvt.Output,
+					},
+				)
+			}
+			if jsonEvt.Action == "fail" {
+				ctestEvt = ctest_failed_event.NewFromJsonTestEvent(
+					events.JsonTestEvent{
+						Time:    jsonEvt.Time,
+						Action:  jsonEvt.Action,
+						Package: jsonEvt.Package,
+						Test:    *jsonEvt.Test,
+						Elapsed: jsonEvt.Elapsed,
+						Output:  jsonEvt.Output,
+					},
+				)
+			}
+			fmt.Printf("%s %s\n\n", ctestEvt.Pictogram(), ctestEvt.CtestName())
+
 		}
-		if jsonEvt.Action == "fail" {
-			evt = ctest_failed_event.NewFromJsonTestEvent(jsonEvt)
-		}
-		fmt.Printf("%s %s\n%f\n\n", evt.Pictogram(), evt.Message(), evt.Duration())
 
 	}
 	cmd.Wait()

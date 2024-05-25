@@ -15,6 +15,8 @@ import (
 
 func TestPackageUt(t *testing.T) {
 	assert := assert.New(t)
+	fakeElapsed := 1.2
+
 	Test(`
 	Given that we have a PackageUnderTest without Ctests
 	When a CtestRanEvent is received
@@ -98,7 +100,7 @@ func TestPackageUt(t *testing.T) {
 				Time:    time.Now(),
 				Package: packageName,
 				Test:    testName,
-				Elapsed: 1.2,
+				Elapsed: &fakeElapsed,
 			},
 		)
 		packageUnderTest.NewTestPassedEvent(testPassedEvt)
@@ -136,7 +138,7 @@ func TestPackageUt(t *testing.T) {
 				Time:    time.Now(),
 				Package: packageName,
 				Test:    testName,
-				Elapsed: 1.2,
+				Elapsed: &fakeElapsed,
 			},
 		)
 		packageUnderTest.NewTestFailedEvent(testFailedEvt)

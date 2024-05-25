@@ -10,7 +10,7 @@ import (
 type PackageCtestsPassedEvent struct {
 	time        time.Time
 	packageName string
-	elapsed     float64
+	elapsed     *float64
 }
 
 func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) PackageCtestsPassedEvent {
@@ -33,19 +33,9 @@ func (evt PackageCtestsPassedEvent) Timestamp() time.Time {
 	return evt.time
 }
 
-func (evt PackageCtestsPassedEvent) HasDuration() bool {
-	return true
-}
-
-func (evt PackageCtestsPassedEvent) Duration() float64 {
-	return evt.elapsed
-}
-
 func (evt PackageCtestsPassedEvent) Equals(otherEvt events.PackageEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.PackageName() == otherEvt.PackageName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
-		evt.HasDuration() == otherEvt.HasDuration() &&
-		evt.Duration() == otherEvt.Duration() &&
 		reflect.TypeOf(evt) == reflect.TypeOf(otherEvt)
 }

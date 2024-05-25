@@ -30,22 +30,22 @@ func (packageUt *PackageUnderTest) insertCtestIfNew(ctest Ctest) *Ctest {
 }
 
 func (packageUt *PackageUnderTest) NewTestRanEvent(evt ctest_ran_event.CtestRanEvent) {
-	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.CtestName()))
 	ctest.NewRanEvent(evt)
 }
 
 func (packageUt *PackageUnderTest) NewTestPausedEvent(evt ctest_paused_event.CtestPausedEvent) {
-	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.CtestName()))
 	ctest.NewPausedEvent(evt)
 }
 
 func (packageUt *PackageUnderTest) NewTestPassedEvent(evt ctest_passed_event.CtestPassedEvent) {
-	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.CtestName()))
 	ctest.NewPassedEvent(evt)
 }
 
 func (packageUt *PackageUnderTest) NewTestFailedEvent(evt ctest_failed_event.CtestFailedEvent) {
-	ctest := packageUt.insertCtestIfNew(NewCtest(evt.Message()))
+	ctest := packageUt.insertCtestIfNew(NewCtest(evt.CtestName()))
 	ctest.NewFailedEvent(evt)
 }
 

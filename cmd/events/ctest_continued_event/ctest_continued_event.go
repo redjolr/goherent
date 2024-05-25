@@ -34,19 +34,9 @@ func (evt CtestContinuedEvent) Timestamp() time.Time {
 	return evt.time
 }
 
-func (evt CtestContinuedEvent) HasDuration() bool {
-	return true
-}
-
-func (evt CtestContinuedEvent) Duration() float64 {
-	return 0
-}
-
 func (evt CtestContinuedEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.CtestName() == otherEvt.CtestName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
-		evt.HasDuration() == otherEvt.HasDuration() &&
-		evt.Duration() == otherEvt.Duration() &&
 		reflect.TypeOf(evt) == reflect.TypeOf(otherEvt)
 }

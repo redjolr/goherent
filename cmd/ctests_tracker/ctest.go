@@ -16,14 +16,14 @@ import (
 // It represents the tests that the client of the Goherent package runs
 type Ctest struct {
 	name      string
-	events    []events.Event
+	events    []events.CtestEvent
 	isRunning bool
 }
 
 func NewCtest(name string) Ctest {
 	return Ctest{
 		name:      name,
-		events:    []events.Event{},
+		events:    []events.CtestEvent{},
 		isRunning: false,
 	}
 }
@@ -36,8 +36,8 @@ func (ctest *Ctest) HasName(name string) bool {
 	return ctest.name == name
 }
 
-func (ctest *Ctest) HasEvent(evt events.Event) bool {
-	return slices.ContainsFunc(ctest.events, func(otherEvt events.Event) bool {
+func (ctest *Ctest) HasEvent(evt events.CtestEvent) bool {
+	return slices.ContainsFunc(ctest.events, func(otherEvt events.CtestEvent) bool {
 		return evt.Equals(otherEvt)
 	})
 }

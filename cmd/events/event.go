@@ -5,17 +5,16 @@ import "time"
 type TestingEvent interface {
 	Pictogram() string
 	Timestamp() time.Time
-	HasDuration() bool
-	Duration() float64
-	Equals(evt TestingEvent) bool
 }
 
 type PackageEvent interface {
 	TestingEvent
 	PackageName() string
+	Equals(evt PackageEvent) bool
 }
 
 type CtestEvent interface {
 	TestingEvent
 	CtestName() string
+	Equals(evt CtestEvent) bool
 }

@@ -50,7 +50,5 @@ func (evt CtestRanEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.CtestName() == otherEvt.CtestName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
-		evt.HasDuration() == otherEvt.HasDuration() &&
-		evt.Duration() == otherEvt.Duration() &&
 		reflect.TypeOf(evt) == reflect.TypeOf(otherEvt)
 }

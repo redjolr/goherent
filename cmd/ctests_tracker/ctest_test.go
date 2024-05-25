@@ -17,6 +17,7 @@ import (
 
 func TestCtestIsRunning(t *testing.T) {
 	assert := assert.New(t)
+	var fakeElapsed float64 = 1.2
 
 	Test("it should return true, if the Ctest instance has only a TestRanEvent", func(t *testing.T) {
 		ctest := NewCtest("ctestName")
@@ -49,7 +50,7 @@ func TestCtestIsRunning(t *testing.T) {
 					Time:    time.Now(),
 					Package: "somePackage",
 					Test:    "someTestName",
-					Elapsed: 1.2,
+					Elapsed: &fakeElapsed,
 				},
 			),
 		)
@@ -73,7 +74,7 @@ func TestCtestIsRunning(t *testing.T) {
 					Time:    time.Now(),
 					Package: "somePackage",
 					Test:    "someTestName",
-					Elapsed: 1.2,
+					Elapsed: &fakeElapsed,
 				},
 			),
 		)
@@ -120,7 +121,7 @@ func TestCtestIsRunning(t *testing.T) {
 					Time:    time.Now(),
 					Package: "somePackage",
 					Test:    "someTestName",
-					Elapsed: 1.2,
+					Elapsed: &fakeElapsed,
 				},
 			),
 		)
@@ -153,7 +154,7 @@ func TestCtestIsRunning(t *testing.T) {
 					Time:    time.Now(),
 					Package: "somePackage",
 					Test:    "someTestName",
-					Elapsed: 1.2,
+					Elapsed: &fakeElapsed,
 				},
 			),
 		)
@@ -163,6 +164,8 @@ func TestCtestIsRunning(t *testing.T) {
 
 func TestCtestHasEvent(t *testing.T) {
 	assert := assert.New(t)
+	var fakeElapsed float64 = 1.2
+
 	Test("it should return false, if the Ctest instance has no events", func(t *testing.T) {
 		ctest := NewCtest("ctestName")
 		evt := ctest_ran_event.NewFromJsonTestEvent(
@@ -197,7 +200,7 @@ func TestCtestHasEvent(t *testing.T) {
 				Time:    time.Now(),
 				Package: "somePackage",
 				Test:    "someTestName",
-				Elapsed: 1.2,
+				Elapsed: &fakeElapsed,
 			},
 		)
 		hasTestPassEvt := ctest.HasEvent(checkForTestPassEvt)
@@ -277,7 +280,7 @@ func TestCtestHasEvent(t *testing.T) {
 				Time:    time.Now(),
 				Package: "somePackage",
 				Test:    "someTestName",
-				Elapsed: 1.2,
+				Elapsed: &fakeElapsed,
 			},
 		)
 		ctest.NewPassedEvent(testPassedvt)
@@ -288,7 +291,7 @@ func TestCtestHasEvent(t *testing.T) {
 				Time:    time.Now(),
 				Package: "somePackage",
 				Test:    "someTestName",
-				Elapsed: 1.2,
+				Elapsed: &fakeElapsed,
 			},
 		))
 
