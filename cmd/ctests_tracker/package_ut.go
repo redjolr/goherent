@@ -1,4 +1,4 @@
-package tests_tracker
+package ctests_tracker
 
 import (
 	"slices"
@@ -15,10 +15,11 @@ type PackageUnderTest struct {
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
-	return PackageUnderTest{
+	newPack := PackageUnderTest{
 		name:   name,
 		ctests: []Ctest{},
 	}
+	return newPack
 }
 
 func (packageUt *PackageUnderTest) insertCtestIfNew(ctest Ctest) *Ctest {
@@ -67,4 +68,8 @@ func (packageUt *PackageUnderTest) Ctest(name string) *Ctest {
 
 func (packageUt *PackageUnderTest) TestCount() int {
 	return len(packageUt.ctests)
+}
+
+func (packageUt *PackageUnderTest) HasName(name string) bool {
+	return packageUt.name == name
 }

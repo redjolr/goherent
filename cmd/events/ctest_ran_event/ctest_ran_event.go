@@ -22,6 +22,10 @@ func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestRanEvent {
 	}
 }
 
+func (evt CtestRanEvent) PackageName() string {
+	return evt.packageName
+}
+
 func (evt CtestRanEvent) Pictogram() string {
 	return "🏃"
 }

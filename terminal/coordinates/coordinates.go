@@ -1,7 +1,5 @@
 package coordinates
 
-import "fmt"
-
 type Coordinates struct {
 	X int
 	Y int
@@ -23,6 +21,5 @@ func Origin() Coordinates {
 
 func (c Coordinates) OffsetX(x int) Coordinates {
 	c.X += x
-	fmt.Println("IS IT 1 OR NOT?", c.X)
 	return c
 }

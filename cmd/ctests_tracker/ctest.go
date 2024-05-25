@@ -1,4 +1,4 @@
-package tests_tracker
+package ctests_tracker
 
 import (
 	"slices"

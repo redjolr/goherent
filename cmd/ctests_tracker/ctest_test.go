@@ -1,4 +1,4 @@
-package tests_tracker_test
+package ctests_tracker
 
 import (
 	"testing"
@@ -11,7 +11,6 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_paused_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
-	"github.com/redjolr/goherent/cmd/tests_tracker"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,7 +19,7 @@ func TestCtestIsRunning(t *testing.T) {
 	assert := assert.New(t)
 
 	Test("it should return true, if the Ctest instance has only a TestRanEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -34,7 +33,7 @@ func TestCtestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestPassedEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -58,7 +57,7 @@ func TestCtestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestFailedEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -82,7 +81,7 @@ func TestCtestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestPausedEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -105,7 +104,7 @@ func TestCtestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return true, if the Ctest instance has TestRanEvent, TestPausedEvent, and TestContinuedEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -138,7 +137,7 @@ func TestCtestIsRunning(t *testing.T) {
 	}, t)
 
 	Test("it should return false, if the Ctest instance has a TestRanEvent and a TestSkippedEvent", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		ctest.NewRanEvent(
 			ctest_ran_event.NewFromJsonTestEvent(
 				events.JsonTestEvent{
@@ -165,7 +164,7 @@ func TestCtestIsRunning(t *testing.T) {
 func TestCtestHasEvent(t *testing.T) {
 	assert := assert.New(t)
 	Test("it should return false, if the Ctest instance has no events", func(t *testing.T) {
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		evt := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -182,7 +181,7 @@ func TestCtestHasEvent(t *testing.T) {
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		testRanEvt := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -213,7 +212,7 @@ func TestCtestHasEvent(t *testing.T) {
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		testRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -243,7 +242,7 @@ func TestCtestHasEvent(t *testing.T) {
 	Then it should return true.
 	`, func(t *testing.T) {
 		// Given
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		testRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -272,7 +271,7 @@ func TestCtestHasEvent(t *testing.T) {
 	Then it should return false.
 	`, func(t *testing.T) {
 		// Given
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		testPassedvt := ctest_passed_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -303,7 +302,7 @@ func TestCtestHasEvent(t *testing.T) {
 	Then it should return true for all.
 	`, func(t *testing.T) {
 		// Given
-		ctest := tests_tracker.NewCtest("ctestName")
+		ctest := NewCtest("ctestName")
 		testRanEvt := ctest_ran_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
