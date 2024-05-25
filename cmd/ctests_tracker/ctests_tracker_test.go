@@ -1,9 +1,10 @@
-package ctests_tracker
+package ctests_tracker_test
 
 import (
 	"testing"
 	"time"
 
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	. "github.com/redjolr/goherent/pkg"
@@ -16,9 +17,9 @@ func TestNewCtestRanEvent(t *testing.T) {
 	Test(`
 	Given an empty CtestsTracker
 	When a CtestRanEvent for a certain test in a certain package is received
-	Then the CtestsTracker should contain that package 
+	Then the CtestsTracker should contain that PackageUnderTest
 	`, func(t *testing.T) {
-		tracker := NewCtestsTracker()
+		tracker := ctests_tracker.NewCtestsTracker()
 
 		packageName := "somePackageName"
 		ctestRanEvent := ctest_ran_event.NewFromJsonTestEvent(
