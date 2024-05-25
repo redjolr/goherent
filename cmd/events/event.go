@@ -2,11 +2,20 @@ package events
 
 import "time"
 
-type Event interface {
+type TestingEvent interface {
 	Pictogram() string
-	Message() string
 	Timestamp() time.Time
 	HasDuration() bool
 	Duration() float64
-	Equals(evt Event) bool
+	Equals(evt TestingEvent) bool
+}
+
+type PackageEvent interface {
+	TestingEvent
+	PackageName() string
+}
+
+type CtestEvent interface {
+	TestingEvent
+	CtestName() string
 }

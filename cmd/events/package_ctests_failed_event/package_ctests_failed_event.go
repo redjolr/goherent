@@ -25,7 +25,7 @@ func (evt PackageCTestsFailedEvent) Pictogram() string {
 	return "📦❌"
 }
 
-func (evt PackageCTestsFailedEvent) Message() string {
+func (evt PackageCTestsFailedEvent) PackageName() string {
 	return evt.packageName
 }
 
@@ -41,9 +41,9 @@ func (evt PackageCTestsFailedEvent) Duration() float64 {
 	return evt.elapsed
 }
 
-func (evt PackageCTestsFailedEvent) Equals(otherEvt events.Event) bool {
+func (evt PackageCTestsFailedEvent) Equals(otherEvt events.PackageEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
-		evt.Message() == otherEvt.Message() &&
+		evt.PackageName() == otherEvt.PackageName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
 		evt.HasDuration() == otherEvt.HasDuration() &&
 		evt.Duration() == otherEvt.Duration() &&

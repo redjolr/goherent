@@ -28,7 +28,7 @@ func (evt CtestSkippedEvent) Pictogram() string {
 	return "⏭"
 }
 
-func (evt CtestSkippedEvent) Message() string {
+func (evt CtestSkippedEvent) CtestName() string {
 	return evt.testName
 }
 
@@ -44,9 +44,9 @@ func (evt CtestSkippedEvent) Duration() float64 {
 	return evt.elapsed
 }
 
-func (evt CtestSkippedEvent) Equals(otherEvt events.Event) bool {
+func (evt CtestSkippedEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
-		evt.Message() == otherEvt.Message() &&
+		evt.CtestName() == otherEvt.CtestName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
 		evt.HasDuration() == otherEvt.HasDuration() &&
 		evt.Duration() == otherEvt.Duration() &&

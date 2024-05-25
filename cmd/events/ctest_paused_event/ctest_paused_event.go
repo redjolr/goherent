@@ -26,7 +26,7 @@ func (evt CtestPausedEvent) Pictogram() string {
 	return "⏸️"
 }
 
-func (evt CtestPausedEvent) Message() string {
+func (evt CtestPausedEvent) CtestName() string {
 	return evt.testName
 }
 
@@ -42,9 +42,9 @@ func (evt CtestPausedEvent) Duration() float64 {
 	return 0
 }
 
-func (evt CtestPausedEvent) Equals(otherEvt events.Event) bool {
+func (evt CtestPausedEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
-		evt.Message() == otherEvt.Message() &&
+		evt.CtestName() == otherEvt.CtestName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
 		evt.HasDuration() == otherEvt.HasDuration() &&
 		evt.Duration() == otherEvt.Duration() &&

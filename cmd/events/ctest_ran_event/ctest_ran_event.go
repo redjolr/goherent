@@ -30,7 +30,7 @@ func (evt CtestRanEvent) Pictogram() string {
 	return "🏃"
 }
 
-func (evt CtestRanEvent) Message() string {
+func (evt CtestRanEvent) CtestName() string {
 	return evt.testName
 }
 
@@ -46,9 +46,9 @@ func (evt CtestRanEvent) Duration() float64 {
 	return 0
 }
 
-func (evt CtestRanEvent) Equals(otherEvt events.Event) bool {
+func (evt CtestRanEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
-		evt.Message() == otherEvt.Message() &&
+		evt.CtestName() == otherEvt.CtestName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&
 		evt.HasDuration() == otherEvt.HasDuration() &&
 		evt.Duration() == otherEvt.Duration() &&
