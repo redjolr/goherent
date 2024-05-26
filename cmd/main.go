@@ -5,18 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
 )
 
-func Main() int {
+func Main(extraCmdArgs []string) int {
 	baseCommand := "go test -json"
-	extraCmdArgs := os.Args[1:]
-
 	commandArgs := append(strings.Split(baseCommand, " "), extraCmdArgs...)
+
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 	stdout, err := cmd.StdoutPipe()
 	router := NewRouter()
