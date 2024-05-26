@@ -10,8 +10,6 @@ import (
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 )
 
 func Main() int {
@@ -21,6 +19,7 @@ func Main() int {
 	commandArgs := append(strings.Split(baseCommand, " "), extraCmdArgs...)
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 	stdout, err := cmd.StdoutPipe()
+	router := NewRouter()
 	if err != nil {
 		fmt.Printf("Error opening StdoutPipe: %v\n", err)
 		return 1
@@ -39,37 +38,7 @@ func Main() int {
 		if err != nil {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
-		var ctestEvt events.CtestEvent
-		// var packEvt events.PackageEvent
-		if jsonEvt.Test != nil {
-			if jsonEvt.Action == "pass" {
-				ctestEvt = ctest_passed_event.NewFromJsonTestEvent(
-					events.JsonTestEvent{
-						Time:    jsonEvt.Time,
-						Action:  jsonEvt.Action,
-						Package: jsonEvt.Package,
-						Test:    *jsonEvt.Test,
-						Elapsed: jsonEvt.Elapsed,
-						Output:  jsonEvt.Output,
-					},
-				)
-			}
-			if jsonEvt.Action == "fail" {
-				ctestEvt = ctest_failed_event.NewFromJsonTestEvent(
-					events.JsonTestEvent{
-						Time:    jsonEvt.Time,
-						Action:  jsonEvt.Action,
-						Package: jsonEvt.Package,
-						Test:    *jsonEvt.Test,
-						Elapsed: jsonEvt.Elapsed,
-						Output:  jsonEvt.Output,
-					},
-				)
-			}
-			fmt.Printf("%s %s\n\n", ctestEvt.Pictogram(), ctestEvt.CtestName())
-
-		}
-
+		router.RouteJsonEvent(jsonEvt)
 	}
 	cmd.Wait()
 	return 0
