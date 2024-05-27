@@ -34,3 +34,24 @@ func TestNewCtestRanEvent(t *testing.T) {
 		assert.True(tracker.ContainsPackageUtWithName(packageName))
 	}, t)
 }
+
+func TestInsertCtest(t *testing.T) {
+	assert := assert.New(t)
+	Test(`
+	Given that we have an empty TestsTracker
+	When we call the InsertCtest() method with a Ctest as an argument
+	The test will be added and returned from the method
+	And a package with the name of the Ctest's packageName will be added to the tracker
+	`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		// When
+		ctest := ctests_tracker.NewCtest("testName", "packageName")
+		ctestReturned := tracker.InsertCtest(ctest)
+
+		// Then
+		assert.Equal(ctestReturned, ctest)
+		assert.True(tracker.ContainsCtestWithName("testName"))
+		assert.True(tracker.ContainsPackageUtWithName("packageName"))
+	}, t)
+}

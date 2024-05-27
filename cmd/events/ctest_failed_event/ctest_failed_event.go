@@ -20,6 +20,7 @@ func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestFailedEvent {
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
 		testName:    internal.DecodeGoherentTestName(jsonEvt.Test),
+		elapsed:     *jsonEvt.Elapsed,
 	}
 }
 
@@ -33,6 +34,10 @@ func (evt CtestFailedEvent) CtestName() string {
 
 func (evt CtestFailedEvent) Timestamp() time.Time {
 	return evt.time
+}
+
+func (evt CtestFailedEvent) TestDuration() float64 {
+	return evt.elapsed
 }
 
 func (evt CtestFailedEvent) Equals(otherEvt events.CtestEvent) bool {

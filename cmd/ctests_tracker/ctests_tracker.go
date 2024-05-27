@@ -22,6 +22,13 @@ func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTes
 	}
 }
 
+func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
+	packUt := NewPackageUnderTest(ctest.packageName)
+	packUt.insertCtest(ctest)
+	tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+	return ctest
+}
+
 func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName()) {
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, NewPackageUnderTest(evt.PackageName()))
@@ -30,7 +37,7 @@ func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent
 
 func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
-		return packUt.HasName(name)
+		return packUt.name == name
 	})
 	return indexOfPackUttWithName != -1
 }
@@ -38,9 +45,16 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 func (tracker *CtestsTracker) PackageUnderTest(name string) *PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
 		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
-			return packUt.HasName(name)
+			return packUt.name == name
 		})
 		return &tracker.packagesUnderTest[indexOfPackUtWithName]
 	}
 	panic("Ctest does not exist. Check if it exists, before trying to get it.")
+}
+
+func (tracker *CtestsTracker) ContainsCtestWithName(name string) bool {
+	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
+		return packUt.containsCtestWithName(name)
+	})
+	return indexOfPackUttWithName != -1
 }

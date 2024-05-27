@@ -12,7 +12,7 @@ type CtestPassedEvent struct {
 	time        time.Time
 	packageName string
 	testName    string
-	elapsed     *float64
+	elapsed     float64
 }
 
 func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestPassedEvent {
@@ -20,7 +20,7 @@ func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) CtestPassedEvent {
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
 		testName:    internal.DecodeGoherentTestName(jsonEvt.Test),
-		elapsed:     jsonEvt.Elapsed,
+		elapsed:     *jsonEvt.Elapsed,
 	}
 }
 
@@ -32,8 +32,16 @@ func (evt CtestPassedEvent) CtestName() string {
 	return evt.testName
 }
 
+func (evt CtestPassedEvent) PackageName() string {
+	return evt.packageName
+}
+
 func (evt CtestPassedEvent) Timestamp() time.Time {
 	return evt.time
+}
+
+func (evt CtestPassedEvent) TestDuration() float64 {
+	return evt.elapsed
 }
 
 func (evt CtestPassedEvent) Equals(otherEvt events.CtestEvent) bool {

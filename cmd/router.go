@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 )
 
@@ -10,8 +11,11 @@ type Router struct {
 }
 
 func NewRouter() Router {
+	terminalPresenter := NewTerminalPresenter()
+	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
-		eventsMapper: NewEventsMapper(),
+		eventsMapper:  NewEventsMapper(),
+		eventsHandler: NewEventsHandler(terminalPresenter, &ctestsTracker),
 	}
 }
 
