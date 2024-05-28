@@ -17,17 +17,24 @@ func NewPackageUnderTest(name string) PackageUnderTest {
 	return newPack
 }
 
+func (packageUt *PackageUnderTest) isCtestTheFirstOne(ctest Ctest) bool {
+	if len(packageUt.ctests) == 0 {
+		return false
+	}
+	return packageUt.ctests[0].HasName(ctest.name)
+}
+
 func (packageUt *PackageUnderTest) insertCtest(ctest Ctest) Ctest {
-	if !packageUt.containsCtestWithName(ctest.name) {
+	if !packageUt.containsCtest(ctest) {
 		packageUt.ctests = append(packageUt.ctests, ctest)
 		return ctest
 	}
 	panic("Ctest already exists")
 }
 
-func (packageUt *PackageUnderTest) containsCtestWithName(ctestName string) bool {
-	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(ctest Ctest) bool {
-		return ctest.HasName(ctestName)
+func (packageUt *PackageUnderTest) containsCtest(ctest Ctest) bool {
+	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(aCtest Ctest) bool {
+		return ctest.Equals(aCtest)
 	})
 	return indexOfCtestWithName != -1
 }

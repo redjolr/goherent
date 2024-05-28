@@ -19,12 +19,18 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 }
 
 func (handler EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) {
-	if handler.ctestsTracker.ContainsCtestWithName(evt.CtestName()) {
-		return
-	}
 	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
 
+	if handler.ctestsTracker.ContainsCtest(ctest) {
+		return
+	}
 	handler.ctestsTracker.InsertCtest(ctest)
+
+	if handler.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
+		handler.output.FirstCtestOfPackagePassed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
+		return
+	}
+
 	handler.output.CtestPassed(evt.CtestName(), evt.TestDuration())
 }
 

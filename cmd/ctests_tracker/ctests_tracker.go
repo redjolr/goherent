@@ -16,16 +16,18 @@ func NewCtestsTracker() CtestsTracker {
 	}
 }
 
-func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
-	if !tracker.ContainsPackageUtWithName(packUt.name) {
+func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
+	var packUt PackageUnderTest
+	if tracker.ContainsPackageUtWithName(ctest.packageName) {
+		packUt = tracker.PackageUnderTest(ctest.packageName)
+		packUt.insertCtest(ctest)
+		tracker.replacePackageWith(ctest.packageName, packUt)
+	} else {
+		packUt = NewPackageUnderTest(ctest.packageName)
+		packUt.insertCtest(ctest)
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
 	}
-}
 
-func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
-	packUt := NewPackageUnderTest(ctest.packageName)
-	packUt.insertCtest(ctest)
-	tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
 	return ctest
 }
 
@@ -35,6 +37,14 @@ func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent
 	}
 }
 
+func (tracker *CtestsTracker) IsCtestFirstOfItsPackage(ctest Ctest) bool {
+	if !tracker.ContainsPackageUtWithName(ctest.packageName) {
+		return false
+	}
+	packageUnderTest := tracker.PackageUnderTest(ctest.packageName)
+	return packageUnderTest.isCtestTheFirstOne(ctest)
+}
+
 func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
 		return packUt.name == name
@@ -42,19 +52,39 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	return indexOfPackUttWithName != -1
 }
 
-func (tracker *CtestsTracker) PackageUnderTest(name string) *PackageUnderTest {
+func (tracker *CtestsTracker) PackagesCount() int {
+	return len(tracker.packagesUnderTest)
+}
+
+func (tracker *CtestsTracker) PackageUnderTest(name string) PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
 		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
 			return packUt.name == name
 		})
-		return &tracker.packagesUnderTest[indexOfPackUtWithName]
+		return tracker.packagesUnderTest[indexOfPackUtWithName]
 	}
 	panic("Ctest does not exist. Check if it exists, before trying to get it.")
 }
 
-func (tracker *CtestsTracker) ContainsCtestWithName(name string) bool {
+func (tracker *CtestsTracker) ContainsCtest(ctest Ctest) bool {
 	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
-		return packUt.containsCtestWithName(name)
+		return packUt.containsCtest(ctest)
 	})
 	return indexOfPackUttWithName != -1
+}
+
+func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
+	if !tracker.ContainsPackageUtWithName(packUt.name) {
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+	}
+}
+
+func (tracker *CtestsTracker) replacePackageWith(packageName string, replacement PackageUnderTest) {
+	packageIndex := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
+		return packUt.name == packageName
+	})
+	if packageIndex == -1 {
+		return
+	}
+	slices.Replace(tracker.packagesUnderTest, packageIndex, packageIndex+1, replacement)
 }

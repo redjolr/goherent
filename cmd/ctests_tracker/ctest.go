@@ -41,3 +41,8 @@ func (ctest *Ctest) HasEvent(evt events.CtestEvent) bool {
 func (ctest *Ctest) EventCount() int {
 	return len(ctest.events)
 }
+
+func (ctest *Ctest) Equals(otherCtest Ctest) bool {
+	return ctest.name == otherCtest.name &&
+		ctest.packageName == otherCtest.packageName
+}
