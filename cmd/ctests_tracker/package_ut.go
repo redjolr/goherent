@@ -32,6 +32,16 @@ func (packageUt *PackageUnderTest) insertCtest(ctest Ctest) Ctest {
 	panic("Ctest already exists")
 }
 
+func (packageUt *PackageUnderTest) ctestByName(ctestName string) *Ctest {
+	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(aCtest Ctest) bool {
+		return aCtest.HasName(ctestName)
+	})
+	if indexOfCtestWithName != -1 {
+		return &packageUt.ctests[indexOfCtestWithName]
+	}
+	return nil
+}
+
 func (packageUt *PackageUnderTest) containsCtest(ctest Ctest) bool {
 	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(aCtest Ctest) bool {
 		return ctest.Equals(aCtest)

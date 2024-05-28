@@ -51,7 +51,7 @@ func TestInsertCtest(t *testing.T) {
 
 		// Then
 		assert.Equal(ctestReturned, ctest)
-		assert.True(tracker.ContainsCtest(ctest))
+		assert.True(tracker.CtestWithNameInPackageExists("testName", "packageName"))
 		assert.True(tracker.ContainsPackageUtWithName("packageName"))
 	}, t)
 
@@ -74,7 +74,7 @@ func TestInsertCtest(t *testing.T) {
 		tracker.InsertCtest(ctest2)
 
 		// Then
-		assert.True(tracker.ContainsCtest(ctest2))
+		assert.True(tracker.CtestWithNameInPackageExists("ctestName2", "packageName"))
 		assert.Equal(tracker.PackagesCount(), 1)
 	}, t)
 
@@ -97,7 +97,7 @@ func TestInsertCtest(t *testing.T) {
 		tracker.InsertCtest(ctest2)
 
 		// Then
-		assert.True(tracker.ContainsCtest(ctest2))
+		assert.True(tracker.CtestWithNameInPackageExists("ctestName2", "packageName2"))
 		assert.Equal(tracker.PackagesCount(), 2)
 	}, t)
 }

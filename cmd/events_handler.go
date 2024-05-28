@@ -18,20 +18,21 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 	}
 }
 
-func (handler EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) {
+func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) {
+	ctestExists := eh.ctestsTracker.CtestWithNameInPackageExists(evt.CtestName(), evt.PackageName())
+	if ctestExists {
+		return
+	}
+
 	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
+	eh.ctestsTracker.InsertCtest(ctest)
 
-	if handler.ctestsTracker.ContainsCtest(ctest) {
-		return
-	}
-	handler.ctestsTracker.InsertCtest(ctest)
-
-	if handler.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		handler.output.FirstCtestOfPackagePassed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
+	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
+		eh.output.FirstCtestOfPackagePassed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
 		return
 	}
 
-	handler.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+	eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
 }
 
 func (handler EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {

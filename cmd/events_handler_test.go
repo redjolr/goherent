@@ -52,6 +52,7 @@ func TestCtestPassedEvent(t *testing.T) {
 	Given that no events have happened
 	When 2 CtestPassedEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
 	Then the user should be informed about both tests that have passed
+	And that "testName1" was the first test of its package
 	`, func(t *testing.T) {
 		eventsHandler, outputPortMock := setup()
 		elapsedTime1, elapsedTime2 := 2.3, 1.2

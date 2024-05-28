@@ -66,11 +66,16 @@ func (tracker *CtestsTracker) PackageUnderTest(name string) PackageUnderTest {
 	panic("Ctest does not exist. Check if it exists, before trying to get it.")
 }
 
-func (tracker *CtestsTracker) ContainsCtest(ctest Ctest) bool {
-	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
-		return packUt.containsCtest(ctest)
-	})
-	return indexOfPackUttWithName != -1
+func (tracker *CtestsTracker) CtestWithNameInPackageExists(ctestName string, packageName string) bool {
+	for _, packUt := range tracker.packagesUnderTest {
+		if packUt.name == packageName {
+			ctest := packUt.ctestByName(ctestName)
+			if ctest != nil {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
