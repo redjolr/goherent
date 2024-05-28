@@ -8,6 +8,7 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/mock"
 )
@@ -18,6 +19,8 @@ func setup() (cmd.EventsHandler, *cmd.OutputPortMock) {
 	eventHandler := cmd.NewEventsHandler(outputPortMock, &ctestTracker)
 	outputPortMock.On("CtestPassed", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("FirstCtestOfPackagePassed", mock.Anything, mock.Anything, mock.Anything).Return()
+	outputPortMock.On("FirstCtestOfPackageStartedRunning", mock.Anything, mock.Anything).Return()
+	outputPortMock.On("CtestStartedRunning", mock.Anything).Return()
 
 	return eventHandler, outputPortMock
 }
@@ -45,6 +48,8 @@ func TestCtestPassedEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
+
+		// Then
 		outputPortMock.AssertCalled(t, "FirstCtestOfPackagePassed", "testName", "somePackage", elapsedTime)
 	}, t)
 
@@ -113,5 +118,100 @@ func TestCtestPassedEvent(t *testing.T) {
 		outputPortMock.AssertCalled(t, "FirstCtestOfPackagePassed", "testName", "somePackage", elapsedTime)
 		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackagePassed", 1)
 		outputPortMock.AssertNumberOfCalls(t, "CtestPassed", 0)
+	}, t)
+}
+
+func TestCtestRanEvent(t *testing.T) {
+	Test(`
+	Given that no events have happened
+	When a CtestRanEvent occurs with test name "testName" from "packageName"
+	Then the user should be informed that the testing of a new package started and
+	that the first test of that package started running
+	`, func(t *testing.T) {
+
+		// Given
+		eventsHandler, outputPortMock := setup()
+
+		// When
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// Then
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
+	}, t)
+
+	Test(`
+	Given that no events have happened
+	When 2 CtestRanEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
+	Then the user should be informed about both tests that have started running
+	And that "testName1" was the first test of its package
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, outputPortMock := setup()
+		elapsedTime1, elapsedTime2 := 2.3, 1.2
+
+		// When
+		ctestRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "run",
+				Package: "somePackage",
+				Test:    "testName1",
+				Elapsed: &elapsedTime1,
+				Output:  "Some output",
+			},
+		)
+		ctestRanEvt2 := ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "run",
+				Package: "somePackage",
+				Test:    "testName2",
+				Elapsed: &elapsedTime2,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// Then
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName1", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName2")
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
+	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed about the second passing, when the second event occurs
+	`, func(t *testing.T) {
+		eventsHandler, outputPortMock := setup()
+		elapsedTime := 2.3
+
+		// Given
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "run",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// Then
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
+		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageStartedRunning", 1)
+		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 0)
 	}, t)
 }

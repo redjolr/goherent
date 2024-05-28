@@ -4,6 +4,7 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 )
 
 type EventsHandler struct {
@@ -35,6 +36,21 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 	eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
 }
 
-func (handler EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {
-	handler.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
+	ctestExists := eh.ctestsTracker.CtestWithNameInPackageExists(evt.CtestName(), evt.PackageName())
+	if ctestExists {
+		return
+	}
+	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
+	eh.ctestsTracker.InsertCtest(ctest)
+	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
+		eh.output.FirstCtestOfPackageStartedRunning(evt.CtestName(), evt.PackageName())
+		return
+	}
+
+	eh.output.CtestStartedRunning(evt.CtestName())
+}
+
+func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {
+	eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
 }
