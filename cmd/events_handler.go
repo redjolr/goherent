@@ -20,12 +20,19 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 }
 
 func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) {
-	ctestExists := eh.ctestsTracker.CtestWithNameInPackageExists(evt.CtestName(), evt.PackageName())
-	if ctestExists {
+	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+
+	if existingCtest != nil && existingCtest.HasPassed() {
 		return
 	}
 
-	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
+	if existingCtest != nil && existingCtest.IsRunning() {
+		existingCtest.MarkAsPassed(evt)
+		eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+		return
+	}
+
+	ctest := ctests_tracker.NewPassedCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
@@ -37,11 +44,11 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 }
 
 func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
-	ctestExists := eh.ctestsTracker.CtestWithNameInPackageExists(evt.CtestName(), evt.PackageName())
-	if ctestExists {
+	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+	if existingCtest != nil {
 		return
 	}
-	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
+	ctest := ctests_tracker.NewRunningCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.FirstCtestOfPackageStartedRunning(evt.CtestName(), evt.PackageName())

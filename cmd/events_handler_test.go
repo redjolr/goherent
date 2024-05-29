@@ -119,6 +119,44 @@ func TestCtestPassedEvent(t *testing.T) {
 		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackagePassed", 1)
 		outputPortMock.AssertNumberOfCalls(t, "CtestPassed", 0)
 	}, t)
+
+	// //
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestPassedEvent of the same test/package occurs
+	Then the user should be informed that the test has passed.
+
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, outputPortMock := setup()
+		testPassedElapsedTime := 1.2
+
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &testPassedElapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
+
+		// Then
+		outputPortMock.AssertCalled(t, "CtestPassed", "testName", testPassedElapsedTime)
+
+	}, t)
 }
 
 func TestCtestRanEvent(t *testing.T) {
