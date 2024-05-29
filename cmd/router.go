@@ -25,6 +25,11 @@ func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		router.eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 	}
 
+	if jsonEvt.Test != nil && jsonEvt.Action == "run" {
+		ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestRanEvt(jsonEvt)
+		router.eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+	}
+
 	if jsonEvt.Test != nil && jsonEvt.Action == "fail" {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)

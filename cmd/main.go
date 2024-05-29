@@ -33,9 +33,11 @@ func Main(extraCmdArgs []string) int {
 		m := scanner.Text()
 		var jsonEvt events.JsonEvent
 		err := json.Unmarshal([]byte(m), &jsonEvt)
+
 		if err != nil {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
+
 		router.RouteJsonEvent(jsonEvt)
 	}
 	cmd.Wait()
