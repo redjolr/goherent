@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 )
@@ -77,4 +78,15 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 	}
 
 	eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+}
+
+func (eh EventsHandler) HandleCtestOutputEvent(evt ctest_output_event.CtestOutputEvent) {
+	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+	if existingCtest != nil {
+		return
+	}
+
+	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
+	ctest.LogOutput(evt.Output())
+	eh.ctestsTracker.InsertCtest(ctest)
 }

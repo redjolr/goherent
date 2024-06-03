@@ -8,13 +8,15 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	. "github.com/redjolr/goherent/pkg"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
-func setup() (cmd.EventsHandler, *cmd.OutputPortMock) {
+func setup() (cmd.EventsHandler, *cmd.OutputPortMock, *ctests_tracker.CtestsTracker) {
 	outputPortMock := cmd.NewOutputPortMock()
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventHandler := cmd.NewEventsHandler(outputPortMock, &ctestTracker)
@@ -25,7 +27,7 @@ func setup() (cmd.EventsHandler, *cmd.OutputPortMock) {
 	outputPortMock.On("FirstCtestOfPackageStartedRunning", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestStartedRunning", mock.Anything).Return()
 
-	return eventHandler, outputPortMock
+	return eventHandler, outputPortMock, &ctestTracker
 }
 
 func TestCtestPassedEvent(t *testing.T) {
@@ -36,7 +38,7 @@ func TestCtestPassedEvent(t *testing.T) {
 	that the first test of that package passed
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// When
@@ -62,7 +64,7 @@ func TestCtestPassedEvent(t *testing.T) {
 	Then the user should be informed about both tests that have passed
 	And that "testName1" was the first test of its package
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime1, elapsedTime2 := 2.3, 1.2
 
 		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
@@ -98,7 +100,7 @@ func TestCtestPassedEvent(t *testing.T) {
 	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should not be informed about the second passing, when the second event occurs
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// Given
@@ -130,7 +132,7 @@ func TestCtestPassedEvent(t *testing.T) {
 
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		testPassedElapsedTime := 1.2
 
 		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
@@ -169,7 +171,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	that the first test of that package failed.
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// When
@@ -195,7 +197,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	Then the user should be informed about both tests that have failed
 	And that "testName1" was the first test of its package
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime1, elapsedTime2 := 2.3, 1.2
 
 		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
@@ -231,7 +233,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should not be informed about the second passing, when the second event occurs
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// Given
@@ -263,7 +265,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	Then the user should be informed that the test has failed.
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		testPassedElapsedTime := 1.2
 
 		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
@@ -292,6 +294,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		outputPortMock.AssertCalled(t, "CtestFailed", "testName", testPassedElapsedTime)
 
 	}, t)
+
 }
 
 func TestCtestRanEvent(t *testing.T) {
@@ -302,7 +305,7 @@ func TestCtestRanEvent(t *testing.T) {
 	that the first test of that package started running
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 
 		// When
 		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
@@ -325,7 +328,7 @@ func TestCtestRanEvent(t *testing.T) {
 	And that "testName1" was the first test of its package
 	`, func(t *testing.T) {
 		// Given
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime1, elapsedTime2 := 2.3, 1.2
 
 		// When
@@ -362,7 +365,7 @@ func TestCtestRanEvent(t *testing.T) {
 	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should not be informed about the second run, when the second event occurs
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// Given
@@ -393,7 +396,7 @@ func TestCtestRanEvent(t *testing.T) {
 	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should not be informed about the second run, when the second event occurs
 	`, func(t *testing.T) {
-		eventsHandler, outputPortMock := setup()
+		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
 
 		// Given
@@ -427,5 +430,34 @@ func TestCtestRanEvent(t *testing.T) {
 		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
 		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageStartedRunning", 1)
 		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 0)
+	}, t)
+}
+
+func TestCtestOutputEvent(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	Given that there are no events
+	When a CtestOutputEvent occurs for the test "testName" of package "somePackage"
+	Then a new package under test should be created with the the test testName
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, _, ctestTracker := setup()
+
+		// When
+		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "testName",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+
+		//Then
+		ctest := ctestTracker.FindCtestWithNameInPackage("testName", "somePackage")
+		assert.NotNil(ctest)
 	}, t)
 }

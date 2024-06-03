@@ -1,8 +1,6 @@
 package ctests_tracker
 
 import (
-	"slices"
-
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
@@ -15,6 +13,7 @@ type Ctest struct {
 	name        string
 	packageName string
 	events      []events.CtestEvent
+	output      []string
 	isRunning   bool
 	hasPassed   bool
 	hasFailed   bool
@@ -25,6 +24,7 @@ func NewCtest(testName string, packageName string) Ctest {
 		name:        testName,
 		packageName: packageName,
 		events:      []events.CtestEvent{},
+		output:      []string{},
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   false,
@@ -36,6 +36,7 @@ func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
 		name:        ranEvt.CtestName(),
 		packageName: ranEvt.PackageName(),
 		events:      []events.CtestEvent{ranEvt},
+		output:      []string{},
 		isRunning:   true,
 		hasPassed:   false,
 		hasFailed:   false,
@@ -47,6 +48,7 @@ func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
 		name:        passedEvt.CtestName(),
 		packageName: passedEvt.PackageName(),
 		events:      []events.CtestEvent{passedEvt},
+		output:      []string{},
 		isRunning:   false,
 		hasPassed:   true,
 		hasFailed:   false,
@@ -58,6 +60,7 @@ func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
 		name:        passedEvt.CtestName(),
 		packageName: passedEvt.PackageName(),
 		events:      []events.CtestEvent{passedEvt},
+		output:      []string{},
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   true,
@@ -80,6 +83,10 @@ func (ctest *Ctest) HasFailed() bool {
 	return ctest.hasFailed
 }
 
+func (ctest *Ctest) LogOutput(log string) {
+	ctest.output = append(ctest.output, log)
+}
+
 func (ctest *Ctest) MarkAsPassed(passedEvt ctest_passed_event.CtestPassedEvent) {
 	ctest.isRunning = false
 	ctest.hasPassed = true
@@ -92,16 +99,6 @@ func (ctest *Ctest) MarkAsFailed(passedEvt ctest_failed_event.CtestFailedEvent) 
 	ctest.hasPassed = false
 	ctest.hasFailed = true
 	ctest.events = append(ctest.events, passedEvt)
-}
-
-func (ctest *Ctest) HasEvent(evt events.CtestEvent) bool {
-	return slices.ContainsFunc(ctest.events, func(otherEvt events.CtestEvent) bool {
-		return evt.Equals(otherEvt)
-	})
-}
-
-func (ctest *Ctest) EventCount() int {
-	return len(ctest.events)
 }
 
 func (ctest *Ctest) Equals(otherCtest Ctest) bool {

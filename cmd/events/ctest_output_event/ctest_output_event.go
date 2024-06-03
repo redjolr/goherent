@@ -36,6 +36,14 @@ func (evt CtestOutputEvent) Timestamp() time.Time {
 	return evt.time
 }
 
+func (evt CtestOutputEvent) PackageName() string {
+	return evt.packageName
+}
+
+func (evt CtestOutputEvent) Output() string {
+	return evt.output
+}
+
 func (evt CtestOutputEvent) Equals(otherEvt events.CtestEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.CtestName() == otherEvt.CtestName() &&
