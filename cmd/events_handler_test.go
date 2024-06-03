@@ -225,7 +225,7 @@ func TestCtestRanEvent(t *testing.T) {
 	Test(`
 	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
 	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
-	Then the user should not be informed about the second passing, when the second event occurs
+	Then the user should not be informed about the second run, when the second event occurs
 	`, func(t *testing.T) {
 		eventsHandler, outputPortMock := setup()
 		elapsedTime := 2.3
@@ -242,6 +242,49 @@ func TestCtestRanEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// Then
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
+		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageStartedRunning", 1)
+		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 0)
+	}, t)
+
+	//
+	Test(`
+	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
+	And then a CtestPassedEvent has occurred for the same test
+	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed about the second run, when the second event occurs
+	`, func(t *testing.T) {
+		eventsHandler, outputPortMock := setup()
+		elapsedTime := 2.3
+
+		// Given
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "run",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// When
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
