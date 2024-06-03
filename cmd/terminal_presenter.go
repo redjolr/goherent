@@ -18,6 +18,11 @@ func (presenter TerminalPresenter) FirstCtestOfPackagePassed(testName string, pa
 	fmt.Printf("\t✅ %s\n\n %f\n", testName, testDuration)
 }
 
+func (presenter TerminalPresenter) FirstCtestOfPackageFailed(testName string, packageName string, testDuration float64) {
+	fmt.Printf("📦⏳ %s\n", packageName)
+	fmt.Printf("\t❌ %s\n\n %f\n", testName, testDuration)
+}
+
 func (pressenter TerminalPresenter) CtestStartedRunning(testName string) {
 	fmt.Printf("\t⏳ %s\n\n", testName)
 }

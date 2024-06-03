@@ -32,6 +32,10 @@ func (evt CtestFailedEvent) CtestName() string {
 	return evt.testName
 }
 
+func (evt CtestFailedEvent) PackageName() string {
+	return evt.packageName
+}
+
 func (evt CtestFailedEvent) Timestamp() time.Time {
 	return evt.time
 }
