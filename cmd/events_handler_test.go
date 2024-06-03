@@ -166,7 +166,6 @@ func TestCtestRanEvent(t *testing.T) {
 	Then the user should be informed that the testing of a new package started and
 	that the first test of that package started running
 	`, func(t *testing.T) {
-
 		// Given
 		eventsHandler, outputPortMock := setup()
 
