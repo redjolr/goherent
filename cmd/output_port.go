@@ -7,4 +7,5 @@ type OutputPort interface {
 	CtestPassed(testName string, testDuration float64)
 	CtestStartedRunning(testName string)
 	CtestFailed(testName string, testDuration float64)
+	CtestOutput(testName string, packageName string, output string)
 }

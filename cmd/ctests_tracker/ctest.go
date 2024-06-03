@@ -1,6 +1,8 @@
 package ctests_tracker
 
 import (
+	"strings"
+
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
@@ -85,6 +87,14 @@ func (ctest *Ctest) HasFailed() bool {
 
 func (ctest *Ctest) LogOutput(log string) {
 	ctest.output = append(ctest.output, log)
+}
+
+func (ctest *Ctest) ContainsOutput() bool {
+	return len(ctest.output) > 0
+}
+
+func (ctest *Ctest) Output() string {
+	return strings.Join(ctest.output, "\n")
 }
 
 func (ctest *Ctest) MarkAsPassed(passedEvt ctest_passed_event.CtestPassedEvent) {

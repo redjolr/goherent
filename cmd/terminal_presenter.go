@@ -1,6 +1,8 @@
 package cmd
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type TerminalPresenter struct {
 }
@@ -33,4 +35,8 @@ func (presenter TerminalPresenter) CtestPassed(testName string, testDuration flo
 
 func (presenter TerminalPresenter) CtestFailed(testName string, testDuration float64) {
 	fmt.Printf("\t❌ %s\n\n %f\n", testName, testDuration)
+}
+
+func (presenter TerminalPresenter) CtestOutput(testName string, packageName string, output string) {
+	fmt.Printf("\t %s\n\n %s\n", testName, output)
 }
