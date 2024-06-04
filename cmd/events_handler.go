@@ -37,7 +37,8 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 	eh.ctestsTracker.InsertCtest(ctest)
 
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		eh.output.FirstCtestOfPackagePassed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
+		eh.output.PackageTestsStartedRunning(evt.PackageName())
+		eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
 		return
 	}
 

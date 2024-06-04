@@ -17,12 +17,13 @@ func (outputMock *OutputPortMock) FirstCtestOfPackageStartedRunning(testName str
 
 }
 
-func (outputMock *OutputPortMock) FirstCtestOfPackagePassed(testName string, packageName string, testDuration float64) {
+func (outputMock *OutputPortMock) FirstCtestOfPackageFailed(testName string, packageName string, testDuration float64) {
 	outputMock.Called(testName, packageName, testDuration)
 }
 
-func (outputMock *OutputPortMock) FirstCtestOfPackageFailed(testName string, packageName string, testDuration float64) {
-	outputMock.Called(testName, packageName, testDuration)
+func (outputMock *OutputPortMock) PackageTestsStartedRunning(packageName string) {
+	outputMock.Called(packageName)
+
 }
 
 func (outputMock *OutputPortMock) CtestPassed(testName string, timeElapsed float64) {

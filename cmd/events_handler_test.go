@@ -20,9 +20,9 @@ func setup() (cmd.EventsHandler, *cmd.OutputPortMock, *ctests_tracker.CtestsTrac
 	outputPortMock := cmd.NewOutputPortMock()
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventHandler := cmd.NewEventsHandler(outputPortMock, &ctestTracker)
+	outputPortMock.On("PackageTestsStartedRunning", mock.AnythingOfType("string")).Return()
 	outputPortMock.On("CtestPassed", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestFailed", mock.Anything, mock.Anything).Return()
-	outputPortMock.On("FirstCtestOfPackagePassed", mock.Anything, mock.Anything, mock.Anything).Return()
 	outputPortMock.On("FirstCtestOfPackageFailed", mock.Anything, mock.Anything, mock.Anything).Return()
 	outputPortMock.On("FirstCtestOfPackageStartedRunning", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestStartedRunning", mock.Anything).Return()
@@ -56,7 +56,8 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackagePassed", "testName", "somePackage", elapsedTime)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestPassed", "testName", elapsedTime)
 	}, t)
 
 	Test(`
@@ -91,7 +92,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackagePassed", "testName1", "somePackage", elapsedTime1)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
 		outputPortMock.AssertCalled(t, "CtestPassed", "testName2", elapsedTime2)
 
 	}, t)
@@ -121,16 +122,14 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackagePassed", "testName", "somePackage", elapsedTime)
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackagePassed", 1)
-		outputPortMock.AssertNumberOfCalls(t, "CtestPassed", 0)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestPassed", "testName", elapsedTime)
 	}, t)
 
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed.
-
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, outputPortMock, _ := setup()
@@ -160,7 +159,6 @@ func TestCtestPassedEvent(t *testing.T) {
 
 		// Then
 		outputPortMock.AssertCalled(t, "CtestPassed", "testName", testPassedElapsedTime)
-
 	}, t)
 }
 
