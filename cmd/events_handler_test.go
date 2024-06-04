@@ -263,7 +263,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestFailedEvent of the same test/package occurs
-	Then the user should be informed that the test has failed.
+	Then the user should be informed that the first test of the package has failed.
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, outputPortMock, _ := setup()
@@ -292,7 +292,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
 
 	}, t)
 
@@ -396,6 +396,57 @@ func TestCtestFailedEvent(t *testing.T) {
 		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
 		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageFailed", 1)
 		outputPortMock.AssertCalled(t, "CtestOutput", "testName", "somePackage", "This is output 1.\nThis is output 2.")
+	}, t)
+
+	Test(`
+	Given that no events have happened
+	When these events occurr for a Ctest with name "testName" from package "somePackage":
+		- 1 CtestRanEvent
+		- 1 CtestOutputEvent
+		- 1 CtestFailedEvent
+	Then the user should be be presented with this information:
+		- Test started running
+		- First test of package failed
+		- The output from the CtestOutputEvent
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, outputPortMock, _ := setup()
+		elapsedTime := 1.2
+
+		// When
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+		})
+		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "testName",
+				Package: "somePackage",
+				Output:  "This is some output.",
+			},
+		)
+		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
+		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
+		outputPortMock.AssertCalled(t, "CtestOutput", "testName", "somePackage", "This is some output.")
+
 	}, t)
 }
 
@@ -415,7 +466,6 @@ func TestCtestRanEvent(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -431,7 +481,6 @@ func TestCtestRanEvent(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, outputPortMock, _ := setup()
-		elapsedTime1, elapsedTime2 := 2.3, 1.2
 
 		// When
 		ctestRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(
@@ -440,8 +489,6 @@ func TestCtestRanEvent(t *testing.T) {
 				Action:  "run",
 				Package: "somePackage",
 				Test:    "testName1",
-				Elapsed: &elapsedTime1,
-				Output:  "Some output",
 			},
 		)
 		ctestRanEvt2 := ctest_ran_event.NewFromJsonTestEvent(
@@ -450,8 +497,6 @@ func TestCtestRanEvent(t *testing.T) {
 				Action:  "run",
 				Package: "somePackage",
 				Test:    "testName2",
-				Elapsed: &elapsedTime2,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
@@ -468,7 +513,6 @@ func TestCtestRanEvent(t *testing.T) {
 	Then the user should not be informed about the second run, when the second event occurs
 	`, func(t *testing.T) {
 		eventsHandler, outputPortMock, _ := setup()
-		elapsedTime := 2.3
 
 		// Given
 		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(
@@ -477,8 +521,6 @@ func TestCtestRanEvent(t *testing.T) {
 				Action:  "run",
 				Test:    "testName",
 				Package: "somePackage",
-				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -508,8 +550,6 @@ func TestCtestRanEvent(t *testing.T) {
 				Action:  "run",
 				Test:    "testName",
 				Package: "somePackage",
-				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -520,7 +560,6 @@ func TestCtestRanEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
