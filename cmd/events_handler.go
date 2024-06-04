@@ -53,7 +53,8 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
 	ctest := ctests_tracker.NewRunningCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		eh.output.FirstCtestOfPackageStartedRunning(evt.CtestName(), evt.PackageName())
+		eh.output.PackageTestsStartedRunning(evt.PackageName())
+		eh.output.CtestStartedRunning(evt.CtestName())
 		return
 	}
 
@@ -68,11 +69,12 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 	}
 	if existingCtest != nil {
 		existingCtest.MarkAsFailed(evt)
+
 		if eh.ctestsTracker.IsCtestFirstOfItsPackage(*existingCtest) {
-			eh.output.FirstCtestOfPackageFailed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
-		} else {
-			eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+			eh.output.PackageTestsStartedRunning(evt.PackageName())
 		}
+		eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+
 		if existingCtest.ContainsOutput() {
 			eh.output.CtestOutput(evt.CtestName(), evt.PackageName(), existingCtest.Output())
 		}
@@ -81,7 +83,8 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 	ctest := ctests_tracker.NewFailedCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		eh.output.FirstCtestOfPackageFailed(evt.CtestName(), evt.PackageName(), evt.TestDuration())
+		eh.output.PackageTestsStartedRunning(evt.PackageName())
+		eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
 		return
 	}
 

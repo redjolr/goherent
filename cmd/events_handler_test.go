@@ -23,8 +23,6 @@ func setup() (cmd.EventsHandler, *cmd.OutputPortMock, *ctests_tracker.CtestsTrac
 	outputPortMock.On("PackageTestsStartedRunning", mock.AnythingOfType("string")).Return()
 	outputPortMock.On("CtestPassed", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestFailed", mock.Anything, mock.Anything).Return()
-	outputPortMock.On("FirstCtestOfPackageFailed", mock.Anything, mock.Anything, mock.Anything).Return()
-	outputPortMock.On("FirstCtestOfPackageStartedRunning", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestStartedRunning", mock.Anything).Return()
 	outputPortMock.On("CtestOutput", mock.Anything, mock.Anything, mock.Anything).Return()
 
@@ -187,7 +185,8 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
 	}, t)
 
 	Test(`
@@ -196,9 +195,11 @@ func TestCtestFailedEvent(t *testing.T) {
 	Then the user should be informed about both tests that have failed
 	And that "testName1" was the first test of its package
 	`, func(t *testing.T) {
+		// Given
 		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime1, elapsedTime2 := 2.3, 1.2
 
+		// When
 		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -206,7 +207,6 @@ func TestCtestFailedEvent(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName1",
 				Elapsed: &elapsedTime1,
-				Output:  "Some output",
 			},
 		)
 		ctestFailedEvt2 := ctest_failed_event.NewFromJsonTestEvent(
@@ -216,21 +216,21 @@ func TestCtestFailedEvent(t *testing.T) {
 				Test:    "testName2",
 				Package: "somePackage",
 				Elapsed: &elapsedTime2,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName1", "somePackage", elapsedTime1)
+		// Then
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName1", elapsedTime1)
 		outputPortMock.AssertCalled(t, "CtestFailed", "testName2", elapsedTime2)
-
 	}, t)
 
 	Test(`
 	Given that a CtestFailedEvent has occurred with test name "testName" of package "somePackage"
-	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
-	Then the user should not be informed about the second passing, when the second event occurs
+	When a CtestFailedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed about the second failure, when the second event occurs
 	`, func(t *testing.T) {
 		eventsHandler, outputPortMock, _ := setup()
 		elapsedTime := 2.3
@@ -243,7 +243,6 @@ func TestCtestFailedEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -252,16 +251,17 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageFailed", 1)
-		outputPortMock.AssertNumberOfCalls(t, "CtestFailed", 0)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
+		outputPortMock.AssertNumberOfCalls(t, "CtestFailed", 1)
 	}, t)
 
-	// Here
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestFailedEvent of the same test/package occurs
-	Then the user should be informed that the first test of the package has failed.
+	Then the user should be informed that the test for the "somePackage" package have started
+	And then that the Ctest with name "testName" has started running
+	And that the Ctest with name "testName" has failed
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, outputPortMock, _ := setup()
@@ -272,7 +272,6 @@ func TestCtestFailedEvent(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -284,20 +283,20 @@ func TestCtestFailedEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
-
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
 	}, t)
 
 	Test(`
 	Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
 	When a CtestFailedEvent of the same test/package occurs
-	Then a user should be informed that the testing of a new package started 
+	Then a user should be informed that the testing of a new package started
 	And that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented
 	`, func(t *testing.T) {
@@ -340,15 +339,15 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageFailed", 1)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
 		outputPortMock.AssertCalled(t, "CtestOutput", "testName", "somePackage", "This is output 1.\nThis is output 2.")
 	}, t)
 
 	Test(`
 	Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
 	When a CtestFailedEvent of the same test/package occurs
-	Then a user should be informed that the testing of a new package started 
+	Then a user should be informed that the testing of a new package started
 	And that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented
 	`, func(t *testing.T) {
@@ -391,8 +390,9 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageFailed", 1)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
+		outputPortMock.AssertNumberOfCalls(t, "CtestFailed", 1)
 		outputPortMock.AssertCalled(t, "CtestOutput", "testName", "somePackage", "This is output 1.\nThis is output 2.")
 	}, t)
 
@@ -441,10 +441,9 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageFailed", "testName", "somePackage", elapsedTime)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestFailed", "testName", elapsedTime)
 		outputPortMock.AssertCalled(t, "CtestOutput", "testName", "somePackage", "This is some output.")
-
 	}, t)
 }
 
@@ -468,7 +467,8 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName")
 	}, t)
 
 	Test(`
@@ -501,7 +501,8 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName1", "somePackage")
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName1")
 		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName2")
 	}, t)
 
@@ -527,9 +528,9 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageStartedRunning", 1)
-		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 0)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName")
+		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 1)
 	}, t)
 
 	Test(`
@@ -566,9 +567,9 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		outputPortMock.AssertCalled(t, "FirstCtestOfPackageStartedRunning", "testName", "somePackage")
-		outputPortMock.AssertNumberOfCalls(t, "FirstCtestOfPackageStartedRunning", 1)
-		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 0)
+		outputPortMock.AssertCalled(t, "PackageTestsStartedRunning", "somePackage")
+		outputPortMock.AssertCalled(t, "CtestStartedRunning", "testName")
+		outputPortMock.AssertNumberOfCalls(t, "CtestStartedRunning", 1)
 	}, t)
 }
 
