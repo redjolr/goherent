@@ -3,8 +3,8 @@ package textblock_test
 import (
 	"testing"
 
+	"github.com/redjolr/goherent/console/textblock"
 	. "github.com/redjolr/goherent/pkg"
-	"github.com/redjolr/goherent/terminal/textblock"
 	"github.com/stretchr/testify/assert"
 )
 

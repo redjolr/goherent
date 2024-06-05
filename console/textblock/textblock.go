@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/redjolr/goherent/terminal/coordinates"
+	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type Textblock struct {

@@ -1,20 +1,20 @@
-package terminal_test
+package console_test
 
 import (
 	"testing"
 
+	"github.com/redjolr/goherent/console"
 	. "github.com/redjolr/goherent/pkg"
-	"github.com/redjolr/goherent/terminal"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewItem(t *testing.T) {
 	assert := assert.New(t)
 	Test("it should add a new item to a UnorderedList.", func(t *testing.T) {
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		item := list.NewItem("item1")
 
-		assert.IsType(terminal.ListItem{}, item)
+		assert.IsType(console.ListItem{}, item)
 	}, t)
 }
 
@@ -22,14 +22,14 @@ func TestFindItemById(t *testing.T) {
 	assert := assert.New(t)
 
 	Test("it should return nil, if the UnorderedList is empty.", func(t *testing.T) {
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		item := list.FindItemById(0)
 		assert.Nil(item)
 	}, t)
 
 	Test(`it should return nil,
 	if the UnorderedList has 1 item and you try to find the item with id 1.`, func(t *testing.T) {
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("some text")
 		item := list.FindItemById(1)
 		assert.Nil(item)
@@ -37,10 +37,10 @@ func TestFindItemById(t *testing.T) {
 
 	Test(`it should return a ListItem,
 	if the UnorderedList has 1 item and you try to find the item with id 0.`, func(t *testing.T) {
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("some text")
 		item := list.FindItemById(0)
-		assert.IsType(&terminal.ListItem{}, item)
+		assert.IsType(&console.ListItem{}, item)
 	}, t)
 
 	Test(`Given that the ListTiem has two items: "First Item" and "Second Item"
@@ -48,7 +48,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "First Item" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First Item")
 		list.NewItem("Second Item")
 
@@ -64,7 +64,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "Second Item" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First Item")
 		list.NewItem("Second Item")
 
@@ -80,7 +80,7 @@ func TestFindItemById(t *testing.T) {
 	Then nil will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First Item")
 		list.NewItem("Second Item")
 
@@ -96,7 +96,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "First" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First")
 		list.NewItem("Second")
 		list.NewItem("Third")
@@ -116,7 +116,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "Third" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First")
 		list.NewItem("Second")
 		list.NewItem("Third")
@@ -136,7 +136,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "Third" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First")
 		list.NewItem("Second")
 		list.NewItem("Third")
@@ -156,7 +156,7 @@ func TestFindItemById(t *testing.T) {
 	Then the item "Third" will be returned
 	`, func(t *testing.T) {
 		// Given
-		list := terminal.NewUnorderedList()
+		list := console.NewUnorderedList()
 		list.NewItem("First")
 		list.NewItem("Second")
 		list.NewItem("Third")

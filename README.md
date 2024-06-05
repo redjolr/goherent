@@ -45,7 +45,7 @@ PASS
 ok      github.com/redjolr/go-iam/src/core/tests        0.167s
 ```
 
-The test report displayed in your terminal is clunky and awkward.
+The test report displayed in your console is clunky and awkward.
 
 ## The package
 

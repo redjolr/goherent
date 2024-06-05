@@ -1,4 +1,4 @@
-package terminal
+package console
 
 type ListItem struct {
 	id   int
