@@ -11,6 +11,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -25,6 +26,7 @@ func setup() (cmd.EventsHandler, *cmd.OutputPortMock, *ctests_tracker.CtestsTrac
 	outputPortMock.On("CtestFailed", mock.Anything, mock.Anything).Return()
 	outputPortMock.On("CtestStartedRunning", mock.Anything).Return()
 	outputPortMock.On("CtestOutput", mock.Anything, mock.Anything, mock.Anything).Return()
+	outputPortMock.On("TestingStarted", mock.Anything).Return()
 
 	return eventHandler, outputPortMock, &ctestTracker
 }
@@ -599,5 +601,16 @@ func TestCtestOutputEvent(t *testing.T) {
 		//Then
 		ctest := ctestTracker.FindCtestWithNameInPackage("testName", "somePackage")
 		assert.NotNil(ctest)
+	}, t)
+}
+
+func TestHandleTestingStarted(t *testing.T) {
+	Test("User should be informed, that the testing has started", func(t *testing.T) {
+		eventsHandler, outputPortMock, _ := setup()
+		now := time.Now()
+		testingStartedEvt := testing_started_event.NewTestingStartedEvent(now)
+		eventsHandler.HandleTestingStarted(testingStartedEvt)
+
+		outputPortMock.AssertCalled(t, "TestingStarted", now)
 	}, t)
 }
