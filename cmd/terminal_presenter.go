@@ -17,8 +17,12 @@ func NewTerminalPresenter(terminal *console.Terminal) TerminalPresenter {
 	}
 }
 
-func (pressenter TerminalPresenter) TestingStarted(timestamp time.Time) {
-	fmt.Printf("\n🚀 Starting... %s\n\n", timestamp.Format("2006-01-02 15:04:05.000"))
+func (presenter TerminalPresenter) TestingStarted(timestamp time.Time) {
+	presenter.terminal.NewTextBlock(
+		fmt.Sprintf("\n🚀 Starting... %s\n\n", timestamp.Format("2006-01-02 15:04:05.000")),
+	)
+	presenter.terminal.NewUnorderedList("All tests:")
+	presenter.terminal.Render()
 }
 
 func (presenter TerminalPresenter) PackageTestsStartedRunning(packageName string) {

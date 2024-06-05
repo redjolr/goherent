@@ -1,6 +1,7 @@
-package textblock
+package console
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -10,16 +11,10 @@ import (
 type Textblock struct {
 	lines          []string
 	cursorPosition coordinates.Coordinates
+	rendered       bool
 }
 
-func EmptyTextblock() Textblock {
-	return Textblock{
-		lines:          []string{""},
-		cursorPosition: coordinates.Origin(),
-	}
-}
-
-func FromString(text string) Textblock {
+func NewTextBlock(text string) Textblock {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
 
@@ -86,4 +81,13 @@ func (tb *Textblock) MoveCursorTo(x int, y int) {
 
 	tb.cursorPosition.X = x
 	tb.cursorPosition.Y = y
+}
+
+func (tb *Textblock) render() {
+	fmt.Println(strings.Join(tb.Lines(), "\n"))
+	tb.rendered = true
+}
+
+func (ul *Textblock) isRendered() bool {
+	return ul.rendered
 }

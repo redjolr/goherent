@@ -1,14 +1,21 @@
 package console
 
-import "slices"
+import (
+	"fmt"
+	"slices"
+)
 
 type UnorderedList struct {
-	items []ListItem
+	headingText string
+	items       []ListItem
+	rendered    bool
 }
 
-func NewUnorderedList() UnorderedList {
+func NewUnorderedList(headingText string) UnorderedList {
 	return UnorderedList{
-		items: []ListItem{},
+		headingText: headingText,
+		items:       []ListItem{},
+		rendered:    true,
 	}
 }
 
@@ -35,4 +42,13 @@ func (ul *UnorderedList) FindItemById(id int) *ListItem {
 		return nil
 	}
 	return &ul.items[listItemIndex]
+}
+
+func (ul *UnorderedList) render() {
+	fmt.Println(ul.headingText)
+	ul.rendered = true
+}
+
+func (ul *UnorderedList) isRendered() bool {
+	return ul.rendered
 }

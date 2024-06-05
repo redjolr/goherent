@@ -1,75 +1,75 @@
-package textblock_test
+package console_test
 
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/console/textblock"
+	"github.com/redjolr/goherent/console"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewTextblockFromString(t *testing.T) {
+func TestNewTextblockNewTextBlock(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
 	it should store the line []string{""},
 	if we pass an empty string`, func(t *testing.T) {
-		textBlock := textblock.FromString("")
+		textBlock := console.NewTextBlock("")
 		assert.Equal(textBlock.Lines(), []string{""})
 	}, t)
 
 	Test(`
 	it should store the line []string{"A"},
 	if we pass the string "A"`, func(t *testing.T) {
-		textBlock := textblock.FromString("A")
+		textBlock := console.NewTextBlock("A")
 		assert.Equal(textBlock.Lines(), []string{"A"})
 	}, t)
 
 	Test(`
 	it should store two empty lines,
 	if we pass the string "\n"`, func(t *testing.T) {
-		textBlock := textblock.FromString("\n")
+		textBlock := console.NewTextBlock("\n")
 		assert.Equal(textBlock.Lines(), []string{"", ""})
 	}, t)
 
 	Test(`
 	it should store 3 empty lines,
 	if we pass the string "\n\n"`, func(t *testing.T) {
-		textBlock := textblock.FromString("\n\n")
+		textBlock := console.NewTextBlock("\n\n")
 		assert.Equal(textBlock.Lines(), []string{"", "", ""})
 	}, t)
 
 	Test(`
 	it should store two empty lines,
 	if we pass the string "\r\n"`, func(t *testing.T) {
-		textBlock := textblock.FromString("\r\n")
+		textBlock := console.NewTextBlock("\r\n")
 		assert.Equal(textBlock.Lines(), []string{"", ""})
 	}, t)
 
 	Test(`
 	it should store 3 empty lines,
 	if we pass the string "\r\n\r\n"`, func(t *testing.T) {
-		textBlock := textblock.FromString("\r\n\r\n")
+		textBlock := console.NewTextBlock("\r\n\r\n")
 		assert.Equal(textBlock.Lines(), []string{"", "", ""})
 	}, t)
 
 	Test(`
 	it should store 3 empty lines,
 	if we pass the string "\n\n"`, func(t *testing.T) {
-		textBlock := textblock.FromString("\n\n")
+		textBlock := console.NewTextBlock("\n\n")
 		assert.Equal(textBlock.Lines(), []string{"", "", ""})
 	}, t)
 
 	Test(`
 	it should store the lines []string{"This is line 1", ""},
 	if we pass the string "This is line 1\n" to NewTextBlock()`, func(t *testing.T) {
-		textBlock := textblock.FromString("This is line 1\n")
+		textBlock := console.NewTextBlock("This is line 1\n")
 		assert.Equal(textBlock.Lines(), []string{"This is line 1", ""})
 	}, t)
 
 	Test(`
 	it should store the lines []string{"This is line 1", "This is line 2"},
 	if we pass the string "This is line 1\nThis is line 2" to NewTextBlock()`, func(t *testing.T) {
-		textBlock := textblock.FromString("This is line 1\nThis is line 2")
+		textBlock := console.NewTextBlock("This is line 1\nThis is line 2")
 		assert.Equal(textBlock.Lines(), []string{"This is line 1", "This is line 2"})
 	}, t)
 }
@@ -81,7 +81,7 @@ func TestWrite(t *testing.T) {
 	When we print the "X" character
 	Then the first element in the first row will be "X"
 	`, func(t *testing.T) {
-		textBlock := textblock.EmptyTextblock()
+		textBlock := console.NewTextBlock("")
 		textBlock.Write("X")
 		lines := textBlock.Lines()
 		assert.Equal(lines[0], "X")
@@ -93,7 +93,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "X" character
 	Then the textblock should have one line []string{"XY"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorToOrigin()
 
 		textBlock.Write("X")
@@ -107,7 +107,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "7Letter" string
 	Then the textblock should have one line []string{"8Letters"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorToOrigin()
 
 		textBlock.Write("7Letter")
@@ -121,7 +121,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "8Letters" string
 	Then the textblock should have one line []string{"8Letters"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorToOrigin()
 
 		textBlock.Write("8Letters")
@@ -135,7 +135,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "9 Letters" string
 	Then the textblock should have one line []string{"9 Letters"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorToOrigin()
 
 		textBlock.Write("9 Letters")
@@ -149,7 +149,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "THIS_IS_A_VERY_LONG_STRING" string
 	Then the textblock should have one line []string{"THIS_IS_A_VERY_LONG_STRING"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorToOrigin()
 
 		textBlock.Write("THIS_IS_A_VERY_LONG_STRING")
@@ -163,7 +163,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "THIS_IS_A_VERY_LONG_STRING" string
 	Then the textblock should have one line []string{"THIS_IS_A_VERY_LONG_STRING"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorTo(1, 0)
 
 		textBlock.Write("THIS_IS_A_VERY_LONG_STRING")
@@ -177,7 +177,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "THIS_IS_A_VERY_LONG_STRING" string
 	Then the textblock should have one line []string{"THIS_IS_A_VERY_LONG_STRING"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorTo(7, 0)
 
 		textBlock.Write("THIS_IS_A_VERY_LONG_STRING")
@@ -191,7 +191,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "THIS_IS_A_VERY_LONG_STRING" string
 	Then the textblock should have one line []string{"THIS_IS_A_VERY_LONG_STRING"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorTo(8, 0)
 		textBlock.Write("THIS_IS_A_VERY_LONG_STRING")
 		lines := textBlock.Lines()
@@ -204,7 +204,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "X" character
 	Then the textblock should have one line []string{"SomeLinX"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorTo(7, 0)
 
 		textBlock.Write("X")
@@ -218,7 +218,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "X" character
 	Then the textblock should have one line []string{"SomeLineX"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.MoveCursorTo(8, 0)
 
 		textBlock.Write("X")
@@ -232,7 +232,7 @@ func TestWrite(t *testing.T) {
 	When we Write the "X" character
 	Then the textblock should have one line []string{"SomeLineX"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.Write("X")
 		lines := textBlock.Lines()
 		assert.Equal(lines[0], "SomeLineX")
@@ -244,7 +244,7 @@ func TestWrite(t *testing.T) {
 	When the Write("Y") method is called 
 	Then the textblock should have one line []string{"SomeLineXY"}
 	`, func(t *testing.T) {
-		textBlock := textblock.FromString("SomeLine")
+		textBlock := console.NewTextBlock("SomeLine")
 		textBlock.Write("X")
 		textBlock.Write("Y")
 		lines := textBlock.Lines()
@@ -260,7 +260,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 0,0
 	Then it does NOT panic
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.NotPanics(func() {
 			textblock.MoveCursorTo(0, 0)
 		})
@@ -271,7 +271,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 0,1
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(0, 1)
 		})
@@ -282,7 +282,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 0,2
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(0, 2)
 		})
@@ -293,7 +293,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 1,0
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(1, 0)
 		})
@@ -304,7 +304,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 1,0
 	Then it does NOT panic
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("X")
+		textblock := console.NewTextBlock("X")
 		assert.NotPanics(func() {
 			textblock.MoveCursorTo(1, 0)
 		})
@@ -315,7 +315,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 2,0
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("X")
+		textblock := console.NewTextBlock("X")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(2, 0)
 		})
@@ -326,7 +326,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 3,0
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("X")
+		textblock := console.NewTextBlock("X")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(3, 0)
 		})
@@ -337,7 +337,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 0, -1
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(0, -1)
 		})
@@ -348,7 +348,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to -1, 0
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.EmptyTextblock()
+		textblock := console.NewTextBlock("")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(-1, 0)
 		})
@@ -359,7 +359,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 8, 1
 	Then it does NOT panic
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("SomeLine1\nSomeLine2")
+		textblock := console.NewTextBlock("SomeLine1\nSomeLine2")
 		assert.NotPanics(func() {
 			textblock.MoveCursorTo(8, 1)
 		})
@@ -370,7 +370,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 9, 1
 	Then it does NOT panic
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("SomeLine1\nSomeLine2")
+		textblock := console.NewTextBlock("SomeLine1\nSomeLine2")
 		assert.NotPanics(func() {
 			textblock.MoveCursorTo(9, 1)
 		})
@@ -381,7 +381,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 10, 1
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("SomeLine1\nSomeLine2")
+		textblock := console.NewTextBlock("SomeLine1\nSomeLine2")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(10, 1)
 		})
@@ -392,7 +392,7 @@ func TestMoveCursorTo(t *testing.T) {
 	When we move the cursor to 9, 2
 	Then it panics
 	`, func(t *testing.T) {
-		textblock := textblock.FromString("SomeLine1\nSomeLine2")
+		textblock := console.NewTextBlock("SomeLine1\nSomeLine2")
 		assert.Panics(func() {
 			textblock.MoveCursorTo(9, 2)
 		})
