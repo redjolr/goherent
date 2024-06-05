@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/events/testing_started_event"
+	"github.com/redjolr/goherent/console"
 )
 
 type Router struct {
@@ -11,7 +15,8 @@ type Router struct {
 }
 
 func NewRouter() Router {
-	terminalPresenter := NewTerminalPresenter()
+	terminal := console.NewTerminal()
+	terminalPresenter := NewTerminalPresenter(&terminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
 		eventsMapper:  NewEventsMapper(),
@@ -34,4 +39,9 @@ func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 	}
+}
+
+func (router Router) RouteTestingStartedEvent(timestamp time.Time) {
+	testingStartedEvt := testing_started_event.NewTestingStartedEvent(timestamp)
+	router.eventsHandler.HandleTestingStarted(testingStartedEvt)
 }

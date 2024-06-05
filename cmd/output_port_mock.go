@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"time"
+
 	"github.com/stretchr/testify/mock"
 )
 
@@ -10,6 +12,10 @@ type OutputPortMock struct {
 
 func NewOutputPortMock() *OutputPortMock {
 	return &OutputPortMock{}
+}
+
+func (outputMock *OutputPortMock) TestingStarted(timestamp time.Time) {
+	outputMock.Called(timestamp)
 }
 
 func (outputMock *OutputPortMock) PackageTestsStartedRunning(packageName string) {

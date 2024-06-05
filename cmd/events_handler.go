@@ -6,6 +6,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 )
 
 type EventsHandler struct {
@@ -101,4 +102,8 @@ func (eh EventsHandler) HandleCtestOutputEvent(evt ctest_output_event.CtestOutpu
 	ctest := ctests_tracker.NewCtest(evt.CtestName(), evt.PackageName())
 	ctest.LogOutput(evt.Output())
 	eh.ctestsTracker.InsertCtest(ctest)
+}
+
+func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingStartedEvent) {
+	eh.output.TestingStarted(evt.Timestamp())
 }

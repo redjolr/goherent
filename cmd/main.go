@@ -7,6 +7,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/redjolr/goherent/cmd/events"
 )
@@ -27,6 +28,8 @@ func Main(extraCmdArgs []string) int {
 		fmt.Printf("Error starting command: %v\n", err)
 		return 1
 	}
+	router.RouteTestingStartedEvent(time.Now())
+
 	scanner := bufio.NewScanner(stdout)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
