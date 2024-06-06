@@ -43,10 +43,86 @@ func TestPrint(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Jello",
-		if we print "Hello", and then CursorToHomePosEscapeCode + "J", and then  .`, func(t *testing.T) {
+		if we print "Hello", and then CursorToHomePosEscapeCode + "J".`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "J")
 		assert.Equal(fakeTerminal.Text(), "Jello")
+	}, t)
+
+	Test(`it should store the string "Jello",
+		if we print "Hello", and then CursorToHomePosEscapeCode, and then"J".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode)
+		fakeTerminal.Print("J")
+		assert.Equal(fakeTerminal.Text(), "Jello")
+	}, t)
+
+	Test(`it should store the string "Condo",
+		if we print "Hello", and then CursorToHomePosEscapeCode + "Cond".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "Cond")
+		assert.Equal(fakeTerminal.Text(), "Condo")
+	}, t)
+
+	Test(`it should store the string "Condo",
+		if we print "Hello", and then CursorToHomePosEscapeCode, and then "Cond".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode)
+		fakeTerminal.Print("Cond")
+		assert.Equal(fakeTerminal.Text(), "Condo")
+	}, t)
+
+	Test(`it should store the string "Condo",
+		if we print "Hello", and then CursorToHomePosEscapeCode + "Candy".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "Candy")
+		assert.Equal(fakeTerminal.Text(), "Candy")
+	}, t)
+
+	Test(`it should store the string "Candy",
+		if we print "Hello", and then CursorToHomePosEscapeCode, and then "Candy".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode)
+		fakeTerminal.Print("Candy")
+		assert.Equal(fakeTerminal.Text(), "Candy")
+	}, t)
+
+	Test(`it should store the string "Granny",
+		if we print "Hello", and then CursorToHomePosEscapeCode + "Granny".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "Granny")
+		assert.Equal(fakeTerminal.Text(), "Granny")
+	}, t)
+
+	Test(`it should store the string "Granny",
+		if we print "Hello", and then CursorToHomePosEscapeCode, and then "Granny".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode)
+		fakeTerminal.Print("Granny")
+		assert.Equal(fakeTerminal.Text(), "Granny")
+	}, t)
+
+	Test(`it should store the string "Jello\nWorld",
+		if we print "Hello\nWor;d", and then CursorToHomePosEscapeCode+"J".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello\nWorld")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "J")
+		assert.Equal(fakeTerminal.Text(), "Jello\nWorld")
+	}, t)
+
+	Test(`it should store the string "Candy\nWorld",
+		if we print "Hello\nWor;d", and then CursorToHomePosEscapeCode+"J".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello\nWorld")
+		fakeTerminal.Print(internal.CursorToHomePosEscapeCode + "Candy")
+		assert.Equal(fakeTerminal.Text(), "Candy\nWorld")
 	}, t)
 }

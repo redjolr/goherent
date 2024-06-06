@@ -48,7 +48,6 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			fat.text[y] = strings.Join(lineChars, "")
 			fat.cursor.MoveRight(1)
 		}
-
 	}
 }
 
