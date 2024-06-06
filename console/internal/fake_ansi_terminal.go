@@ -1,6 +1,9 @@
 package internal
 
 import (
+	"fmt"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/redjolr/goherent/console/coordinates"
@@ -32,6 +35,25 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			fat.cursor.X = 0
 			continue
 		}
+
+		moveCursorLeftRegex, _ := regexp.Compile("\033\\[[0-9]{1,}D")
+		moveCursorLeftSeqLoc := moveCursorLeftRegex.FindStringIndex(text)
+		if moveCursorLeftSeqLoc != nil && moveCursorLeftSeqLoc[0] == 0 {
+			fmt.Println(text[moveCursorLeftSeqLoc[1]:])
+			moveCursorLeftSeq := text[0:moveCursorLeftSeqLoc[1]]
+			text = text[moveCursorLeftSeqLoc[1]:]
+
+			moveLeftCountAsStr, _ := strings.CutPrefix(moveCursorLeftSeq, "\033[")
+			moveLeftCountAsStr, _ = strings.CutSuffix(moveLeftCountAsStr, "D")
+			moveLeftCount, err := strconv.Atoi(moveLeftCountAsStr)
+			if err != nil {
+				panic("Cannot determine the number steps to move left.")
+			}
+
+			fat.cursor.MoveLeft(min(moveLeftCount, fat.cursor.X))
+			continue
+		}
+
 		x := fat.cursor.X
 		y := fat.cursor.Y
 		curLine := fat.text[y]
