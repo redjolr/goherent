@@ -15,8 +15,8 @@ type Router struct {
 }
 
 func NewRouter() Router {
-	terminal := console.NewTerminal()
-	terminalPresenter := NewTerminalPresenter(&terminal)
+	container := console.NewContainer()
+	terminalPresenter := NewTerminalPresenter(&container)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
 		eventsMapper:  NewEventsMapper(),

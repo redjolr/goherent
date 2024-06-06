@@ -8,25 +8,25 @@ import (
 )
 
 type TerminalPresenter struct {
-	terminal  *console.Terminal
+	container *console.Container
 	header    *console.Textblock
 	testsList *console.UnorderedList
 }
 
-func NewTerminalPresenter(terminal *console.Terminal) TerminalPresenter {
+func NewTerminalPresenter(container *console.Container) TerminalPresenter {
 	return TerminalPresenter{
-		terminal:  terminal,
+		container: container,
 		header:    nil,
 		testsList: nil,
 	}
 }
 
 func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
-	tp.header = tp.terminal.NewTextBlock(
+	tp.header = tp.container.NewTextBlock(
 		fmt.Sprintf("\n🚀 Starting... %s\n\n", timestamp.Format("2006-01-02 15:04:05.000")),
 	)
-	tp.testsList = tp.terminal.NewUnorderedList("All tests:")
-	tp.terminal.Render()
+	tp.testsList = tp.container.NewUnorderedList("All tests:")
+	tp.container.Render()
 }
 
 func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
@@ -34,7 +34,7 @@ func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
 		fmt.Sprintf("📦⏳ %s\n", packageName),
 	)
 
-	tp.terminal.Render()
+	tp.container.Render()
 }
 
 func (pressenter *TerminalPresenter) CtestStartedRunning(testName string) {
