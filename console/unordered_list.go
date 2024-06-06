@@ -15,14 +15,15 @@ func NewUnorderedList(headingText string) UnorderedList {
 	return UnorderedList{
 		headingText: headingText,
 		items:       []ListItem{},
-		rendered:    true,
+		rendered:    false,
 	}
 }
 
 func (ul *UnorderedList) NewItem(text string) ListItem {
 	item := ListItem{
-		id:   len(ul.items),
-		text: text,
+		id:       len(ul.items),
+		text:     text,
+		rendered: false,
 	}
 
 	ul.items = append(ul.items, item)
@@ -46,9 +47,17 @@ func (ul *UnorderedList) FindItemById(id int) *ListItem {
 
 func (ul *UnorderedList) render() {
 	fmt.Println(ul.headingText)
+	for _, item := range ul.items {
+		if !item.isRendered() {
+			item.render()
+		}
+	}
 	ul.rendered = true
 }
 
 func (ul *UnorderedList) isRendered() bool {
-	return ul.rendered
+	atLeastOneItemUnrendered := slices.ContainsFunc(ul.items, func(item ListItem) bool {
+		return !item.isRendered()
+	})
+	return !atLeastOneItemUnrendered
 }

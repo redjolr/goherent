@@ -1,36 +1,41 @@
 package console
 
+import "slices"
+
 type Terminal struct {
-	areas    []Area
-	rendered bool
+	areas []Area
 }
 
 func NewTerminal() Terminal {
 	return Terminal{
-		areas:    []Area{},
-		rendered: true,
+		areas: []Area{},
 	}
 }
 
-func (t *Terminal) NewTextBlock(text string) Textblock {
+func (t *Terminal) NewTextBlock(text string) *Textblock {
 	textBlock := NewTextBlock(text)
 	t.areas = append(t.areas, &textBlock)
-	return textBlock
+	return &textBlock
 }
 
-func (t *Terminal) NewUnorderedList(headingText string) UnorderedList {
+func (t *Terminal) NewUnorderedList(headingText string) *UnorderedList {
 	list := NewUnorderedList(headingText)
 	t.areas = append(t.areas, &list)
-	t.rendered = false
-	return list
+	return &list
 }
 
 func (t *Terminal) Render() {
-	if t.rendered {
+	if t.IsRendered() {
 		return
 	}
 	for _, area := range t.areas {
 		area.render()
 	}
-	t.rendered = true
+}
+
+func (t *Terminal) IsRendered() bool {
+	atLeastOneAreaUnrendered := slices.ContainsFunc(t.areas, func(area Area) bool {
+		return !area.isRendered()
+	})
+	return !atLeastOneAreaUnrendered
 }

@@ -20,7 +20,7 @@ func NewRouter() Router {
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
 		eventsMapper:  NewEventsMapper(),
-		eventsHandler: NewEventsHandler(terminalPresenter, &ctestsTracker),
+		eventsHandler: NewEventsHandler(&terminalPresenter, &ctestsTracker),
 	}
 }
 
