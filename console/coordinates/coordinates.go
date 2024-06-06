@@ -19,7 +19,19 @@ func Origin() Coordinates {
 	}
 }
 
-func (c Coordinates) OffsetX(x int) Coordinates {
+func (c *Coordinates) OffsetX(x int) {
 	c.X += x
-	return c
+}
+
+func (c *Coordinates) MoveRight(x int) {
+	c.X += x
+}
+
+func (c *Coordinates) OffsetY(y int) {
+	c.Y += y
+}
+
+func (c *Coordinates) GoToOrigin() {
+	c.X = 0
+	c.Y = 0
 }
