@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -36,10 +35,10 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			continue
 		}
 
+		// Move left
 		moveCursorLeftRegex, _ := regexp.Compile("\033\\[[0-9]{1,}D")
 		moveCursorLeftSeqLoc := moveCursorLeftRegex.FindStringIndex(text)
 		if moveCursorLeftSeqLoc != nil && moveCursorLeftSeqLoc[0] == 0 {
-			fmt.Println(text[moveCursorLeftSeqLoc[1]:])
 			moveCursorLeftSeq := text[0:moveCursorLeftSeqLoc[1]]
 			text = text[moveCursorLeftSeqLoc[1]:]
 
@@ -54,12 +53,35 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			continue
 		}
 
+		// Move right
+		moveCursorRightRegex, _ := regexp.Compile("\033\\[[0-9]{1,}C")
+		moveCursorRightSeqLoc := moveCursorRightRegex.FindStringIndex(text)
+
+		if moveCursorRightSeqLoc != nil && moveCursorRightSeqLoc[0] == 0 {
+			moveCursorRightSeq := text[0:moveCursorRightSeqLoc[1]]
+			text = text[moveCursorRightSeqLoc[1]:]
+
+			moveRightCountAsStr, _ := strings.CutPrefix(moveCursorRightSeq, "\033[")
+			moveRightCountAsStr, _ = strings.CutSuffix(moveRightCountAsStr, "C")
+			moveRightCount, err := strconv.Atoi(moveRightCountAsStr)
+			if err != nil {
+				panic("Cannot determine the number steps to move right.")
+			}
+			y := fat.cursor.Y
+			for i := 0; i < moveRightCount; i++ {
+				if fat.cursor.X == len(fat.text[y]) {
+					fat.text[y] += " "
+				}
+				fat.cursor.MoveRight(1)
+			}
+			continue
+		}
+
 		x := fat.cursor.X
 		y := fat.cursor.Y
-		curLine := fat.text[y]
 		firstChar := strings.Split(text, "")[0]
 		remainingChars := strings.Split(text, "")[1:]
-		if fat.cursor.X == len(curLine) {
+		if fat.cursor.X == len(fat.text[y]) {
 			fat.text[y] += firstChar
 			fat.cursor.MoveRight(1)
 			text = strings.Join(remainingChars, "")
