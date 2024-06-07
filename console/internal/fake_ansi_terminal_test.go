@@ -446,9 +446,23 @@ func TestPrintMoveCursorUp(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "\nAADAA\nB\nCC",
-	if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("\nAAAAA\nB\nCC" + internal.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nAADAA\nB\nCC")
+	}, t)
+
+	Test(`it should store the string "\nAADAA\nB\nCC",
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(3) + "D".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nAAAAA\nB\nCC" + internal.MoveCursorUpNRows(3) + "D")
+		assert.Equal(fakeTerminal.Text(), "  D\nAAAAA\nB\nCC")
+	}, t)
+
+	Test(`it should store the string "\nAADAA\nB\nCC",
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(4) + "D".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nAAAAA\nB\nCC" + internal.MoveCursorUpNRows(4) + "D")
+		assert.Equal(fakeTerminal.Text(), "  D\nAAAAA\nB\nCC")
 	}, t)
 }
