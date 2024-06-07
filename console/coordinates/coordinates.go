@@ -31,7 +31,11 @@ func (c *Coordinates) MoveLeft(x int) {
 	c.X -= x
 }
 
-func (c *Coordinates) OffsetY(y int) {
+func (c *Coordinates) MoveUp(y int) {
+	c.Y -= y
+}
+
+func (c *Coordinates) MoveDown(y int) {
 	c.Y += y
 }
 

@@ -30,7 +30,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
 			fat.text = append(fat.text, "")
-			fat.cursor.OffsetY(1)
+			fat.cursor.MoveDown(1)
 			fat.cursor.X = 0
 			continue
 		}
@@ -67,12 +67,31 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move right.")
 			}
-			y := fat.cursor.Y
 			for i := 0; i < moveRightCount; i++ {
-				if fat.cursor.X == len(fat.text[y]) {
-					fat.text[y] += " "
+				if fat.cursor.X == len(fat.text[fat.cursor.Y]) {
+					fat.text[fat.cursor.Y] += " "
 				}
 				fat.cursor.MoveRight(1)
+			}
+			continue
+		}
+
+		// Move up
+		moveCursorUpRegex, _ := regexp.Compile("\033\\[[0-9]{1,}A")
+		moveCursorUpSeqLoc := moveCursorUpRegex.FindStringIndex(text)
+		if moveCursorUpSeqLoc != nil && moveCursorUpSeqLoc[0] == 0 {
+			moveCursorUpSeq := text[0:moveCursorUpSeqLoc[1]]
+			text = text[moveCursorUpSeqLoc[1]:]
+
+			moveUpCountAsStr, _ := strings.CutPrefix(moveCursorUpSeq, "\033[")
+			moveUpCountAsStr, _ = strings.CutSuffix(moveUpCountAsStr, "A")
+			moveUpCount, err := strconv.Atoi(moveUpCountAsStr)
+			if err != nil {
+				panic("Cannot determine the number steps to move left.")
+			}
+			fat.cursor.MoveUp(min(moveUpCount, fat.cursor.Y))
+			if fat.cursor.X > len(fat.text[fat.cursor.Y]) {
+				fat.text[fat.cursor.Y] = fat.text[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.text[fat.cursor.Y]))
 			}
 			continue
 		}
@@ -92,9 +111,26 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			fat.text[y] = strings.Join(lineChars, "")
 			fat.cursor.MoveRight(1)
 		}
+
 	}
 }
 
 func (fat *FakeAnsiTerminal) Text() string {
 	return strings.Join(fat.text, "\n")
 }
+
+// func (fat *FakeAnsiTerminal) padRowsToLongestWidth() {
+// 	maxWidth := 0
+// 	for _, line := range fat.text {
+// 		if len(line) > maxWidth {
+// 			maxWidth = len(line)
+// 		}
+// 	}
+
+// 	for i := 0; i < len(fat.text); i++ {
+// 		if len(fat.text[i]) < maxWidth {
+// 			fat.text[i] = fat.text[i] + strings.Repeat(" ", maxWidth-len(fat.text[i]))
+// 		}
+// 	}
+
+// }
