@@ -208,18 +208,18 @@ func TestPrintMoveCursorLeft(t *testing.T) {
 
 func TestPrintMoveCursorRight(t *testing.T) {
 	assert := assert.New(t)
-	Test(`it should store the string " " (empty space),
+	Test(`it should store the string "" (empty string),
 		if we print MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print(internal.MoveCursorRightNCols(1))
-		assert.Equal(fakeTerminal.Text(), " ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
-	Test(`it should store the string "   " (3 empty spaces),
-		if we print MoveCursorRightNCols(1).`, func(t *testing.T) {
+	Test(`it should store the string "" empty string,
+		if we print MoveCursorRightNCols(3).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print(internal.MoveCursorRightNCols(3))
-		assert.Equal(fakeTerminal.Text(), "   ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R R",
@@ -239,43 +239,51 @@ func TestPrintMoveCursorRight(t *testing.T) {
 
 func TestPrintMoveCursorLeftAndRight(t *testing.T) {
 	assert := assert.New(t)
-	Test(`it should store the string " " (empty space),
-		if we print MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
+	Test(`it should store the string "" (empty space),
+			if we print MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print(internal.MoveCursorLeftNCols(1) + internal.MoveCursorRightNCols(1))
-		assert.Equal(fakeTerminal.Text(), " ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R",
-		if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("R" + internal.MoveCursorLeftNCols(1) + internal.MoveCursorRightNCols(1))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
-	Test(`it should store the string "R ",
-		if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(2).`, func(t *testing.T) {
+	Test(`it should store the string "R",
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(2).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("R" + internal.MoveCursorLeftNCols(1) + internal.MoveCursorRightNCols(2))
-		assert.Equal(fakeTerminal.Text(), "R ")
+		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
-	Test(`it should store the string "R   " (R + 3 empty spaces),
-		if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(4).`, func(t *testing.T) {
+	Test(`it should store the string "RR",
+		if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(1)+"R".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("R" + internal.MoveCursorLeftNCols(1) + internal.MoveCursorRightNCols(1) + "R")
+		assert.Equal(fakeTerminal.Text(), "RR")
+	}, t)
+
+	Test(`it should store the string "R",
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(4).`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("R" + internal.MoveCursorLeftNCols(1) + internal.MoveCursorRightNCols(4))
-		assert.Equal(fakeTerminal.Text(), "R   ")
+		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "Hellp" ,
-		if we print "Hello"+ MoveCursorLeftNCols(2) + MoveCursorRightNCols(1) + "p".`, func(t *testing.T) {
+			if we print "Hello"+ MoveCursorLeftNCols(2) + MoveCursorRightNCols(1) + "p".`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("Hello" + internal.MoveCursorLeftNCols(2) + internal.MoveCursorRightNCols(1) + "p")
 		assert.Equal(fakeTerminal.Text(), "Hellp")
 	}, t)
 
 	Test(`it should store the string "Helix shaped" ,
-		if we print "Hello"+ MoveCursorLeftNCols(2) + "ix" + MoveCursorRightNCols(1) + "shaped".`, func(t *testing.T) {
+	
+			if we print "Hello"+ MoveCursorLeftNCols(2) + "ix" + MoveCursorRightNCols(1) + "shaped".`, func(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("Hello" + internal.MoveCursorLeftNCols(2) + "ix" + internal.MoveCursorRightNCols(1) + "shaped")
 		assert.Equal(fakeTerminal.Text(), "Helix shaped")
@@ -464,5 +472,211 @@ func TestPrintMoveCursorUp(t *testing.T) {
 		fakeTerminal := internal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("\nAAAAA\nB\nCC" + internal.MoveCursorUpNRows(4) + "D")
 		assert.Equal(fakeTerminal.Text(), "  D\nAAAAA\nB\nCC")
+	}, t)
+}
+
+func TestPrintMoveCursorDown(t *testing.T) {
+	assert := assert.New(t)
+	Test(`it should store the string "" (empty space),
+		if we print MoveCursorDownNRows(1).`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print(internal.MoveCursorDownNRows(1))
+		assert.Equal(fakeTerminal.Text(), "")
+	}, t)
+
+	Test(`it should store the string "R",
+		if we print "R"+MoveCursorDownNRows(1).`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("R" + internal.MoveCursorDownNRows(1))
+		assert.Equal(fakeTerminal.Text(), "R")
+	}, t)
+
+	Test(`it should store the string "R",
+		if we print "R"+MoveCursorDownNRows(2).`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("R" + internal.MoveCursorDownNRows(2))
+		assert.Equal(fakeTerminal.Text(), "R")
+	}, t)
+
+	Test(`it should store the string "A\nB",
+		if we print "A\n"+MoveCursorUpNRows(1)+MoveCursorDwonNRows(1)+"B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A\n" + internal.MoveCursorUpNRows(1) + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\nB")
+	}, t)
+
+	Test(`it should store the string "B\n",
+		if we print "\nA"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(1)+"B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nA" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "\nB")
+	}, t)
+
+	Test(`it should store the string "\nA\nB",
+		if we print "\nA"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nA" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(2) + "B")
+		assert.Equal(fakeTerminal.Text(), "\nA\nB")
+	}, t)
+
+	Test(`it should store the string "B\n",
+		if we print "\nA"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nA" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(5) + "B")
+		assert.Equal(fakeTerminal.Text(), "\nA\n\n\n\nB")
+	}, t)
+
+	Test(`it should store the string "\nCD",
+		if we print "\nAB"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(1)+"CD".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nAB" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "CD")
+		assert.Equal(fakeTerminal.Text(), "\nCD")
+	}, t)
+
+	Test(`it should store the string "\nCDE",
+		if we print "\nAB"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(1)+"CDE".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\nAB" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "CDE")
+		assert.Equal(fakeTerminal.Text(), "\nCDE")
+	}, t)
+
+	Test(`it should store the string "\n",
+		if we print "\n"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(1).`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1))
+		assert.Equal(fakeTerminal.Text(), "\n")
+	}, t)
+
+	Test(`it should store the string "\nA",
+		if we print "\n"+ CursorToHomePosEscapeCode + MoveCursorDownNRows(1) + "A".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "A")
+		assert.Equal(fakeTerminal.Text(), "\nA")
+	}, t)
+
+	Test(`it should store the string "\nAAA",
+		if we print "\n" + CursorToHomePosEscapeCode + MoveCursorDownNRows(1) + "AAA"`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "AAA")
+		assert.Equal(fakeTerminal.Text(), "\nAAA")
+	}, t)
+
+	Test(`it should store the string "A\nB",
+		if we print "A\n" + CursorToHomePosEscapeCode + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\nB")
+	}, t)
+
+	Test(`it should store the string "A\n\nB",
+		if we print "A\n" + CursorToHomePosEscapeCode + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(2) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\n\nB")
+	}, t)
+
+	Test(`it should store the string "A\n\n\n\nB",
+		if we print "A\n" + CursorToHomePosEscapeCode + MoveCursorDownNRows(5) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(5) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\n\n\n\n\nB")
+	}, t)
+
+	Test(`it should store the string "A\n B",
+		if we print "A" + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A" + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\n B")
+	}, t)
+
+	Test(`it should store the string "A\n\n B",
+		if we print "A" + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A" + internal.MoveCursorDownNRows(2) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\n\n B")
+	}, t)
+
+	Test(`it should store the string "AA\n  B",
+		if we print "AA" + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("AA" + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "AA\n  B")
+	}, t)
+
+	Test(`it should store the string "AA\n\n\n  B",
+		if we print "AA" + MoveCursorDownNRows(3) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("AA" + internal.MoveCursorDownNRows(3) + "B")
+		assert.Equal(fakeTerminal.Text(), "AA\n\n\n  B")
+	}, t)
+
+	Test(`it should store the string "AAAAA\n\n     BBB",
+		if we print "AAAAA" + MoveCursorDownNRows(2) + "BBB".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("AAAAA" + internal.MoveCursorDownNRows(2) + "BBB")
+		assert.Equal(fakeTerminal.Text(), "AAAAA\n\n     BBB")
+	}, t)
+
+	Test(`it should store the string "A\nB\n",
+		if we print "A\nA\n" + CursorToHomePosEscapeCode + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("A\nA\n" + internal.CursorToHomePosEscapeCode + internal.MoveCursorDownNRows(1) + "B")
+		assert.Equal(fakeTerminal.Text(), "A\nB\n")
+	}, t)
+
+	Test(`it should store the string "BBBBB\nAA C",
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(1) MoveCursorDownNRows(1) + "C".
+	`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print(
+			"BBBBB\nAA" +
+				internal.MoveCursorUpNRows(1) +
+				internal.MoveCursorRightNCols(1) +
+				internal.MoveCursorDownNRows(1) +
+				"C",
+		)
+		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA C")
+	}, t)
+
+	Test(`it should store the string "BBBBB\nAA  C",
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(2) MoveCursorDownNRows(1) + "C".
+	`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print(
+			"BBBBB\nAA" +
+				internal.MoveCursorUpNRows(1) +
+				internal.MoveCursorRightNCols(2) +
+				internal.MoveCursorDownNRows(1) +
+				"C",
+		)
+		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA  C")
+	}, t)
+
+	Test(`it should store the string "BBBBB\nAA  C",
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(3) MoveCursorDownNRows(1) + "C".
+	`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print(
+			"BBBBB\nAA" +
+				internal.MoveCursorUpNRows(1) +
+				internal.MoveCursorRightNCols(3) +
+				internal.MoveCursorDownNRows(1) +
+				"C",
+		)
+		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA   C")
+	}, t)
+
+	Test(`it should store the string "BBBBB\nAA C",
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(6) MoveCursorDownNRows(1) + "C".
+	`, func(t *testing.T) {
+		fakeTerminal := internal.NewFakeAnsiTerminal()
+		fakeTerminal.Print(
+			"BBBBB\nAA" +
+				internal.MoveCursorUpNRows(1) +
+				internal.MoveCursorRightNCols(6) +
+				internal.MoveCursorDownNRows(1) +
+				"C",
+		)
+		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA      C")
 	}, t)
 }

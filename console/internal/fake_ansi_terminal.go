@@ -9,13 +9,13 @@ import (
 )
 
 type FakeAnsiTerminal struct {
-	text   []string
+	lines  []string
 	cursor coordinates.Coordinates
 }
 
 func NewFakeAnsiTerminal() FakeAnsiTerminal {
 	return FakeAnsiTerminal{
-		text:   []string{""},
+		lines:  []string{""},
 		cursor: coordinates.Origin(),
 	}
 }
@@ -29,7 +29,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
-			fat.text = append(fat.text, "")
+			fat.lines = append(fat.lines, "")
 			fat.cursor.MoveDown(1)
 			fat.cursor.X = 0
 			continue
@@ -67,12 +67,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move right.")
 			}
-			for i := 0; i < moveRightCount; i++ {
-				if fat.cursor.X == len(fat.text[fat.cursor.Y]) {
-					fat.text[fat.cursor.Y] += " "
-				}
-				fat.cursor.MoveRight(1)
-			}
+			fat.cursor.MoveRight(moveRightCount)
 			continue
 		}
 
@@ -90,47 +85,56 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 				panic("Cannot determine the number steps to move left.")
 			}
 			fat.cursor.MoveUp(min(moveUpCount, fat.cursor.Y))
-			if fat.cursor.X > len(fat.text[fat.cursor.Y]) {
-				fat.text[fat.cursor.Y] = fat.text[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.text[fat.cursor.Y]))
+			if fat.cursor.X > len(fat.lines[fat.cursor.Y]) {
+				fat.lines[fat.cursor.Y] = fat.lines[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.lines[fat.cursor.Y]))
 			}
 			continue
 		}
 
-		x := fat.cursor.X
-		y := fat.cursor.Y
+		// Move down
+		moveCursorDownRegex, _ := regexp.Compile("\033\\[[0-9]{1,}B")
+		moveCursorDownSeqLoc := moveCursorDownRegex.FindStringIndex(text)
+		if moveCursorDownSeqLoc != nil && moveCursorDownSeqLoc[0] == 0 {
+			moveCursorDownSeq := text[0:moveCursorDownSeqLoc[1]]
+			text = text[moveCursorDownSeqLoc[1]:]
+
+			moveUpCountAsStr, _ := strings.CutPrefix(moveCursorDownSeq, "\033[")
+			moveUpCountAsStr, _ = strings.CutSuffix(moveUpCountAsStr, "B")
+			moveDownCount, err := strconv.Atoi(moveUpCountAsStr)
+			if err != nil {
+				panic("Cannot determine the number steps to move down.")
+			}
+			fat.cursor.MoveDown(moveDownCount)
+			continue
+		}
+
+		// Append empty strings to the right
+		if fat.cursor.Y >= len(fat.lines) {
+			linesToAddCount := fat.cursor.Y - len(fat.lines) + 1
+			fat.lines = append(fat.lines, make([]string, linesToAddCount)...)
+			if fat.cursor.X > len(fat.lines[fat.cursor.Y]) {
+				fat.lines[fat.cursor.Y] = fat.lines[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.lines[fat.cursor.Y]))
+			}
+		}
+
 		firstChar := strings.Split(text, "")[0]
 		remainingChars := strings.Split(text, "")[1:]
-		if fat.cursor.X == len(fat.text[y]) {
-			fat.text[y] += firstChar
+		if fat.cursor.X >= len(fat.lines[fat.cursor.Y]) {
+			emptySpacesToAdd := fat.cursor.X - len(fat.lines[fat.cursor.Y])
+			fat.lines[fat.cursor.Y] += strings.Repeat(" ", emptySpacesToAdd)
+			fat.lines[fat.cursor.Y] += firstChar
 			fat.cursor.MoveRight(1)
 			text = strings.Join(remainingChars, "")
 		} else {
-			lineChars := strings.Split(fat.text[y], "")
+			lineChars := strings.Split(fat.lines[fat.cursor.Y], "")
 			text = strings.Join(remainingChars, "")
-			lineChars[x] = firstChar
-			fat.text[y] = strings.Join(lineChars, "")
+			lineChars[fat.cursor.X] = firstChar
+			fat.lines[fat.cursor.Y] = strings.Join(lineChars, "")
 			fat.cursor.MoveRight(1)
 		}
-
 	}
 }
 
 func (fat *FakeAnsiTerminal) Text() string {
-	return strings.Join(fat.text, "\n")
+	return strings.Join(fat.lines, "\n")
 }
-
-// func (fat *FakeAnsiTerminal) padRowsToLongestWidth() {
-// 	maxWidth := 0
-// 	for _, line := range fat.text {
-// 		if len(line) > maxWidth {
-// 			maxWidth = len(line)
-// 		}
-// 	}
-
-// 	for i := 0; i < len(fat.text); i++ {
-// 		if len(fat.text[i]) < maxWidth {
-// 			fat.text[i] = fat.text[i] + strings.Repeat(" ", maxWidth-len(fat.text[i]))
-// 		}
-// 	}
-
-// }
