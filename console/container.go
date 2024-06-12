@@ -3,12 +3,12 @@ package console
 import "slices"
 
 type Container struct {
-	areas []Area
+	areas []Element
 }
 
 func NewContainer() Container {
 	return Container{
-		areas: []Area{},
+		areas: []Element{},
 	}
 }
 
@@ -34,8 +34,8 @@ func (c *Container) Render() {
 }
 
 func (c *Container) IsRendered() bool {
-	atLeastOneAreaUnrendered := slices.ContainsFunc(c.areas, func(area Area) bool {
-		return !area.isRendered()
+	atLeastOneElementUnrendered := slices.ContainsFunc(c.areas, func(element Element) bool {
+		return !element.isRendered()
 	})
-	return !atLeastOneAreaUnrendered
+	return !atLeastOneElementUnrendered
 }

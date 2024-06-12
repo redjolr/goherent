@@ -1,6 +1,6 @@
 package console
 
-type Area interface {
+type Element interface {
 	render()
 	isRendered() bool
 }
