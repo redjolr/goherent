@@ -1,6 +1,8 @@
 package console
 
 type Element interface {
-	render()
-	isRendered() bool
+	render() string
+	hasChangedWithSameWidth() bool
+	width() int
+	height() int
 }

@@ -1,93 +1,75 @@
 package console
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
-
-	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type Textblock struct {
-	lines          []string
-	cursorPosition coordinates.Coordinates
-	rendered       bool
+	lines                []string
+	changedWithSameWidth bool
 }
 
 func NewTextBlock(text string) Textblock {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
-
 	return Textblock{
-		lines:          lines,
-		cursorPosition: coordinates.New(len(lines[len(lines)-1]), len(lines)-1),
+		lines:                lines,
+		changedWithSameWidth: true,
 	}
 }
 
-func (tb *Textblock) Write(writeStr string) error {
-	x := tb.cursorPosition.X
-	y := tb.cursorPosition.Y
-	line := tb.lines[y]
-
-	if x == len(line) {
-		tb.lines[y] += writeStr
-	} else {
-		lineChars := strings.Split(tb.lines[y], "")
-		writeChars := strings.Split(writeStr, "")
-		for i, char := range writeChars {
-			if x+i < len(lineChars) {
-				lineChars[x+i] = char
-			} else {
-				lineChars = append(lineChars, char)
-			}
-		}
-		tb.lines[y] = strings.Join(lineChars, "")
-	}
-	tb.MoveCursorRight(len(writeStr))
-	return nil
-}
-
-func (tb Textblock) Lines() []string {
+func (tb *Textblock) Lines() []string {
 	return tb.lines
 }
 
-func (tb *Textblock) MoveCursorRight(offset int) {
-	tb.MoveCursorTo(tb.cursorPosition.X+offset, tb.cursorPosition.Y)
+func (tb *Textblock) height() int {
+	return len(tb.lines)
 }
 
-func (tb *Textblock) MoveCursorLeft(offset int) {
-	tb.MoveCursorTo(tb.cursorPosition.X-offset, tb.cursorPosition.Y)
+func (tb *Textblock) width() int {
+	return len(tb.longestLine())
 }
 
-func (tb *Textblock) MoveCursorToOrigin() {
+func (tb *Textblock) longestLine() string {
 	if len(tb.lines) == 0 {
-		tb.lines = []string{""}
+		return ""
 	}
 
-	tb.cursorPosition.X = 0
-	tb.cursorPosition.Y = 0
+	longest := tb.lines[0]
+	for _, line := range tb.lines {
+		if len(line) > len(longest) {
+			longest = line
+		}
+	}
+	return longest
 }
 
-func (tb *Textblock) MoveCursorTo(x int, y int) {
-	if x < 0 || y < 0 {
-		panic("Textblock Coordinates cannot be negative.")
+func (tb *Textblock) Write(text string) {
+	oldWidth := tb.width()
+	newLineRegex := regexp.MustCompile(`\r?\n`)
+	lines := newLineRegex.Split(text, -1)
+	tb.lines = lines
+	newWidth := tb.width()
+	tb.padWithWhiteSpaces(newWidth)
+	if oldWidth == newWidth {
+		tb.changedWithSameWidth = true
 	}
-	if y >= len(tb.lines) {
-		panic("Textblock cannot move cursor to Y coordinate that is >= len(lines) - 1.")
-	}
-	if x > len(tb.lines[y]) {
-		panic("Textblock cannot move cursor to X coordinate that is > len(lines[y]) - 1.")
-	}
-
-	tb.cursorPosition.X = x
-	tb.cursorPosition.Y = y
 }
 
-func (tb *Textblock) render() {
-	fmt.Println(strings.Join(tb.Lines(), "\n"))
-	tb.rendered = true
+func (tb *Textblock) render() string {
+	tb.changedWithSameWidth = false
+	return strings.Join(tb.Lines(), "\n")
 }
 
-func (ul *Textblock) isRendered() bool {
-	return ul.rendered
+func (ul *Textblock) hasChangedWithSameWidth() bool {
+	return ul.changedWithSameWidth
+}
+
+func (tb *Textblock) padWithWhiteSpaces(width int) {
+	for i, line := range tb.lines {
+		if len(line) < width {
+			tb.lines[i] = line + strings.Repeat(" ", width-len(line))
+		}
+	}
 }

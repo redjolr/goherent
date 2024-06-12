@@ -33,6 +33,13 @@ func TestPrintBasic(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Hello\nWorld",
+		if we print "Hello\nWorld".`, func(t *testing.T) {
+		fakeTerminal := terminal.NewFakeAnsiTerminal()
+		fakeTerminal.Print("Hello\nWorld")
+		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
+	}, t)
+
+	Test(`it should store the string "Hello\nWorld",
 		if we print "Hello" and then "\n" and then "World".`, func(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("Hello")
