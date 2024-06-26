@@ -53,12 +53,12 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
 	}
 	ctest := ctests_tracker.NewRunningCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
+
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.PackageTestsStartedRunning(evt.PackageName())
 		eh.output.CtestStartedRunning(evt.CtestName())
 		return
 	}
-
 	eh.output.CtestStartedRunning(evt.CtestName())
 }
 

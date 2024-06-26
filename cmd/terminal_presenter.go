@@ -29,10 +29,10 @@ func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
 }
 
 func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
-	tp.testsList.NewItem(
-		fmt.Sprintf("📦⏳ %s\n", packageName),
-	)
-
+	if tp.testsList == nil {
+		testsList := console.NewUnorderedList(fmt.Sprintf("📦⏳ %s\n", packageName))
+		tp.testsList = &testsList
+	}
 	tp.console.Render()
 }
 

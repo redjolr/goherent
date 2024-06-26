@@ -289,8 +289,7 @@ func TestPrintMoveCursorLeftAndRight(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Helix shaped" ,
-	
-			if we print "Hello"+ MoveCursorLeftNCols(2) + "ix" + MoveCursorRightNCols(1) + "shaped".`, func(t *testing.T) {
+		if we print "Hello"+ MoveCursorLeftNCols(2) + "ix" + MoveCursorRightNCols(1) + "shaped".`, func(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal()
 		fakeTerminal.Print("Hello" + terminal.MoveCursorLeftNCols(2) + "ix" + terminal.MoveCursorRightNCols(1) + "shaped")
 		assert.Equal(fakeTerminal.Text(), "Helix shaped")
