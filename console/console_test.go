@@ -95,6 +95,50 @@ func TestRenderingUnorderedList(t *testing.T) {
 		console.Render()
 		assert.Equal(fakeTerminal.Text(), "Some unordered list")
 	}, t)
+
+	Test(`The terminal should print "Undordered\nList", 
+		if we create an UnorderedList with that name and render it.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		console.NewUnorderedList("list1", "Unordered\nList")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Unordered\nList")
+	}, t)
+
+	Test(`The terminal should print "Unordered List\n\tList item 1", 
+		if we create an UnorderedList with that name, add an item to the list and render it.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		unorderedList := console.NewUnorderedList("list1", "Unordered List")
+		unorderedList.NewItem("List item 1")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 1")
+	}, t)
+
+	Test(`The terminal should print "Unordered List\n\tList item 1\n\tList item 2", 
+		if we create an UnorderedList with that name, add two items to the list and render it.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		unorderedList := console.NewUnorderedList("list1", "Unordered List")
+		unorderedList.NewItem("List item 1")
+		unorderedList.NewItem("List item 2")
+
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 1\n\tList item 2")
+	}, t)
+
+	// Test(`The terminal should print "Unordered List\n\tList item 0",
+	// 	if we perform these actions in the given sequence:
+	// 	- create an UnorderedList with that name
+	// 	- add one item with name "List item 1"
+	// 	- render the console
+	// 	- edit the list item and change its name to "List item 0"
+	// 	- render the console again`, func(t *testing.T) {
+	// 	console, fakeTerminal := setup()
+	// 	unorderedList := console.NewUnorderedList("list1", "Unordered List")
+	// 	listItem := unorderedList.NewItem("List item 1")
+	// 	console.Render()
+	// 	listItem.Edit("List item 0")
+	// 	console.Render()
+	// 	assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 0")
+	// }, t)
 }
 
 func TestTextBlockWrite(t *testing.T) {

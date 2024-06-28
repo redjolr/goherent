@@ -18,6 +18,11 @@ func (li *ListItem) Text() string {
 	return li.text
 }
 
+func (li *ListItem) Edit(newText string) {
+	li.text = newText
+	li.rendered = false
+}
+
 func (li *ListItem) Render() string {
 	li.rendered = true
 	return li.text

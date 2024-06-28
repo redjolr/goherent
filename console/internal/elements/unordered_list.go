@@ -20,7 +20,7 @@ func NewUnorderedList(id string, headingText string) UnorderedList {
 	}
 }
 
-func (ul *UnorderedList) NewItem(text string) ListItem {
+func (ul *UnorderedList) NewItem(text string) *ListItem {
 	item := ListItem{
 		order:    len(ul.items),
 		text:     text,
@@ -28,7 +28,7 @@ func (ul *UnorderedList) NewItem(text string) ListItem {
 	}
 
 	ul.items = append(ul.items, &item)
-	return item
+	return &item
 }
 
 func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
@@ -50,7 +50,7 @@ func (ul *UnorderedList) Render() string {
 	renderStr := ul.headingText
 	for _, item := range ul.items {
 		if !item.IsRendered() {
-			renderStr += item.Render()
+			renderStr += "\n\t" + item.Render()
 		}
 	}
 	ul.headingTextRendered = true
