@@ -7,7 +7,7 @@ import (
 type UnorderedList struct {
 	id                  string
 	headingText         string
-	items               []ListItem
+	items               []*ListItem
 	headingTextRendered bool
 }
 
@@ -15,35 +15,35 @@ func NewUnorderedList(id string, headingText string) UnorderedList {
 	return UnorderedList{
 		id:                  id,
 		headingText:         headingText,
-		items:               []ListItem{},
+		items:               []*ListItem{},
 		headingTextRendered: false,
 	}
 }
 
 func (ul *UnorderedList) NewItem(text string) ListItem {
 	item := ListItem{
-		id:       len(ul.items),
+		order:    len(ul.items),
 		text:     text,
 		rendered: false,
 	}
 
-	ul.items = append(ul.items, item)
+	ul.items = append(ul.items, &item)
 	return item
 }
 
-func (ul *UnorderedList) FindItemById(id int) *ListItem {
+func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	if len(ul.items) == 0 {
 		return nil
 	}
 
-	listItemIndex := slices.IndexFunc(ul.items, func(item ListItem) bool {
-		return item.id == id
+	listItemIndex := slices.IndexFunc(ul.items, func(item *ListItem) bool {
+		return item.order == order
 	})
 
 	if listItemIndex == -1 {
 		return nil
 	}
-	return &ul.items[listItemIndex]
+	return ul.items[listItemIndex]
 }
 
 func (ul *UnorderedList) Render() string {
@@ -58,7 +58,7 @@ func (ul *UnorderedList) Render() string {
 }
 
 func (ul *UnorderedList) IsRendered() bool {
-	atLeastOneItemUnrendered := slices.ContainsFunc(ul.items, func(item ListItem) bool {
+	atLeastOneItemUnrendered := slices.ContainsFunc(ul.items, func(item *ListItem) bool {
 		return !item.IsRendered()
 	})
 	return !atLeastOneItemUnrendered && ul.headingTextRendered

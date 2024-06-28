@@ -19,12 +19,12 @@ func TestNewItem(t *testing.T) {
 	}, t)
 }
 
-func TestFindItemById(t *testing.T) {
+func TestFindItemByOrder(t *testing.T) {
 	assert := assert.New(t)
 
 	Test("it should return nil, if the UnorderedList is empty.", func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		item := list.FindItemById(0)
+		item := list.FindItemByOrder(0)
 		assert.Nil(item)
 	}, t)
 
@@ -32,7 +32,7 @@ func TestFindItemById(t *testing.T) {
 	if the UnorderedList has 1 item and you try to find the item with id 1.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 		list.NewItem("some text")
-		item := list.FindItemById(1)
+		item := list.FindItemByOrder(1)
 		assert.Nil(item)
 	}, t)
 
@@ -40,7 +40,7 @@ func TestFindItemById(t *testing.T) {
 	if the UnorderedList has 1 item and you try to find the item with id 0.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 		list.NewItem("some text")
-		item := list.FindItemById(0)
+		item := list.FindItemByOrder(0)
 		assert.IsType(&elements.ListItem{}, item)
 	}, t)
 
@@ -54,7 +54,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Second Item")
 
 		// When
-		item := list.FindItemById(0)
+		item := list.FindItemByOrder(0)
 
 		// Then
 		assert.Equal(item.Text(), "First Item")
@@ -70,7 +70,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Second Item")
 
 		// When
-		item := list.FindItemById(1)
+		item := list.FindItemByOrder(1)
 
 		// Then
 		assert.Equal(item.Text(), "Second Item")
@@ -86,7 +86,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Second Item")
 
 		// When
-		item := list.FindItemById(2)
+		item := list.FindItemByOrder(2)
 
 		// Then
 		assert.Nil(item)
@@ -106,7 +106,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Sixth")
 
 		// When
-		item := list.FindItemById(0)
+		item := list.FindItemByOrder(0)
 
 		// Then
 		assert.Equal(item.Text(), "First")
@@ -126,7 +126,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Sixth")
 
 		// When
-		item := list.FindItemById(2)
+		item := list.FindItemByOrder(2)
 
 		// Then
 		assert.Equal(item.Text(), "Third")
@@ -146,7 +146,7 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Sixth")
 
 		// When
-		item := list.FindItemById(4)
+		item := list.FindItemByOrder(4)
 
 		// Then
 		assert.Equal(item.Text(), "Fifth")
@@ -166,9 +166,51 @@ func TestFindItemById(t *testing.T) {
 		list.NewItem("Sixth")
 
 		// When
-		item := list.FindItemById(5)
+		item := list.FindItemByOrder(5)
 
 		// Then
 		assert.Equal(item.Text(), "Sixth")
+	}, t)
+}
+
+func TestIsRendered(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`it should return false, if:
+		the UnorderedList is created, it has no items and has NOT been rendered. `, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+
+		assert.False(list.IsRendered())
+	}, t)
+
+	Test(`it should return false, if:
+		the UnorderedList is created, it has one item and has NOT been rendered.`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Some text")
+		assert.False(list.IsRendered())
+	}, t)
+
+	Test(`it should return true, if:
+		the UnorderedList is created, it has no items and has been rendered.`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.Render()
+		assert.True(list.IsRendered())
+	}, t)
+
+	Test(`it should return true, if:
+		the UnorderedList is created, it has one item and has been rendered.`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Some text")
+		list.Render()
+		assert.True(list.IsRendered())
+	}, t)
+
+	Test(`it should return false, if:
+		the UnorderedList is created, it has one item and has been rendered and then another item is added.`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Some text")
+		list.Render()
+		list.NewItem("Some other text")
+		assert.False(list.IsRendered())
 	}, t)
 }

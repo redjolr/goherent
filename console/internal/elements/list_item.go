@@ -1,16 +1,16 @@
 package elements
 
 type ListItem struct {
-	id       int
+	order    int
 	text     string
 	rendered bool
 }
 
-func NewListItem(id int, text string) ListItem {
+func NewListItem(order int, text string) ListItem {
 	return ListItem{
-		id:       id,
+		order:    order,
 		text:     text,
-		rendered: true,
+		rendered: false,
 	}
 }
 

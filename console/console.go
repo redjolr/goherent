@@ -65,10 +65,11 @@ func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 }
 
 func (c *Console) Render() {
-	fmt.Println("\nIs it rendered", c.IsRendered())
 	if c.IsRendered() {
+		fmt.Println("\n\n\n IS RENDERED")
 		return
 	}
+	fmt.Println("\n\n\n IS NOT RENDERED")
 
 	for _, alignedElement := range c.alignedElements {
 		if alignedElement.element.HasChangedWithSameWidth() {
@@ -95,7 +96,6 @@ func (c *Console) IsRendered() bool {
 	atLeastOneElementUnrendered := slices.ContainsFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
 		return alignedElement.element.HasChangedWithSameWidth()
 	})
-	fmt.Println("IS IT RENDERED?", !atLeastOneElementUnrendered)
 	return !atLeastOneElementUnrendered
 }
 

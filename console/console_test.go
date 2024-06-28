@@ -40,6 +40,17 @@ func TestRenderingTextBlock(t *testing.T) {
 	}, t)
 }
 
+func TestRenderingUnorderedList(t *testing.T) {
+	assert := assert.New(t)
+	Test(`The terminal should print "Some unordered list", 
+		if we create an UnorderedList with that name and render it.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		console.NewUnorderedList("list1", "Some unordered list")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Some unordered list")
+	}, t)
+}
+
 func TestTextBlockWrite(t *testing.T) {
 	assert := assert.New(t)
 	Test(`The terminal should print Hello\nWorld, if we write "Hello\nWorld".`, func(t *testing.T) {
