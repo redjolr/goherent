@@ -7,31 +7,30 @@ import (
 	"github.com/redjolr/goherent/console"
 )
 
+const testsListId string = "testsList"
+const startingTestsTextblockId string = "startingTestsTextBlock"
+
 type TerminalPresenter struct {
-	console   *console.Console
-	header    *console.Textblock
-	testsList *console.UnorderedList
+	console *console.Console
 }
 
 func NewTerminalPresenter(console *console.Console) TerminalPresenter {
 	return TerminalPresenter{
-		console:   console,
-		header:    nil,
-		testsList: nil,
+		console: console,
 	}
 }
 
 func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
-	tp.header = tp.console.NewTextBlock(
+	tp.console.NewTextBlock(
+		startingTestsTextblockId,
 		fmt.Sprintf("\n🚀 Starting... %s\n\n", timestamp.Format("2006-01-02 15:04:05.000")),
 	)
 	tp.console.Render()
 }
 
 func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
-	if tp.testsList == nil {
-		testsList := console.NewUnorderedList(fmt.Sprintf("📦⏳ %s\n", packageName))
-		tp.testsList = &testsList
+	if !tp.console.HasElementWithId(testsListId) {
+		tp.console.NewUnorderedList(testsListId, fmt.Sprintf("📦⏳ %s\n", packageName))
 	}
 	tp.console.Render()
 }

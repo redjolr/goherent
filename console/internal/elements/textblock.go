@@ -1,4 +1,4 @@
-package console
+package elements
 
 import (
 	"regexp"
@@ -6,28 +6,34 @@ import (
 )
 
 type Textblock struct {
+	id                   string
 	lines                []string
 	changedWithSameWidth bool
 }
 
-func NewTextBlock(text string) Textblock {
+func NewTextBlock(id string, text string) Textblock {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
 	return Textblock{
+		id:                   id,
 		lines:                lines,
 		changedWithSameWidth: true,
 	}
+}
+
+func (tb *Textblock) HasId(id string) bool {
+	return tb.id == id
 }
 
 func (tb *Textblock) Lines() []string {
 	return tb.lines
 }
 
-func (tb *Textblock) height() int {
+func (tb *Textblock) Height() int {
 	return len(tb.lines)
 }
 
-func (tb *Textblock) width() int {
+func (tb *Textblock) Width() int {
 	return len(tb.longestLine())
 }
 
@@ -46,24 +52,24 @@ func (tb *Textblock) longestLine() string {
 }
 
 func (tb *Textblock) Write(text string) {
-	oldWidth := tb.width()
+	oldWidth := tb.Width()
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
 	tb.lines = lines
-	newWidth := tb.width()
+	newWidth := tb.Width()
 	tb.padWithWhiteSpaces(newWidth)
 	if oldWidth == newWidth {
 		tb.changedWithSameWidth = true
 	}
 }
 
-func (tb *Textblock) render() string {
+func (tb *Textblock) Render() string {
 	tb.changedWithSameWidth = false
 	return strings.Join(tb.Lines(), "\n")
 }
 
-func (ul *Textblock) hasChangedWithSameWidth() bool {
-	return ul.changedWithSameWidth
+func (tb *Textblock) HasChangedWithSameWidth() bool {
+	return tb.changedWithSameWidth
 }
 
 func (tb *Textblock) padWithWhiteSpaces(width int) {

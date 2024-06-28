@@ -1,6 +1,4 @@
-package console
-
-import "fmt"
+package elements
 
 type ListItem struct {
 	id       int
@@ -8,7 +6,7 @@ type ListItem struct {
 	rendered bool
 }
 
-func (li *ListItem) NewListItem(id int, text string) ListItem {
+func NewListItem(id int, text string) ListItem {
 	return ListItem{
 		id:       id,
 		text:     text,
@@ -20,11 +18,11 @@ func (li *ListItem) Text() string {
 	return li.text
 }
 
-func (li *ListItem) render() {
-	fmt.Println(li.text)
+func (li *ListItem) Render() string {
 	li.rendered = true
+	return li.text
 }
 
-func (li *ListItem) isRendered() bool {
+func (li *ListItem) IsRendered() bool {
 	return li.rendered
 }

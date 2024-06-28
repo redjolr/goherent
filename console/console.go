@@ -1,9 +1,11 @@
 package console
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/internal/elements"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
@@ -27,8 +29,25 @@ func NewConsole(terminal terminal.Terminal) Console {
 	}
 }
 
-func (c *Console) NewTextBlock(text string) *Textblock {
-	textBlock := NewTextBlock(text)
+func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
+	unorderedList := elements.NewUnorderedList(id, headingText)
+	unorderedListElement := alignedElement{
+		coords: &coordinates.Coordinates{
+			X: c.cursor.X,
+			Y: c.cursor.Y,
+		},
+		element: &unorderedList,
+	}
+	c.alignedElements = append(c.alignedElements, &unorderedListElement)
+
+	c.MoveDown(1)
+	c.MoveRight(len(headingText))
+
+	return &unorderedList
+}
+
+func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
+	textBlock := elements.NewTextBlock(id, text)
 	textBlockElement := alignedElement{
 		coords: &coordinates.Coordinates{
 			X: c.cursor.X,
@@ -39,18 +58,20 @@ func (c *Console) NewTextBlock(text string) *Textblock {
 
 	c.alignedElements = append(c.alignedElements, &textBlockElement)
 
-	c.MoveDown(textBlock.height() - 1)
-	c.MoveRight(textBlock.width())
+	c.MoveDown(textBlock.Height() - 1)
+	c.MoveRight(textBlock.Width())
 
 	return &textBlock
 }
 
 func (c *Console) Render() {
+	fmt.Println("\nIs it rendered", c.IsRendered())
 	if c.IsRendered() {
 		return
 	}
+
 	for _, alignedElement := range c.alignedElements {
-		if alignedElement.element.hasChangedWithSameWidth() {
+		if alignedElement.element.HasChangedWithSameWidth() {
 			if c.cursor.X >= alignedElement.coords.X {
 				c.MoveLeft(c.cursor.X - alignedElement.coords.X)
 			} else {
@@ -62,18 +83,19 @@ func (c *Console) Render() {
 				c.MoveDown(alignedElement.coords.Y - c.cursor.Y)
 			}
 
-			renderText := alignedElement.element.render()
+			renderText := alignedElement.element.Render()
 			c.terminal.Print(renderText)
-			c.cursor.MoveRight(alignedElement.element.width())
-			c.cursor.MoveDown(alignedElement.element.height())
+			c.cursor.MoveRight(alignedElement.element.Width())
+			c.cursor.MoveDown(alignedElement.element.Height())
 		}
 	}
 }
 
 func (c *Console) IsRendered() bool {
 	atLeastOneElementUnrendered := slices.ContainsFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
-		return alignedElement.element.hasChangedWithSameWidth()
+		return alignedElement.element.HasChangedWithSameWidth()
 	})
+	fmt.Println("IS IT RENDERED?", !atLeastOneElementUnrendered)
 	return !atLeastOneElementUnrendered
 }
 
@@ -95,4 +117,10 @@ func (c *Console) MoveDown(n int) {
 func (c *Console) MoveUp(n int) {
 	c.terminal.Print(terminal.MoveCursorUpNRows(n))
 	c.cursor.MoveUp(n)
+}
+
+func (c *Console) HasElementWithId(id string) bool {
+	return slices.ContainsFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
+		return alignedElement.element.HasId(id)
+	})
 }
