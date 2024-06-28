@@ -14,6 +14,52 @@ func setup() (console.Console, *terminal.FakeAnsiTerminal) {
 	return console.NewConsole(&fakeAnsiTerminal), &fakeAnsiTerminal
 }
 
+func TestIsConsoleRendered(t *testing.T) {
+	assert := assert.New(t)
+
+	Test("it should return true, if the console has no elements", func(t *testing.T) {
+		console, _ := setup()
+		assert.True(console.IsRendered())
+	}, t)
+
+	Test("it should return false, if the console has a Textblock element and it is not rendered.", func(t *testing.T) {
+		console, _ := setup()
+		console.NewTextBlock("id1", "Hello There")
+		assert.False(console.IsRendered())
+	}, t)
+
+	Test("it should return false, if the console has an UnorderedList element and it is not rendered.", func(t *testing.T) {
+		console, _ := setup()
+		console.NewUnorderedList("id1", "Unordered list name")
+		assert.False(console.IsRendered())
+	}, t)
+
+	Test("it should return true, if the console has a Textblock element and it is rendered.", func(t *testing.T) {
+		console, _ := setup()
+		console.NewTextBlock("id1", "Hello There")
+		console.Render()
+		assert.True(console.IsRendered())
+	}, t)
+
+	Test(`it should return true, if the console has a Textblock element and an UnorderedList
+		and the console is rendered.`, func(t *testing.T) {
+		console, _ := setup()
+		console.NewTextBlock("id1", "Hello There")
+		console.NewUnorderedList("list1", "List name")
+		console.Render()
+		assert.True(console.IsRendered())
+	}, t)
+
+	Test(`it should return false, if the console has a Textblock element, it is rendered,
+		then we add an UnorderedList element.`, func(t *testing.T) {
+		console, _ := setup()
+		console.NewTextBlock("id1", "Hello There")
+		console.Render()
+		console.NewUnorderedList("list1", "List name")
+		assert.False(console.IsRendered())
+	}, t)
+}
+
 func TestRenderingTextBlock(t *testing.T) {
 	assert := assert.New(t)
 	Test("The terminal should print a single letter.", func(t *testing.T) {

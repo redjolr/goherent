@@ -1,7 +1,6 @@
 package console
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
@@ -40,9 +39,6 @@ func (c *Console) NewUnorderedList(id string, headingText string) *elements.Unor
 	}
 	c.alignedElements = append(c.alignedElements, &unorderedListElement)
 
-	c.MoveDown(1)
-	c.MoveRight(len(headingText))
-
 	return &unorderedList
 }
 
@@ -66,35 +62,17 @@ func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 
 func (c *Console) Render() {
 	if c.IsRendered() {
-		fmt.Println("\n\n\n IS RENDERED")
 		return
 	}
-	fmt.Println("\n\n\n IS NOT RENDERED")
-
 	for _, alignedElement := range c.alignedElements {
-		if alignedElement.element.HasChangedWithSameWidth() {
-			if c.cursor.X >= alignedElement.coords.X {
-				c.MoveLeft(c.cursor.X - alignedElement.coords.X)
-			} else {
-				c.MoveRight(alignedElement.coords.X - c.cursor.X)
-			}
-			if c.cursor.Y >= alignedElement.coords.Y {
-				c.MoveUp(c.cursor.Y - alignedElement.coords.Y)
-			} else {
-				c.MoveDown(alignedElement.coords.Y - c.cursor.Y)
-			}
-
-			renderText := alignedElement.element.Render()
-			c.terminal.Print(renderText)
-			c.cursor.MoveRight(alignedElement.element.Width())
-			c.cursor.MoveDown(alignedElement.element.Height())
-		}
+		renderText := alignedElement.element.Render()
+		c.terminal.Print(renderText)
 	}
 }
 
 func (c *Console) IsRendered() bool {
 	atLeastOneElementUnrendered := slices.ContainsFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
-		return alignedElement.element.HasChangedWithSameWidth()
+		return !alignedElement.element.IsRendered()
 	})
 	return !atLeastOneElementUnrendered
 }

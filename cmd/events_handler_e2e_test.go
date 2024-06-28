@@ -1,7 +1,6 @@
 package cmd_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -46,7 +45,6 @@ func TestE2eCtestRanEvent(t *testing.T) {
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
-		fmt.Println("\n\n\n HELLO", ansiTerminal.Text())
 
 		// Then
 		assert.Equal(

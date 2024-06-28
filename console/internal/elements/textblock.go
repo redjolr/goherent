@@ -6,18 +6,18 @@ import (
 )
 
 type Textblock struct {
-	id                   string
-	lines                []string
-	changedWithSameWidth bool
+	id       string
+	lines    []string
+	rendered bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
 	return Textblock{
-		id:                   id,
-		lines:                lines,
-		changedWithSameWidth: true,
+		id:       id,
+		lines:    lines,
+		rendered: false,
 	}
 }
 
@@ -52,24 +52,20 @@ func (tb *Textblock) longestLine() string {
 }
 
 func (tb *Textblock) Write(text string) {
-	oldWidth := tb.Width()
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
 	tb.lines = lines
 	newWidth := tb.Width()
 	tb.padWithWhiteSpaces(newWidth)
-	if oldWidth == newWidth {
-		tb.changedWithSameWidth = true
-	}
 }
 
 func (tb *Textblock) Render() string {
-	tb.changedWithSameWidth = false
+	tb.rendered = true
 	return strings.Join(tb.Lines(), "\n")
 }
 
-func (tb *Textblock) HasChangedWithSameWidth() bool {
-	return tb.changedWithSameWidth
+func (tb *Textblock) IsRendered() bool {
+	return tb.rendered
 }
 
 func (tb *Textblock) padWithWhiteSpaces(width int) {
