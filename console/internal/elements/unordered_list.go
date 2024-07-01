@@ -1,9 +1,11 @@
 package elements
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/internal/utils"
 )
 
 type UnorderedList struct {
@@ -27,6 +29,11 @@ func (ul *UnorderedList) NewItem(text string) *ListItem {
 		order:    len(ul.items),
 		text:     text,
 		rendered: false,
+		renderChange: RenderChange{
+			Before: "",
+			After:  text,
+			Coords: coordinates.Origin(),
+		},
 	}
 
 	ul.items = append(ul.items, &item)
@@ -52,20 +59,43 @@ func (ul *UnorderedList) Render() []RenderChange {
 	renderChanges := []RenderChange{}
 
 	if !ul.headingTextRendered {
-		renderChanges = append(renderChanges, RenderChange{Change: ul.headingText, Coords: coordinates.Coordinates{X: 0, Y: 0}})
+		renderChanges = append(renderChanges, RenderChange{After: ul.headingText, Coords: coordinates.Coordinates{X: 0, Y: 0}})
 	}
 
+	reRenderSubsequentItems := false
 	for order, item := range ul.items {
-		if !item.IsRendered() {
+		if reRenderSubsequentItems {
+			renderChange := item.ReRender()
+
 			renderChanges = append(
 				renderChanges,
 				RenderChange{
-					Change: "\n\t" + item.Render(),
+					After:  "\n\t" + renderChange.After,
 					Coords: coordinates.Coordinates{X: 0, Y: order + 1},
 				},
 			)
+			continue
+		}
+		if !item.IsRendered() {
+
+			renderChange := item.Render()
+
+			renderChanges = append(
+				renderChanges,
+				RenderChange{
+					After:  "\n\t" + renderChange.After,
+					Coords: coordinates.Coordinates{X: 0, Y: order + 1},
+				},
+			)
+			lineLengthBefore := len(utils.SplitStringByNewLine(renderChange.Before))
+			lineLengthAfter := len(utils.SplitStringByNewLine(renderChange.After))
+			fmt.Println(lineLengthAfter, lineLengthBefore)
+			if lineLengthAfter != lineLengthBefore {
+				reRenderSubsequentItems = true
+			}
 		}
 	}
+	ul.headingTextRendered = true
 	return renderChanges
 }
 

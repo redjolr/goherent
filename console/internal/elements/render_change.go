@@ -3,6 +3,7 @@ package elements
 import "github.com/redjolr/goherent/console/coordinates"
 
 type RenderChange struct {
-	Change string
+	Before string
+	After  string
 	Coords coordinates.Coordinates
 }

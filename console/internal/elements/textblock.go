@@ -24,7 +24,7 @@ func NewTextBlock(id string, text string) Textblock {
 	for _, line := range lines {
 		renderCoordinates.MoveDown(1)
 		renderChanges = append(renderChanges, RenderChange{
-			Change: line,
+			After:  line,
 			Coords: coordinates.New(len(line), renderCoordinates.Y),
 		})
 	}
