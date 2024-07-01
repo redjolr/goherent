@@ -3,21 +3,37 @@ package elements
 import (
 	"regexp"
 	"strings"
+
+	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type Textblock struct {
-	id       string
-	lines    []string
-	rendered bool
+	id            string
+	lines         []string
+	renderChanges []RenderChange
+	rendered      bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
 	newLineRegex := regexp.MustCompile(`\r?\n`)
 	lines := newLineRegex.Split(text, -1)
+
+	var renderChanges []RenderChange = []RenderChange{}
+	renderCoordinates := coordinates.New(0, -1)
+
+	for _, line := range lines {
+		renderCoordinates.MoveDown(1)
+		renderChanges = append(renderChanges, RenderChange{
+			Change: line,
+			Coords: coordinates.New(len(line), renderCoordinates.Y),
+		})
+	}
+
 	return Textblock{
-		id:       id,
-		lines:    lines,
-		rendered: false,
+		id:            id,
+		lines:         lines,
+		renderChanges: renderChanges,
+		rendered:      false,
 	}
 }
 
@@ -59,9 +75,15 @@ func (tb *Textblock) Write(text string) {
 	tb.padWithWhiteSpaces(newWidth)
 }
 
-func (tb *Textblock) Render() string {
+func (tb *Textblock) Render() []RenderChange {
+	if tb.rendered {
+		return []RenderChange{}
+	}
+	renderChanges := make([]RenderChange, len(tb.renderChanges))
+	copy(renderChanges, tb.renderChanges)
 	tb.rendered = true
-	return strings.Join(tb.Lines(), "\n")
+	tb.renderChanges = []RenderChange{}
+	return renderChanges
 }
 
 func (tb *Textblock) IsRendered() bool {

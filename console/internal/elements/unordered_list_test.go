@@ -3,6 +3,7 @@ package elements_test
 import (
 	"testing"
 
+	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/elements"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
@@ -212,5 +213,61 @@ func TestIsRendered(t *testing.T) {
 		list.Render()
 		list.NewItem("Some other text")
 		assert.False(list.IsRendered())
+	}, t)
+}
+
+func TestRender(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+		Given that we create a list with header text "List name"
+		And the list does not have any list items
+		When we render the changes
+		The output should contain a render change with Change "List name" at corrdinates 0,0
+	`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		renderChanges := list.Render()
+
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Change: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
+		})
+	}, t)
+
+	Test(`
+		Given that we create a list with header text "List name"
+		And the list has one item with text "Item 1"
+		When we render the changes
+		The output should contain a render change with RenderChange "List name" at corrdinates 0, 0
+		and another RenderChange "\n\tItem 1" at coordinates 0, 1
+	`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		renderChanges := list.Render()
+
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Change: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
+			{Change: "\n\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 1}},
+		})
+	}, t)
+
+	Test(`
+		Given that we create a list with header text "List name"
+		And the list has two items: "Item 1" and "Item 2"
+		When we render the changes
+		The output should contain three render changes: 
+		- "List name" at coordinates 0, 0
+		- "\n\tItem 1"  at coordinates 0, 1
+		- "\n\tItem 2"  at coordinates 0, 2
+	`, func(t *testing.T) {
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		list.NewItem("Item 2")
+		renderChanges := list.Render()
+
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Change: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
+			{Change: "\n\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 1}},
+			{Change: "\n\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 2}},
+		})
 	}, t)
 }

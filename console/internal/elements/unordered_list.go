@@ -2,6 +2,8 @@ package elements
 
 import (
 	"slices"
+
+	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type UnorderedList struct {
@@ -46,15 +48,25 @@ func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	return ul.items[listItemIndex]
 }
 
-func (ul *UnorderedList) Render() string {
-	renderStr := ul.headingText
-	for _, item := range ul.items {
+func (ul *UnorderedList) Render() []RenderChange {
+	renderChanges := []RenderChange{}
+
+	if !ul.headingTextRendered {
+		renderChanges = append(renderChanges, RenderChange{Change: ul.headingText, Coords: coordinates.Coordinates{X: 0, Y: 0}})
+	}
+
+	for order, item := range ul.items {
 		if !item.IsRendered() {
-			renderStr += "\n\t" + item.Render()
+			renderChanges = append(
+				renderChanges,
+				RenderChange{
+					Change: "\n\t" + item.Render(),
+					Coords: coordinates.Coordinates{X: 0, Y: order + 1},
+				},
+			)
 		}
 	}
-	ul.headingTextRendered = true
-	return renderStr
+	return renderChanges
 }
 
 func (ul *UnorderedList) IsRendered() bool {

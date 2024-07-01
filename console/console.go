@@ -64,10 +64,10 @@ func (c *Console) Render() {
 	if c.IsRendered() {
 		return
 	}
-	for _, alignedElement := range c.alignedElements {
-		renderText := alignedElement.element.Render()
-		c.terminal.Print(renderText)
-	}
+	// for _, alignedElement := range c.alignedElements {
+	// 	renderChanges := alignedElement.element.Render()
+	// 	c.terminal.Print(renderChanges)
+	// }
 }
 
 func (c *Console) IsRendered() bool {
