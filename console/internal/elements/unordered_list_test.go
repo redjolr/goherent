@@ -349,6 +349,36 @@ func TestRender(t *testing.T) {
 
 	Test(`
 		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
+		When we edit the first item to a multi line text: "This \n is \n the \n first \n item" and we render the changes
+		The output should contain 3 render changes:
+		- "\n\tThis \n is \n the \n first \n item"  at coordinates 0, 1
+		- "\n\t"Item 2"  at coordinates 0, 2
+		- "\n\t"Item 3"  at coordinates 0, 3
+		- "\n\t"Item 4"  at coordinates 0, 4
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		item1 := list.NewItem("Item 1")
+		list.NewItem("Item 2")
+		list.NewItem("Item 3")
+		list.NewItem("Item 4")
+		list.Render()
+
+		// When
+		item1.Edit("This \n is \n the \n first \n item")
+		renderChanges := list.Render()
+
+		// Then
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{After: "\n\tThis \n is \n the \n first \n item", Coords: coordinates.Coordinates{X: 0, Y: 1}},
+			{After: "\n\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 2}},
+			{After: "\n\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 3}},
+			{After: "\n\tItem 4", Coords: coordinates.Coordinates{X: 0, Y: 4}},
+		})
+	}, t)
+
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
 		When we edit the second item to a multi line text: "This \n is \n the \n second \n item" and we render the changes
 		The output should contain 3 render changes:
 		- "\n\tThis \n is \n the \n second \n item"  at coordinates 0, 2
@@ -372,6 +402,30 @@ func TestRender(t *testing.T) {
 			{After: "\n\tThis \n is \n the \n second \n item", Coords: coordinates.Coordinates{X: 0, Y: 2}},
 			{After: "\n\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 3}},
 			{After: "\n\tItem 4", Coords: coordinates.Coordinates{X: 0, Y: 4}},
+		})
+	}, t)
+
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
+		When we edit the last item to a multi line text: "This \n is \n the \n last \n item" and we render the changes
+		The output should contain 1 render change:
+		- "\n\tThis \n is \n the \n last \n item"  at coordinates 0, 4
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		list.NewItem("Item 2")
+		list.NewItem("Item 3")
+		lastItem := list.NewItem("Item 4")
+		list.Render()
+
+		// When
+		lastItem.Edit("This \n is \n the \n last \n item")
+		renderChanges := list.Render()
+
+		// Then
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{After: "\n\tThis \n is \n the \n last \n item", Coords: coordinates.Coordinates{X: 0, Y: 4}},
 		})
 	}, t)
 
