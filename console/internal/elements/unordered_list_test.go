@@ -12,11 +12,10 @@ import (
 func TestNewItem(t *testing.T) {
 	assert := assert.New(t)
 	Test("it should add a new item to a UnorderedList.", func(t *testing.T) {
-		// list := console.NewUnorderedList("List name")
-		// item := list.NewItem("item1")
+		list := elements.NewUnorderedList("list id", "List name")
+		item := list.NewItem("item1")
 
-		// assert.IsType(console.ListItem{}, item)
-		assert.Equal(2, 2)
+		assert.IsType(elements.ListItem{}, item)
 	}, t)
 }
 

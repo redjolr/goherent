@@ -40,14 +40,15 @@ func (li *ListItem) Render() RenderChange {
 	return renderChange
 }
 
-func (li *ListItem) ReRender() RenderChange {
-	return RenderChange{
+func (li *ListItem) IsRendered() bool {
+	return li.rendered
+}
+
+func (li *ListItem) MarkUnrendered() {
+	li.rendered = false
+	li.renderChange = RenderChange{
 		Before: li.text,
 		After:  li.text,
 		Coords: coordinates.Origin(),
 	}
-}
-
-func (li *ListItem) IsRendered() bool {
-	return li.rendered
 }
