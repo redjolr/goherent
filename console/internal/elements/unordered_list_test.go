@@ -214,6 +214,26 @@ func TestIsRendered(t *testing.T) {
 		list.NewItem("Some other text")
 		assert.False(list.IsRendered())
 	}, t)
+
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Multi \n line", "Item 3", "Item 4"
+		When we check to see if the list is rendered
+		Then we should see that the list has been rendered
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		list.NewItem("This \n is \n multi \n line")
+		list.NewItem("Item 3")
+		list.NewItem("Item 4")
+		list.Render()
+
+		// When
+		isRendered := list.IsRendered()
+
+		// Then
+		assert.True(isRendered)
+	}, t)
 }
 
 func TestRender(t *testing.T) {

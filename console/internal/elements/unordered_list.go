@@ -1,7 +1,6 @@
 package elements
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
@@ -65,7 +64,12 @@ func (ul *UnorderedList) Render() []RenderChange {
 	reRenderSubsequentItems := false
 	for order, item := range ul.items {
 		if reRenderSubsequentItems {
-			renderChange := item.ReRender()
+			var renderChange RenderChange
+			if item.IsRendered() {
+				renderChange = item.ReRender()
+			} else {
+				renderChange = item.Render()
+			}
 
 			renderChanges = append(
 				renderChanges,
@@ -89,7 +93,6 @@ func (ul *UnorderedList) Render() []RenderChange {
 			)
 			lineLengthBefore := len(utils.SplitStringByNewLine(renderChange.Before))
 			lineLengthAfter := len(utils.SplitStringByNewLine(renderChange.After))
-			fmt.Println(lineLengthAfter, lineLengthBefore)
 			if lineLengthAfter != lineLengthBefore {
 				reRenderSubsequentItems = true
 			}

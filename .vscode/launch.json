@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Test file",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            // Indicate the target here
+            "program": "./console/internal/elements/unordered_list_test.go",
+            "env": {},
+            "args": [
+                "-test.v",
+                "--",
+                "arg1",
+                "arg2",
+                "arg3"
+            ]
+        }
+    ]
+}
