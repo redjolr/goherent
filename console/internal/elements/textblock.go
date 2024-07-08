@@ -1,39 +1,30 @@
 package elements
 
 import (
-	"regexp"
-	"strings"
-
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/internal/utils"
 )
 
 type Textblock struct {
 	id            string
-	lines         []string
+	text          string
 	renderChanges []RenderChange
 	rendered      bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
-	newLineRegex := regexp.MustCompile(`\r?\n`)
-	lines := newLineRegex.Split(text, -1)
 
-	var renderChanges []RenderChange = []RenderChange{}
-	renderCoordinates := coordinates.New(0, -1)
-
-	for _, line := range lines {
-		renderCoordinates.MoveDown(1)
-		renderChanges = append(renderChanges, RenderChange{
-			After:      line,
-			Coords:     coordinates.New(len(line), renderCoordinates.Y),
-			IsAnUpdate: false,
-		})
+	renderChange := RenderChange{
+		Before:     "",
+		After:      text,
+		Coords:     coordinates.Origin(),
+		IsAnUpdate: false,
 	}
 
 	return Textblock{
 		id:            id,
-		lines:         lines,
-		renderChanges: renderChanges,
+		text:          text,
+		renderChanges: []RenderChange{renderChange},
 		rendered:      false,
 	}
 }
@@ -42,12 +33,8 @@ func (tb *Textblock) HasId(id string) bool {
 	return tb.id == id
 }
 
-func (tb *Textblock) Lines() []string {
-	return tb.lines
-}
-
 func (tb *Textblock) Height() int {
-	return len(tb.lines)
+	return utils.StrLinesCount(tb.text)
 }
 
 func (tb *Textblock) Width() int {
@@ -55,12 +42,13 @@ func (tb *Textblock) Width() int {
 }
 
 func (tb *Textblock) longestLine() string {
-	if len(tb.lines) == 0 {
+	lines := utils.SplitStringByNewLine(tb.text)
+	if len(lines) == 0 {
 		return ""
 	}
 
-	longest := tb.lines[0]
-	for _, line := range tb.lines {
+	longest := lines[0]
+	for _, line := range lines {
 		if len(line) > len(longest) {
 			longest = line
 		}
@@ -68,12 +56,15 @@ func (tb *Textblock) longestLine() string {
 	return longest
 }
 
-func (tb *Textblock) Write(text string) {
-	newLineRegex := regexp.MustCompile(`\r?\n`)
-	lines := newLineRegex.Split(text, -1)
-	tb.lines = lines
-	newWidth := tb.Width()
-	tb.padWithWhiteSpaces(newWidth)
+func (tb *Textblock) Edit(text string) {
+	tb.rendered = false
+	tb.renderChanges = append(tb.renderChanges, RenderChange{
+		Before:     tb.text,
+		After:      text,
+		Coords:     coordinates.Origin(),
+		IsAnUpdate: true,
+	})
+	tb.text = text
 }
 
 func (tb *Textblock) Render() []RenderChange {
@@ -89,12 +80,4 @@ func (tb *Textblock) Render() []RenderChange {
 
 func (tb *Textblock) IsRendered() bool {
 	return tb.rendered
-}
-
-func (tb *Textblock) padWithWhiteSpaces(width int) {
-	for i, line := range tb.lines {
-		if len(line) < width {
-			tb.lines[i] = line + strings.Repeat(" ", width-len(line))
-		}
-	}
 }

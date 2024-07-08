@@ -3,73 +3,82 @@ package elements_test
 import (
 	"testing"
 
+	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/elements"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewTextblockNewTextBlock(t *testing.T) {
+func TestTextBlockRender(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
-	it should store the line []string{""},
+	it should render RenderChange{ Before: "", After: "", coords: 0,0, IsAnUpdate: false },
 	if we pass an empty string`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "")
-		assert.Equal(textBlock.Lines(), []string{""})
+		renderChanges := textBlock.Render()
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "", After: "", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: false},
+		})
 	}, t)
 
 	Test(`
-	it should store the line []string{"A"},
+	it should render RenderChange{ Before: "", After: "A", coords: 0,0, IsAnUpdate: false },
 	if we pass the string "A"`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "A")
-		assert.Equal(textBlock.Lines(), []string{"A"})
+		renderChanges := textBlock.Render()
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "", After: "A", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: false},
+		})
 	}, t)
 
 	Test(`
-	it should store two empty lines,
+	it should render RenderChange{ Before: "", After: "\n", coords: 0,0, IsAnUpdate: false },
 	if we pass the string "\n"`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "\n")
-		assert.Equal(textBlock.Lines(), []string{"", ""})
+		renderChanges := textBlock.Render()
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "", After: "\n", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: false},
+		})
 	}, t)
 
 	Test(`
-	it should store 3 empty lines,
+	it should render RenderChange{ Before: "", After: "\n\n", coords: 0,0, IsAnUpdate: false },
 	if we pass the string "\n\n"`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "\n\n")
-		assert.Equal(textBlock.Lines(), []string{"", "", ""})
+		renderChanges := textBlock.Render()
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "", After: "\n\n", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: false},
+		})
 	}, t)
 
 	Test(`
-	it should store two empty lines,
-	if we pass the string "\r\n"`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "\r\n")
-		assert.Equal(textBlock.Lines(), []string{"", ""})
-	}, t)
-
-	Test(`
-	it should store 3 empty lines,
-	if we pass the string "\r\n\r\n"`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "\r\n\r\n")
-		assert.Equal(textBlock.Lines(), []string{"", "", ""})
-	}, t)
-
-	Test(`
-	it should store 3 empty lines,
+	it should render RenderChange{ Before: "", After: "Line1 \n Line2", coords: 0,0, IsAnUpdate: false },
 	if we pass the string "\n\n"`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "\n\n")
-		assert.Equal(textBlock.Lines(), []string{"", "", ""})
+		textBlock := elements.NewTextBlock("id", "Line1 \n Line2")
+		renderChanges := textBlock.Render()
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "", After: "Line1 \n Line2", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: false},
+		})
 	}, t)
 
 	Test(`
-	it should store the lines []string{"This is line 1", ""},
-	if we pass the string "This is line 1\n" to NewTextBlock()`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "This is line 1\n")
-		assert.Equal(textBlock.Lines(), []string{"This is line 1", ""})
-	}, t)
+		Given that we have a rendered Textblock "First textblock"
+		And the textblock is edited to "Second textblock"
+		When we render the changes
+		Then the output should contain the following render changes:
+		- RenderChange{ Before: "First textblock", After: "Second textblock", coords: 0,0, IsAnUpdate: true },
+	`, func(t *testing.T) {
+		// Given
+		textBlock := elements.NewTextBlock("id", "First textblock")
+		textBlock.Render()
+		textBlock.Edit("Second textblock")
 
-	Test(`
-	it should store the lines []string{"This is line 1", "This is line 2"},
-	if we pass the string "This is line 1\nThis is line 2" to NewTextBlock()`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "This is line 1\nThis is line 2")
-		assert.Equal(textBlock.Lines(), []string{"This is line 1", "This is line 2"})
+		// When
+		renderChanges := textBlock.Render()
+
+		// Then
+		assert.Equal(renderChanges, []elements.RenderChange{
+			{Before: "First textblock", After: "Second textblock", Coords: coordinates.Coordinates{X: 0, Y: 0}, IsAnUpdate: true},
+		})
 	}, t)
 }

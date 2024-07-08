@@ -146,7 +146,7 @@ func TestTextBlockWrite(t *testing.T) {
 	Test(`The terminal should print Hello\nWorld, if we write "Hello\nWorld".`, func(t *testing.T) {
 		console, fakeTerminal := setup()
 		tb := console.NewTextBlock("id1", "A")
-		tb.Write("Hello\nWorld")
+		tb.Edit("Hello\nWorld")
 		console.Render()
 		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
 	}, t)
@@ -170,7 +170,7 @@ func TestTwoTextblocks(t *testing.T) {
 		tb1 := console.NewTextBlock("id1", "Hello ")
 		console.NewTextBlock("id2", "World")
 		console.Render()
-		tb1.Write("Hellp ")
+		tb1.Edit("Hellp ")
 
 		console.Render()
 		assert.Equal(fakeTerminal.Text(), "Hellp World")
@@ -184,7 +184,7 @@ func TestTwoTextblocks(t *testing.T) {
 		tb1 := console.NewTextBlock("id1", "Hello ")
 		console.NewTextBlock("id2", "World")
 		console.Render()
-		tb1.Write("Help ")
+		tb1.Edit("Help ")
 
 		console.Render()
 		assert.Equal(fakeTerminal.Text(), "Help World")
