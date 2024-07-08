@@ -27,7 +27,7 @@ func (li *ListItem) Edit(newText string) {
 
 }
 
-func (li *ListItem) RenderUpdates() RenderChange {
+func (li *ListItem) Render() RenderChange {
 	renderChange := li.renderChange
 	li.rendered = true
 	li.renderChange = RenderChange{}

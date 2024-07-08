@@ -193,7 +193,7 @@ func TestIsRendered(t *testing.T) {
 	Test(`it should return true, if:
 		the UnorderedList is created, it has no items and has been rendered.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.RenderUpdates()
+		list.Render()
 		assert.True(list.IsRendered())
 	}, t)
 
@@ -201,7 +201,7 @@ func TestIsRendered(t *testing.T) {
 		the UnorderedList is created, it has one item and has been rendered.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 		list.NewItem("Some text")
-		list.RenderUpdates()
+		list.Render()
 		assert.True(list.IsRendered())
 	}, t)
 
@@ -209,7 +209,7 @@ func TestIsRendered(t *testing.T) {
 		the UnorderedList is created, it has one item and has been rendered and then another item is added.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 		list.NewItem("Some text")
-		list.RenderUpdates()
+		list.Render()
 		list.NewItem("Some other text")
 		assert.False(list.IsRendered())
 	}, t)
@@ -225,7 +225,7 @@ func TestIsRendered(t *testing.T) {
 		list.NewItem("This \n is \n multi \n line")
 		list.NewItem("Item 3")
 		list.NewItem("Item 4")
-		list.RenderUpdates()
+		list.Render()
 		// When
 		isRendered := list.IsRendered()
 
@@ -247,7 +247,7 @@ func TestRender(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -267,7 +267,7 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 1")
 
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -291,7 +291,7 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 2")
 
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -311,11 +311,11 @@ func TestRender(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
 		list.NewItem("Item 1")
 		list.NewItem("Item 2")
-		list.RenderUpdates()
+		list.Render()
 		list.NewItem("Item 3")
 
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -333,11 +333,11 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 1")
 		item2 := list.NewItem("Item 2")
 		list.NewItem("Item 3")
-		list.RenderUpdates()
+		list.Render()
 
 		// When
 		item2.Edit("Second item")
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -359,11 +359,11 @@ func TestRender(t *testing.T) {
 		item2 := list.NewItem("This \n is \n multi \n line")
 		list.NewItem("Item 3")
 		list.NewItem("Item 4")
-		list.RenderUpdates()
+		list.Render()
 
 		// When
 		item2.Edit("Item 2")
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -385,7 +385,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "Line 1 \n Line 2")
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
 			{After: "Line 1 \n Line 2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
@@ -403,7 +403,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list := elements.NewUnorderedList("id", "Line 1 \n Line 2")
 		list.NewItem("Item 1")
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
 			{After: "Line 1 \n Line 2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
@@ -423,7 +423,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list.NewItem("Item 1")
 
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -445,7 +445,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list.NewItem("Item 1 Line1 \n Line2")
 		list.NewItem("Item 2")
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
 			{After: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
@@ -472,7 +472,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list.NewItem("Item 2 L1 \n L2 \n L3 \n L4")
 		list.NewItem("Item 3")
 		// When
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
 			{After: "List L1 \n L2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
@@ -497,11 +497,11 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list.NewItem("Item 2")
 		list.NewItem("Item 3")
 		list.NewItem("Item 4")
-		list.RenderUpdates()
+		list.Render()
 
 		// When
 		item1.Edit("This \n is \n the \n first \n item")
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -526,11 +526,11 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		item2 := list.NewItem("Item 2")
 		list.NewItem("Item 3")
 		list.NewItem("Item 4")
-		list.RenderUpdates()
+		list.Render()
 
 		// When
 		item2.Edit("This \n is \n the \n second \n item")
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{
@@ -552,11 +552,11 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list.NewItem("Item 2")
 		list.NewItem("Item 3")
 		lastItem := list.NewItem("Item 4")
-		list.RenderUpdates()
+		list.Render()
 
 		// When
 		lastItem.Edit("This \n is \n the \n last \n item")
-		renderChanges := list.RenderUpdates()
+		renderChanges := list.Render()
 
 		// Then
 		assert.Equal(renderChanges, []elements.RenderChange{

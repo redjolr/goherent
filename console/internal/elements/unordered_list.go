@@ -54,7 +54,7 @@ func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	return ul.items[listItemIndex]
 }
 
-func (ul *UnorderedList) RenderUpdates() []RenderChange {
+func (ul *UnorderedList) Render() []RenderChange {
 	renderChanges := []RenderChange{}
 	currentRenderedHeight := 0
 	if !ul.headingTextRendered {
@@ -68,7 +68,7 @@ func (ul *UnorderedList) RenderUpdates() []RenderChange {
 
 	for _, item := range ul.items {
 		if !item.IsRendered() {
-			renderChange := item.RenderUpdates()
+			renderChange := item.Render()
 			renderChanges = append(
 				renderChanges,
 				RenderChange{

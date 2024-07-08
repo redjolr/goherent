@@ -76,7 +76,7 @@ func (tb *Textblock) Write(text string) {
 	tb.padWithWhiteSpaces(newWidth)
 }
 
-func (tb *Textblock) RenderUpdates() []RenderChange {
+func (tb *Textblock) Render() []RenderChange {
 	if tb.rendered {
 		return []RenderChange{}
 	}
