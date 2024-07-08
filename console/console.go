@@ -54,9 +54,6 @@ func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 
 	c.alignedElements = append(c.alignedElements, &textBlockElement)
 
-	c.MoveDown(textBlock.Height() - 1)
-	c.MoveRight(textBlock.Width())
-
 	return &textBlock
 }
 
@@ -64,10 +61,13 @@ func (c *Console) Render() {
 	if c.IsRendered() {
 		return
 	}
-	// for _, alignedElement := range c.alignedElements {
-	// 	renderChanges := alignedElement.element.Render()
-	// 	c.terminal.Print(renderChanges)
-	// }
+	for _, alignedElement := range c.alignedElements {
+
+		renderChanges := alignedElement.element.Render()
+		for _, renderChange := range renderChanges {
+			c.terminal.Print(renderChange.After)
+		}
+	}
 }
 
 func (c *Console) IsRendered() bool {
