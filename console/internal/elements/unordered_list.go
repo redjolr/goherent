@@ -4,6 +4,7 @@ import (
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/internal/utils"
 )
 
 type UnorderedList struct {
@@ -53,28 +54,33 @@ func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	return ul.items[listItemIndex]
 }
 
-func (ul *UnorderedList) Render() []RenderChange {
+func (ul *UnorderedList) RenderUpdates() []RenderChange {
 	renderChanges := []RenderChange{}
-
+	currentRenderedHeight := 0
 	if !ul.headingTextRendered {
-		renderChanges = append(renderChanges, RenderChange{After: ul.headingText, Coords: coordinates.Coordinates{X: 0, Y: 0}})
+		renderChanges = append(renderChanges, RenderChange{
+			After:  ul.headingText,
+			Coords: coordinates.Coordinates{X: 0, Y: currentRenderedHeight},
+		})
 		ul.headingTextRendered = true
 	}
+	currentRenderedHeight += utils.StrLinesCount(ul.headingText)
 
-	for order, item := range ul.items {
+	for _, item := range ul.items {
 		if !item.IsRendered() {
-			renderChange := item.Render()
+			renderChange := item.RenderUpdates()
 			renderChanges = append(
 				renderChanges,
 				RenderChange{
-					After:  "\n\t" + renderChange.After,
-					Coords: coordinates.Coordinates{X: 0, Y: order + 1},
+					After:  "\t" + renderChange.After,
+					Coords: coordinates.Coordinates{X: 0, Y: currentRenderedHeight},
 				},
 			)
-			if renderChange.HasLineCountChanged() {
+			if renderChange.IsAnUpdate && renderChange.HasLineCountChanged() {
 				ul.markForRerenderStartingAtItem(item)
 			}
 		}
+		currentRenderedHeight += utils.StrLinesCount(item.Text())
 	}
 	return renderChanges
 }

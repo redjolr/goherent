@@ -24,8 +24,9 @@ func NewTextBlock(id string, text string) Textblock {
 	for _, line := range lines {
 		renderCoordinates.MoveDown(1)
 		renderChanges = append(renderChanges, RenderChange{
-			After:  line,
-			Coords: coordinates.New(len(line), renderCoordinates.Y),
+			After:      line,
+			Coords:     coordinates.New(len(line), renderCoordinates.Y),
+			IsAnUpdate: false,
 		})
 	}
 
@@ -75,7 +76,7 @@ func (tb *Textblock) Write(text string) {
 	tb.padWithWhiteSpaces(newWidth)
 }
 
-func (tb *Textblock) Render() []RenderChange {
+func (tb *Textblock) RenderUpdates() []RenderChange {
 	if tb.rendered {
 		return []RenderChange{}
 	}

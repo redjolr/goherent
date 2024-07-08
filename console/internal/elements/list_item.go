@@ -1,21 +1,14 @@
 package elements
 
-import "github.com/redjolr/goherent/console/coordinates"
+import (
+	"github.com/redjolr/goherent/console/coordinates"
+)
 
 type ListItem struct {
 	order        int
 	text         string
 	rendered     bool
 	renderChange RenderChange
-}
-
-func NewListItem(order int, text string) ListItem {
-	return ListItem{
-		order:        order,
-		text:         text,
-		rendered:     false,
-		renderChange: RenderChange{},
-	}
 }
 
 func (li *ListItem) Text() string {
@@ -25,15 +18,16 @@ func (li *ListItem) Text() string {
 func (li *ListItem) Edit(newText string) {
 	li.rendered = false
 	li.renderChange = RenderChange{
-		Before: li.text,
-		After:  newText,
-		Coords: coordinates.Origin(),
+		Before:     li.text,
+		After:      newText,
+		Coords:     coordinates.Origin(),
+		IsAnUpdate: true,
 	}
 	li.text = newText
 
 }
 
-func (li *ListItem) Render() RenderChange {
+func (li *ListItem) RenderUpdates() RenderChange {
 	renderChange := li.renderChange
 	li.rendered = true
 	li.renderChange = RenderChange{}

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewItem(t *testing.T) {
+func TestSplitStringsByNewLine(t *testing.T) {
 	assert := assert.New(t)
 	Test("it should return [''], if you pass an empty string.", func(t *testing.T) {
 		assert.Equal(utils.SplitStringByNewLine(""), []string{""})

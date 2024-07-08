@@ -6,9 +6,10 @@ import (
 )
 
 type RenderChange struct {
-	Before string
-	After  string
-	Coords coordinates.Coordinates
+	Before     string
+	After      string
+	Coords     coordinates.Coordinates
+	IsAnUpdate bool
 }
 
 func (rc RenderChange) HasLineCountChanged() bool {
