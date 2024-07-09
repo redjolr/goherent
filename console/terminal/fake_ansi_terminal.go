@@ -5,18 +5,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/cursor"
 )
 
 type FakeAnsiTerminal struct {
 	lines  []string
-	cursor coordinates.Coordinates
+	cursor *cursor.Cursor
 }
 
-func NewFakeAnsiTerminal() FakeAnsiTerminal {
+func NewFakeAnsiTerminal(cursor *cursor.Cursor) FakeAnsiTerminal {
 	return FakeAnsiTerminal{
 		lines:  []string{""},
-		cursor: coordinates.Origin(),
+		cursor: cursor,
 	}
 }
 
@@ -31,7 +31,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			text, _ = strings.CutPrefix(text, "\n")
 			fat.lines = append(fat.lines, "")
 			fat.cursor.MoveDown(1)
-			fat.cursor.X = 0
+			fat.cursor.MoveAtBeginningOfLine()
 			continue
 		}
 
@@ -49,14 +49,13 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 				panic("Cannot determine the number steps to move left.")
 			}
 
-			fat.cursor.MoveLeft(min(moveLeftCount, fat.cursor.X))
+			fat.cursor.MoveLeft(min(moveLeftCount, fat.cursor.Coordinates().X))
 			continue
 		}
 
 		// Move right
 		moveCursorRightRegex, _ := regexp.Compile("\033\\[[0-9]{1,}C")
 		moveCursorRightSeqLoc := moveCursorRightRegex.FindStringIndex(text)
-
 		if moveCursorRightSeqLoc != nil && moveCursorRightSeqLoc[0] == 0 {
 			moveCursorRightSeq := text[0:moveCursorRightSeqLoc[1]]
 			text = text[moveCursorRightSeqLoc[1]:]
@@ -84,9 +83,11 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move left.")
 			}
-			fat.cursor.MoveUp(min(moveUpCount, fat.cursor.Y))
-			if fat.cursor.X > len(fat.lines[fat.cursor.Y]) {
-				fat.lines[fat.cursor.Y] = fat.lines[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.lines[fat.cursor.Y]))
+			fat.cursor.MoveUp(min(moveUpCount, fat.cursor.Coordinates().Y))
+			if fat.cursor.Coordinates().X > len(fat.lines[fat.cursor.Coordinates().Y]) {
+				fat.lines[fat.cursor.Coordinates().Y] =
+					fat.lines[fat.cursor.Coordinates().Y] +
+						strings.Repeat(" ", fat.cursor.Coordinates().X-len(fat.lines[fat.cursor.Coordinates().Y]))
 			}
 			continue
 		}
@@ -109,27 +110,29 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 
 		// Append empty strings to the right
-		if fat.cursor.Y >= len(fat.lines) {
-			linesToAddCount := fat.cursor.Y - len(fat.lines) + 1
+		if fat.cursor.Coordinates().Y >= len(fat.lines) {
+			linesToAddCount := fat.cursor.Coordinates().Y - len(fat.lines) + 1
 			fat.lines = append(fat.lines, make([]string, linesToAddCount)...)
-			if fat.cursor.X > len(fat.lines[fat.cursor.Y]) {
-				fat.lines[fat.cursor.Y] = fat.lines[fat.cursor.Y] + strings.Repeat(" ", fat.cursor.X-len(fat.lines[fat.cursor.Y]))
+			if fat.cursor.Coordinates().X > len(fat.lines[fat.cursor.Coordinates().Y]) {
+				fat.lines[fat.cursor.Coordinates().Y] =
+					fat.lines[fat.cursor.Coordinates().Y] +
+						strings.Repeat(" ", fat.cursor.Coordinates().X-len(fat.lines[fat.cursor.Coordinates().Y]))
 			}
 		}
 
 		firstChar := strings.Split(text, "")[0]
 		remainingChars := strings.Split(text, "")[1:]
-		if fat.cursor.X >= len(fat.lines[fat.cursor.Y]) {
-			emptySpacesToAdd := fat.cursor.X - len(fat.lines[fat.cursor.Y])
-			fat.lines[fat.cursor.Y] += strings.Repeat(" ", emptySpacesToAdd)
-			fat.lines[fat.cursor.Y] += firstChar
+		if fat.cursor.Coordinates().X >= len(fat.lines[fat.cursor.Coordinates().Y]) {
+			emptySpacesToAdd := fat.cursor.Coordinates().X - len(fat.lines[fat.cursor.Coordinates().Y])
+			fat.lines[fat.cursor.Coordinates().Y] += strings.Repeat(" ", emptySpacesToAdd)
+			fat.lines[fat.cursor.Coordinates().Y] += firstChar
 			fat.cursor.MoveRight(1)
 			text = strings.Join(remainingChars, "")
 		} else {
-			lineChars := strings.Split(fat.lines[fat.cursor.Y], "")
+			lineChars := strings.Split(fat.lines[fat.cursor.Coordinates().Y], "")
 			text = strings.Join(remainingChars, "")
-			lineChars[fat.cursor.X] = firstChar
-			fat.lines[fat.cursor.Y] = strings.Join(lineChars, "")
+			lineChars[fat.cursor.Coordinates().X] = firstChar
+			fat.lines[fat.cursor.Coordinates().Y] = strings.Join(lineChars, "")
 			fat.cursor.MoveRight(1)
 		}
 	}

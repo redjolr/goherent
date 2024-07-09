@@ -4,7 +4,9 @@ import (
 	"slices"
 
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/internal/elements"
+	"github.com/redjolr/goherent/console/internal/utils"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
@@ -16,25 +18,21 @@ type alignedElement struct {
 type Console struct {
 	terminal        terminal.Terminal
 	alignedElements []*alignedElement
-	cursor          *coordinates.Coordinates
+	cursor          *cursor.Cursor
 }
 
-func NewConsole(terminal terminal.Terminal) Console {
-	origin := coordinates.Origin()
+func NewConsole(terminal terminal.Terminal, cursor *cursor.Cursor) Console {
 	return Console{
 		terminal:        terminal,
 		alignedElements: []*alignedElement{},
-		cursor:          &origin,
+		cursor:          cursor,
 	}
 }
 
 func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
 	unorderedList := elements.NewUnorderedList(id, headingText)
 	unorderedListElement := alignedElement{
-		coords: &coordinates.Coordinates{
-			X: c.cursor.X,
-			Y: c.cursor.Y,
-		},
+		coords:  c.cursor.Coordinates(),
 		element: &unorderedList,
 	}
 	c.alignedElements = append(c.alignedElements, &unorderedListElement)
@@ -45,10 +43,7 @@ func (c *Console) NewUnorderedList(id string, headingText string) *elements.Unor
 func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 	textBlock := elements.NewTextBlock(id, text)
 	textBlockElement := alignedElement{
-		coords: &coordinates.Coordinates{
-			X: c.cursor.X,
-			Y: c.cursor.Y,
-		},
+		coords:  c.cursor.Coordinates(),
 		element: &textBlock,
 	}
 
@@ -61,12 +56,22 @@ func (c *Console) Render() {
 	if c.IsRendered() {
 		return
 	}
-	for _, alignedElement := range c.alignedElements {
+	c.cursor.GoToOrigin()
 
-		renderChanges := alignedElement.element.Render()
-		for _, renderChange := range renderChanges {
-			c.terminal.Print(renderChange.After)
+	for _, alignedElement := range c.alignedElements {
+		if alignedElement.element.HasChanged() {
+			renderChanges := alignedElement.element.Render()
+			for _, renderChange := range renderChanges {
+				c.terminal.Print(renderChange.After)
+				lines := utils.SplitStringByNewLine(renderChange.After)
+				lastLine := lines[len(lines)-1]
+				c.cursor.MoveDown(utils.StrLinesCount(renderChange.After))
+				c.cursor.MoveAtBeginningOfLine()
+				c.cursor.MoveRight(len(lastLine))
+			}
+
 		}
+
 	}
 }
 
@@ -75,26 +80,6 @@ func (c *Console) IsRendered() bool {
 		return !alignedElement.element.IsRendered()
 	})
 	return !atLeastOneElementUnrendered
-}
-
-func (c *Console) MoveLeft(n int) {
-	c.terminal.Print(terminal.MoveCursorLeftNCols(n))
-	c.cursor.MoveLeft(n)
-}
-
-func (c *Console) MoveRight(n int) {
-	c.terminal.Print(terminal.MoveCursorRightNCols(n))
-	c.cursor.MoveRight(n)
-}
-
-func (c *Console) MoveDown(n int) {
-	c.terminal.Print(terminal.MoveCursorDownNRows(n))
-	c.cursor.MoveDown(n)
-}
-
-func (c *Console) MoveUp(n int) {
-	c.terminal.Print(terminal.MoveCursorUpNRows(n))
-	c.cursor.MoveUp(n)
 }
 
 func (c *Console) HasElementWithId(id string) bool {

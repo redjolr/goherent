@@ -4,14 +4,16 @@ import (
 	"testing"
 
 	"github.com/redjolr/goherent/console"
+	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup() (console.Console, *terminal.FakeAnsiTerminal) {
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
-	return console.NewConsole(&fakeAnsiTerminal), &fakeAnsiTerminal
+	cursor := cursor.NewCursor()
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&cursor)
+	return console.NewConsole(&fakeAnsiTerminal, &cursor), &fakeAnsiTerminal
 }
 
 func TestIsConsoleRendered(t *testing.T) {
@@ -124,29 +126,57 @@ func TestRenderingUnorderedList(t *testing.T) {
 		assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 1\n\tList item 2")
 	}, t)
 
-	// Test(`The terminal should print "Unordered List\n\tList item 0",
-	// 	if we perform these actions in the given sequence:
-	// 	- create an UnorderedList with that name
-	// 	- add one item with name "List item 1"
-	// 	- render the console
-	// 	- edit the list item and change its name to "List item 0"
-	// 	- render the console again`, func(t *testing.T) {
-	// 	console, fakeTerminal := setup()
-	// 	unorderedList := console.NewUnorderedList("list1", "Unordered List")
-	// 	listItem := unorderedList.NewItem("List item 1")
-	// 	console.Render()
-	// 	listItem.Edit("List item 0")
-	// 	console.Render()
-	// 	assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 0")
-	// }, t)
+	Test(`The terminal should print "Unordered List\n\tList item 0",
+		if we perform these actions in the given sequence:
+		- create an UnorderedList with that name
+		- add one item with name "List item 1"
+		- render the console
+		- edit the list item and change its name to "List item 0"
+		- render the console again`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		unorderedList := console.NewUnorderedList("list1", "Unordered List")
+		listItem := unorderedList.NewItem("List item 1")
+		console.Render()
+		listItem.Edit("List item 0")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Unordered List\n\tList item 0")
+	}, t)
 }
 
 func TestTextBlockWrite(t *testing.T) {
 	assert := assert.New(t)
-	Test(`The terminal should print Hello\nWorld, if we write "Hello\nWorld".`, func(t *testing.T) {
+	Test(`The terminal should print Hello, if we create a Textblock "Hello" and render the console.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		console.NewTextBlock("id1", "Hello")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Hello")
+	}, t)
+
+	Test(`The terminal should print Hello\nWorld, if we create a Textblock "Hello\nWorld" and render the console.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		console.NewTextBlock("id1", "Hello\nWorld")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
+	}, t)
+
+	Test(`The terminal should print Hello\nWorld,
+		if we create a Textblock "A", and then edit it with "Hello\nWorld" and render the console.`, func(t *testing.T) {
 		console, fakeTerminal := setup()
 		tb := console.NewTextBlock("id1", "A")
 		tb.Edit("Hello\nWorld")
+
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
+	}, t)
+
+	Test(`The terminal should print Hello\nWorld, 
+		if we create a Textblock "A" render the console, 
+		and then edit it with "Hello\nWorld" and render the console again.`, func(t *testing.T) {
+		console, fakeTerminal := setup()
+		tb := console.NewTextBlock("id1", "A")
+		console.Render()
+		tb.Edit("Hello\nWorld")
+
 		console.Render()
 		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
 	}, t)

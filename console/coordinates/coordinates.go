@@ -23,23 +23,11 @@ func (c *Coordinates) OffsetX(x int) {
 	c.X += x
 }
 
-func (c *Coordinates) MoveRight(x int) {
-	c.X += x
-}
-
-func (c *Coordinates) MoveLeft(x int) {
-	c.X -= x
-}
-
-func (c *Coordinates) MoveUp(y int) {
-	c.Y -= y
-}
-
-func (c *Coordinates) MoveDown(y int) {
+func (c *Coordinates) OffsetY(y int) {
 	c.Y += y
 }
 
-func (c *Coordinates) GoToOrigin() {
+func (c *Coordinates) SetToOrigin() {
 	c.X = 0
 	c.Y = 0
 }

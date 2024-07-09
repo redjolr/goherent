@@ -85,6 +85,10 @@ func (ul *UnorderedList) Render() []RenderChange {
 	return renderChanges
 }
 
+func (ul *UnorderedList) HasChanged() bool {
+	return !ul.IsRendered()
+}
+
 func (ul *UnorderedList) IsRendered() bool {
 	atLeastOneItemUnrendered := slices.ContainsFunc(ul.items, func(item *ListItem) bool {
 		return !item.IsRendered()

@@ -58,13 +58,17 @@ func (tb *Textblock) longestLine() string {
 
 func (tb *Textblock) Edit(text string) {
 	tb.rendered = false
-	tb.renderChanges = append(tb.renderChanges, RenderChange{
+	tb.renderChanges = []RenderChange{{
 		Before:     tb.text,
 		After:      text,
 		Coords:     coordinates.Origin(),
 		IsAnUpdate: true,
-	})
+	}}
 	tb.text = text
+}
+
+func (tb *Textblock) HasChanged() bool {
+	return !tb.rendered
 }
 
 func (tb *Textblock) Render() []RenderChange {

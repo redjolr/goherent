@@ -9,6 +9,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/console"
+	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
@@ -16,9 +17,10 @@ import (
 
 func setupE2e() (cmd.EventsHandler, terminal.FakeAnsiTerminal) {
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
+	cursor := cursor.NewCursor()
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&cursor)
 
-	outputConsole := console.NewConsole(&fakeAnsiTerminal)
+	outputConsole := console.NewConsole(&fakeAnsiTerminal, &cursor)
 	terminalPresenter := cmd.NewTerminalPresenter(&outputConsole)
 	eventHandler := cmd.NewEventsHandler(&terminalPresenter, &ctestTracker)
 
