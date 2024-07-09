@@ -166,15 +166,26 @@ func TestTextBlockRender(t *testing.T) {
 		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
 	}, t)
 
-	Test(`The terminal should print A,
-		if we create a Textblock "Hello World" render the console,
+	Test(`The terminal should print "A ",
+		if we create a Textblock "BC" render the console,
 		and then edit it with "A" and render the console again.`, func(t *testing.T) {
 		console, fakeTerminal, _ := setup()
-		tb := console.NewTextBlock("id1", "Hello World")
+		tb := console.NewTextBlock("id1", "BC")
 		console.Render()
 		tb.Edit("A")
 		console.Render()
-		assert.Equal(fakeTerminal.Text(), "A")
+		assert.Equal(fakeTerminal.Text(), "A ")
+	}, t)
+
+	Test(`The terminal should print " ",
+		if we create a Textblock "A" render the console,
+		and then edit it with "" and render the console again.`, func(t *testing.T) {
+		console, fakeTerminal, _ := setup()
+		tb := console.NewTextBlock("id1", "A")
+		console.Render()
+		tb.Edit("")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), " ")
 	}, t)
 }
 

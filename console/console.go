@@ -6,6 +6,7 @@ import (
 	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/internal/elements"
+	"github.com/redjolr/goherent/console/internal/utils"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
@@ -58,7 +59,12 @@ func (c *Console) Render() {
 		if alignedElement.element.HasChanged() {
 			renderChanges := alignedElement.element.Render()
 			for _, renderChange := range renderChanges {
-				c.terminal.Print(renderChange.After)
+				if len(renderChange.After) < len(renderChange.Before) {
+					c.terminal.Print(utils.StrRightPad(renderChange.After, " ", len(renderChange.Before)))
+				} else {
+					c.terminal.Print(renderChange.After)
+				}
+
 			}
 		}
 	}
