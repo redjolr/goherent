@@ -2,16 +2,18 @@ package cursor
 
 import (
 	"github.com/redjolr/goherent/console/coordinates"
+	"github.com/redjolr/goherent/console/terminal"
 )
 
 type Cursor struct {
-	coords *coordinates.Coordinates
+	terminal terminal.Terminal
+	coords   *coordinates.Coordinates
 }
 
-func NewCursor() Cursor {
-	origin := coordinates.Origin()
+func NewCursor(terminal terminal.Terminal, origin *coordinates.Coordinates) Cursor {
 	return Cursor{
-		coords: &origin,
+		terminal: terminal,
+		coords:   origin,
 	}
 }
 
@@ -25,7 +27,7 @@ func (c *Cursor) GoToOrigin() {
 }
 
 func (c *Cursor) MoveLeft(n int) {
-	c.coords.OffsetX(-n)
+	c.terminal.Print(terminal.MoveCursorLeftNCols(n))
 }
 
 func (c *Cursor) MoveAtBeginningOfLine() {
@@ -33,13 +35,13 @@ func (c *Cursor) MoveAtBeginningOfLine() {
 }
 
 func (c *Cursor) MoveRight(n int) {
-	c.coords.OffsetX(n)
+	c.terminal.Print(terminal.MoveCursorRightNCols(n))
 }
 
 func (c *Cursor) MoveDown(n int) {
-	c.coords.OffsetY(n)
+	c.terminal.Print(terminal.MoveCursorDownNRows(n))
 }
 
 func (c *Cursor) MoveUp(n int) {
-	c.coords.OffsetY(-n)
+	c.terminal.Print(terminal.MoveCursorUpNRows(n))
 }

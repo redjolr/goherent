@@ -5,33 +5,34 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/redjolr/goherent/console/cursor"
+	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type FakeAnsiTerminal struct {
 	lines  []string
-	cursor *cursor.Cursor
+	coords *coordinates.Coordinates
 }
 
-func NewFakeAnsiTerminal(cursor *cursor.Cursor) FakeAnsiTerminal {
+func NewFakeAnsiTerminal(origin *coordinates.Coordinates) FakeAnsiTerminal {
 	return FakeAnsiTerminal{
 		lines:  []string{""},
-		cursor: cursor,
+		coords: origin,
 	}
 }
 
 func (fat *FakeAnsiTerminal) Print(text string) {
+	// fmt.Println("\nCursor of Fake ansi terminal", fat.coords)
 	for len(text) > 0 {
 		if strings.HasPrefix(text, CursorToHomePosEscapeCode) {
 			text, _ = strings.CutPrefix(text, CursorToHomePosEscapeCode)
-			fat.cursor.GoToOrigin()
+			fat.coords.SetToOrigin()
 			continue
 		}
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
 			fat.lines = append(fat.lines, "")
-			fat.cursor.MoveDown(1)
-			fat.cursor.MoveAtBeginningOfLine()
+			fat.coords.OffsetY(1)
+			fat.coords.X = 0
 			continue
 		}
 
@@ -45,11 +46,12 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			moveLeftCountAsStr, _ := strings.CutPrefix(moveCursorLeftSeq, "\033[")
 			moveLeftCountAsStr, _ = strings.CutSuffix(moveLeftCountAsStr, "D")
 			moveLeftCount, err := strconv.Atoi(moveLeftCountAsStr)
+
 			if err != nil {
 				panic("Cannot determine the number steps to move left.")
 			}
 
-			fat.cursor.MoveLeft(min(moveLeftCount, fat.cursor.Coordinates().X))
+			fat.coords.OffsetX(-min(moveLeftCount, fat.coords.X))
 			continue
 		}
 
@@ -66,7 +68,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move right.")
 			}
-			fat.cursor.MoveRight(moveRightCount)
+			fat.coords.OffsetX(moveRightCount)
 			continue
 		}
 
@@ -83,11 +85,9 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move left.")
 			}
-			fat.cursor.MoveUp(min(moveUpCount, fat.cursor.Coordinates().Y))
-			if fat.cursor.Coordinates().X > len(fat.lines[fat.cursor.Coordinates().Y]) {
-				fat.lines[fat.cursor.Coordinates().Y] =
-					fat.lines[fat.cursor.Coordinates().Y] +
-						strings.Repeat(" ", fat.cursor.Coordinates().X-len(fat.lines[fat.cursor.Coordinates().Y]))
+			fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
+			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
+				fat.lines[fat.coords.Y] = fat.lines[fat.coords.Y] + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
 			}
 			continue
 		}
@@ -105,35 +105,33 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move down.")
 			}
-			fat.cursor.MoveDown(moveDownCount)
+			fat.coords.OffsetY(moveDownCount)
 			continue
 		}
 
 		// Append empty strings to the right
-		if fat.cursor.Coordinates().Y >= len(fat.lines) {
-			linesToAddCount := fat.cursor.Coordinates().Y - len(fat.lines) + 1
+		if fat.coords.Y >= len(fat.lines) {
+			linesToAddCount := fat.coords.Y - len(fat.lines) + 1
 			fat.lines = append(fat.lines, make([]string, linesToAddCount)...)
-			if fat.cursor.Coordinates().X > len(fat.lines[fat.cursor.Coordinates().Y]) {
-				fat.lines[fat.cursor.Coordinates().Y] =
-					fat.lines[fat.cursor.Coordinates().Y] +
-						strings.Repeat(" ", fat.cursor.Coordinates().X-len(fat.lines[fat.cursor.Coordinates().Y]))
+			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
+				fat.lines[fat.coords.Y] = fat.lines[fat.coords.Y] + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
 			}
 		}
 
 		firstChar := strings.Split(text, "")[0]
 		remainingChars := strings.Split(text, "")[1:]
-		if fat.cursor.Coordinates().X >= len(fat.lines[fat.cursor.Coordinates().Y]) {
-			emptySpacesToAdd := fat.cursor.Coordinates().X - len(fat.lines[fat.cursor.Coordinates().Y])
-			fat.lines[fat.cursor.Coordinates().Y] += strings.Repeat(" ", emptySpacesToAdd)
-			fat.lines[fat.cursor.Coordinates().Y] += firstChar
-			fat.cursor.MoveRight(1)
+		if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
+			emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
+			fat.lines[fat.coords.Y] += strings.Repeat(" ", emptySpacesToAdd)
+			fat.lines[fat.coords.Y] += firstChar
+			fat.coords.OffsetX(1)
 			text = strings.Join(remainingChars, "")
 		} else {
-			lineChars := strings.Split(fat.lines[fat.cursor.Coordinates().Y], "")
+			lineChars := strings.Split(fat.lines[fat.coords.Y], "")
 			text = strings.Join(remainingChars, "")
-			lineChars[fat.cursor.Coordinates().X] = firstChar
-			fat.lines[fat.cursor.Coordinates().Y] = strings.Join(lineChars, "")
-			fat.cursor.MoveRight(1)
+			lineChars[fat.coords.X] = firstChar
+			fat.lines[fat.coords.Y] = strings.Join(lineChars, "")
+			fat.coords.OffsetX(1)
 		}
 	}
 }

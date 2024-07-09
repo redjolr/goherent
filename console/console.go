@@ -6,7 +6,6 @@ import (
 	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/internal/elements"
-	"github.com/redjolr/goherent/console/internal/utils"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
@@ -46,9 +45,7 @@ func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 		coords:  c.cursor.Coordinates(),
 		element: &textBlock,
 	}
-
 	c.alignedElements = append(c.alignedElements, &textBlockElement)
-
 	return &textBlock
 }
 
@@ -57,21 +54,13 @@ func (c *Console) Render() {
 		return
 	}
 	c.cursor.GoToOrigin()
-
 	for _, alignedElement := range c.alignedElements {
 		if alignedElement.element.HasChanged() {
 			renderChanges := alignedElement.element.Render()
 			for _, renderChange := range renderChanges {
 				c.terminal.Print(renderChange.After)
-				lines := utils.SplitStringByNewLine(renderChange.After)
-				lastLine := lines[len(lines)-1]
-				c.cursor.MoveDown(utils.StrLinesCount(renderChange.After))
-				c.cursor.MoveAtBeginningOfLine()
-				c.cursor.MoveRight(len(lastLine))
 			}
-
 		}
-
 	}
 }
 
