@@ -62,32 +62,6 @@ func TestIsConsoleRendered(t *testing.T) {
 	}, t)
 }
 
-func TestRenderingTextBlock(t *testing.T) {
-	assert := assert.New(t)
-	Test("The terminal should print a single letter.", func(t *testing.T) {
-		console, fakeTerminal := setup()
-		console.NewTextBlock("id1", "A")
-		console.Render()
-		assert.Equal(fakeTerminal.Text(), "A")
-	}, t)
-
-	Test("The terminal should print a word.", func(t *testing.T) {
-		console, fakeTerminal := setup()
-
-		console.NewTextBlock("id1", "Hello")
-		console.Render()
-
-		assert.Equal(fakeTerminal.Text(), "Hello")
-	}, t)
-
-	Test("The terminal should print two lines.", func(t *testing.T) {
-		console, fakeTerminal := setup()
-		console.NewTextBlock("id1", "Hello\nThere")
-		console.Render()
-		assert.Equal(fakeTerminal.Text(), "Hello\nThere")
-	}, t)
-}
-
 func TestRenderingUnorderedList(t *testing.T) {
 	assert := assert.New(t)
 	Test(`The terminal should print "Some unordered list", 
@@ -143,12 +117,22 @@ func TestRenderingUnorderedList(t *testing.T) {
 	}, t)
 }
 
-func TestTextBlockWrite(t *testing.T) {
+func TestTextBlockRender(t *testing.T) {
 	assert := assert.New(t)
-	Test(`The terminal should print Hello, if we create a Textblock "Hello" and render the console.`, func(t *testing.T) {
+
+	Test("The terminal should print a single letter.", func(t *testing.T) {
 		console, fakeTerminal := setup()
+		console.NewTextBlock("id1", "A")
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "A")
+	}, t)
+
+	Test("The terminal should print a word.", func(t *testing.T) {
+		console, fakeTerminal := setup()
+
 		console.NewTextBlock("id1", "Hello")
 		console.Render()
+
 		assert.Equal(fakeTerminal.Text(), "Hello")
 	}, t)
 
