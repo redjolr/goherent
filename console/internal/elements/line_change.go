@@ -1,18 +1,16 @@
 package elements
 
 import (
-	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/utils"
 )
 
-type RenderChange struct {
+type LineChange struct {
 	Before     string
 	After      string
-	Coords     coordinates.Coordinates
 	IsAnUpdate bool
 }
 
-func (rc RenderChange) HasLineCountChanged() bool {
+func (rc LineChange) HasLineCountChanged() bool {
 	lineLengthBefore := len(utils.SplitStringByNewLine(rc.Before))
 	lineLengthAfter := len(utils.SplitStringByNewLine(rc.After))
 	return lineLengthAfter != lineLengthBefore

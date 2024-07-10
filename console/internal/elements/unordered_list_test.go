@@ -3,7 +3,6 @@ package elements_test
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/elements"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
@@ -250,8 +249,8 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "List name"},
 		})
 	}, t)
 
@@ -259,8 +258,8 @@ func TestRender(t *testing.T) {
 		Given that we create a list with header text "List name"
 		And the list has one item with text "Item 1"
 		When we render the changes
-		The output should contain a render change with RenderChange "List name" at coordinates 0, 0
-		and another RenderChange "\tItem 1" at coordinates 0, 1
+		The output should contain a render change with LineChange "List name" at coordinates 0, 0
+		and another LineChange "\tItem 1" at coordinates 0, 1
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
@@ -270,9 +269,9 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{Before: "", After: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{Before: "", After: "\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 1}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{Before: "", After: "List name"},
+			{Before: "", After: "\tItem 1"},
 		})
 	}, t)
 
@@ -294,10 +293,10 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{After: "\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 1}},
-			{After: "\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 2}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "List name"},
+			{After: "\tItem 1"},
+			{After: "\tItem 2"},
 		})
 	}, t)
 
@@ -318,8 +317,8 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 3}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tItem 3"},
 		})
 	}, t)
 
@@ -340,8 +339,8 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tSecond item", Coords: coordinates.Coordinates{X: 0, Y: 2}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tSecond item"},
 		})
 	}, t)
 
@@ -366,10 +365,10 @@ func TestRender(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 2}},
-			{After: "\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 3}},
-			{After: "\tItem 4", Coords: coordinates.Coordinates{X: 0, Y: 4}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tItem 2"},
+			{After: "\tItem 3"},
+			{After: "\tItem 4"},
 		})
 	}, t)
 }
@@ -387,8 +386,8 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// When
 		renderChanges := list.Render()
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "Line 1 \n Line 2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "Line 1 \n Line 2"},
 		})
 	}, t)
 
@@ -405,9 +404,9 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// When
 		renderChanges := list.Render()
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "Line 1 \n Line 2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{After: "\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 2}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "Line 1 \n Line 2"},
+			{After: "\tItem 1"},
 		})
 	}, t)
 
@@ -426,9 +425,9 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "Line 1 \n Line 2 \n Line 3 \n Line 4", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{After: "\tItem 1", Coords: coordinates.Coordinates{X: 0, Y: 4}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "Line 1 \n Line 2 \n Line 3 \n Line 4"},
+			{After: "\tItem 1"},
 		})
 	}, t)
 
@@ -447,10 +446,10 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// When
 		renderChanges := list.Render()
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "List name", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{After: "\tItem 1 Line1 \n Line2", Coords: coordinates.Coordinates{X: 0, Y: 1}},
-			{After: "\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 3}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "List name"},
+			{After: "\tItem 1 Line1 \n Line2"},
+			{After: "\tItem 2"},
 		})
 	}, t)
 
@@ -474,11 +473,11 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// When
 		renderChanges := list.Render()
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "List L1 \n L2", Coords: coordinates.Coordinates{X: 0, Y: 0}},
-			{After: "\tItem 1 L1 \n L2 \n L3", Coords: coordinates.Coordinates{X: 0, Y: 2}},
-			{After: "\tItem 2 L1 \n L2 \n L3 \n L4", Coords: coordinates.Coordinates{X: 0, Y: 5}},
-			{After: "\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 9}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "List L1 \n L2"},
+			{After: "\tItem 1 L1 \n L2 \n L3"},
+			{After: "\tItem 2 L1 \n L2 \n L3 \n L4"},
+			{After: "\tItem 3"},
 		})
 	}, t)
 
@@ -504,11 +503,11 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tThis \n is \n the \n first \n item", Coords: coordinates.Coordinates{X: 0, Y: 1}},
-			{After: "\tItem 2", Coords: coordinates.Coordinates{X: 0, Y: 6}},
-			{After: "\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 7}},
-			{After: "\tItem 4", Coords: coordinates.Coordinates{X: 0, Y: 8}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tThis \n is \n the \n first \n item"},
+			{After: "\tItem 2"},
+			{After: "\tItem 3"},
+			{After: "\tItem 4"},
 		})
 	}, t)
 
@@ -533,10 +532,10 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tThis \n is \n the \n second \n item", Coords: coordinates.Coordinates{X: 0, Y: 2}},
-			{After: "\tItem 3", Coords: coordinates.Coordinates{X: 0, Y: 7}},
-			{After: "\tItem 4", Coords: coordinates.Coordinates{X: 0, Y: 8}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tThis \n is \n the \n second \n item"},
+			{After: "\tItem 3"},
+			{After: "\tItem 4"},
 		})
 	}, t)
 
@@ -559,8 +558,8 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		renderChanges := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.RenderChange{
-			{After: "\tThis \n is \n the \n last \n item", Coords: coordinates.Coordinates{X: 0, Y: 4}},
+		assert.Equal(renderChanges, []elements.LineChange{
+			{After: "\tThis \n is \n the \n last \n item"},
 		})
 	}, t)
 }

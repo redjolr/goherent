@@ -3,7 +3,6 @@ package elements
 import (
 	"slices"
 
-	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/utils"
 )
 
@@ -28,10 +27,9 @@ func (ul *UnorderedList) NewItem(text string) *ListItem {
 		order:    len(ul.items),
 		text:     text,
 		rendered: false,
-		renderChange: RenderChange{
+		lineChange: LineChange{
 			Before: "",
 			After:  text,
-			Coords: coordinates.Origin(),
 		},
 	}
 
@@ -54,13 +52,12 @@ func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	return ul.items[listItemIndex]
 }
 
-func (ul *UnorderedList) Render() []RenderChange {
-	renderChanges := []RenderChange{}
+func (ul *UnorderedList) Render() []LineChange {
+	renderChanges := []LineChange{}
 	currentRenderedHeight := 0
 	if !ul.headingTextRendered {
-		renderChanges = append(renderChanges, RenderChange{
-			After:  ul.headingText,
-			Coords: coordinates.Coordinates{X: 0, Y: currentRenderedHeight},
+		renderChanges = append(renderChanges, LineChange{
+			After: ul.headingText,
 		})
 		ul.headingTextRendered = true
 	}
@@ -71,9 +68,8 @@ func (ul *UnorderedList) Render() []RenderChange {
 			renderChange := item.Render()
 			renderChanges = append(
 				renderChanges,
-				RenderChange{
-					After:  "\t" + renderChange.After,
-					Coords: coordinates.Coordinates{X: 0, Y: currentRenderedHeight},
+				LineChange{
+					After: "\t" + renderChange.After,
 				},
 			)
 			if renderChange.IsAnUpdate && renderChange.HasLineCountChanged() {

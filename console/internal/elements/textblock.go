@@ -1,30 +1,28 @@
 package elements
 
 import (
-	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/internal/utils"
 )
 
 type Textblock struct {
 	id            string
 	text          string
-	renderChanges []RenderChange
+	renderChanges []LineChange
 	rendered      bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
 
-	renderChange := RenderChange{
+	renderChange := LineChange{
 		Before:     "",
 		After:      text,
-		Coords:     coordinates.Origin(),
 		IsAnUpdate: false,
 	}
 
 	return Textblock{
 		id:            id,
 		text:          text,
-		renderChanges: []RenderChange{renderChange},
+		renderChanges: []LineChange{renderChange},
 		rendered:      false,
 	}
 }
@@ -58,10 +56,9 @@ func (tb *Textblock) longestLine() string {
 
 func (tb *Textblock) Edit(text string) {
 	tb.rendered = false
-	tb.renderChanges = []RenderChange{{
+	tb.renderChanges = []LineChange{{
 		Before:     tb.text,
 		After:      text,
-		Coords:     coordinates.Origin(),
 		IsAnUpdate: true,
 	}}
 	tb.text = text
@@ -71,14 +68,14 @@ func (tb *Textblock) HasChanged() bool {
 	return !tb.rendered
 }
 
-func (tb *Textblock) Render() []RenderChange {
+func (tb *Textblock) Render() []LineChange {
 	if tb.rendered {
-		return []RenderChange{}
+		return []LineChange{}
 	}
-	renderChanges := make([]RenderChange, len(tb.renderChanges))
+	renderChanges := make([]LineChange, len(tb.renderChanges))
 	copy(renderChanges, tb.renderChanges)
 	tb.rendered = true
-	tb.renderChanges = []RenderChange{}
+	tb.renderChanges = []LineChange{}
 	return renderChanges
 }
 
