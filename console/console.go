@@ -19,6 +19,7 @@ type Console struct {
 	terminal        terminal.Terminal
 	alignedElements []*alignedElement
 	cursor          *cursor.Cursor
+	renderedLines   []string
 }
 
 func NewConsole(terminal terminal.Terminal, cursor *cursor.Cursor) Console {
@@ -57,14 +58,16 @@ func (c *Console) Render() {
 	c.cursor.GoToOrigin()
 	for _, alignedElement := range c.alignedElements {
 		if alignedElement.element.HasChanged() {
-			renderChanges := alignedElement.element.Render()
-			for _, renderChange := range renderChanges {
-				if len(renderChange.After) < len(renderChange.Before) {
-					c.terminal.Print(utils.StrRightPad(renderChange.After, " ", len(renderChange.Before)))
+			lineChanges := alignedElement.element.Render()
+			for lineIndex, lineChange := range lineChanges {
+				if len(lineChange.After) < len(lineChange.Before) {
+					c.terminal.Print(utils.StrRightPad(lineChange.After, " ", len(lineChange.Before)))
 				} else {
-					c.terminal.Print(renderChange.After)
+					c.terminal.Print(lineChange.After)
 				}
-
+				if lineIndex < len(lineChanges)-1 {
+					c.terminal.Print("\n")
+				}
 			}
 		}
 	}

@@ -5,25 +5,28 @@ import (
 )
 
 type Textblock struct {
-	id            string
-	text          string
-	renderChanges []LineChange
-	rendered      bool
+	id          string
+	lines       []string
+	lineChanges []LineChange
+	rendered    bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
-
-	renderChange := LineChange{
-		Before:     "",
-		After:      text,
-		IsAnUpdate: false,
+	lines := utils.SplitStringByNewLine(text)
+	lineChanges := []LineChange{}
+	for _, line := range lines {
+		lineChanges = append(lineChanges, LineChange{
+			Before:     "",
+			After:      line,
+			IsAnUpdate: false,
+		})
 	}
 
 	return Textblock{
-		id:            id,
-		text:          text,
-		renderChanges: []LineChange{renderChange},
-		rendered:      false,
+		id:          id,
+		lines:       lines,
+		lineChanges: lineChanges,
+		rendered:    false,
 	}
 }
 
@@ -32,7 +35,7 @@ func (tb *Textblock) HasId(id string) bool {
 }
 
 func (tb *Textblock) Height() int {
-	return utils.StrLinesCount(tb.text)
+	return len(tb.lines)
 }
 
 func (tb *Textblock) Width() int {
@@ -40,13 +43,12 @@ func (tb *Textblock) Width() int {
 }
 
 func (tb *Textblock) longestLine() string {
-	lines := utils.SplitStringByNewLine(tb.text)
-	if len(lines) == 0 {
+	if len(tb.lines) == 0 {
 		return ""
 	}
 
-	longest := lines[0]
-	for _, line := range lines {
+	longest := tb.lines[0]
+	for _, line := range tb.lines {
 		if len(line) > len(longest) {
 			longest = line
 		}
@@ -55,13 +57,28 @@ func (tb *Textblock) longestLine() string {
 }
 
 func (tb *Textblock) Edit(text string) {
+	lines := utils.SplitStringByNewLine(text)
+	lineChanges := []LineChange{}
+	for i, line := range lines {
+		if i < len(tb.lines) && tb.lines[i] != line {
+			lineChanges = append(lineChanges, LineChange{
+				Before:     tb.lines[i],
+				After:      line,
+				IsAnUpdate: true,
+			})
+		} else if i >= len(tb.lines) {
+			lineChanges = append(lineChanges, LineChange{
+				Before:     "",
+				After:      line,
+				IsAnUpdate: false,
+			})
+		}
+
+	}
+
 	tb.rendered = false
-	tb.renderChanges = []LineChange{{
-		Before:     tb.text,
-		After:      text,
-		IsAnUpdate: true,
-	}}
-	tb.text = text
+	tb.lineChanges = lineChanges
+	tb.lines = lines
 }
 
 func (tb *Textblock) HasChanged() bool {
@@ -72,10 +89,10 @@ func (tb *Textblock) Render() []LineChange {
 	if tb.rendered {
 		return []LineChange{}
 	}
-	renderChanges := make([]LineChange, len(tb.renderChanges))
-	copy(renderChanges, tb.renderChanges)
+	renderChanges := make([]LineChange, len(tb.lineChanges))
+	copy(renderChanges, tb.lineChanges)
 	tb.rendered = true
-	tb.renderChanges = []LineChange{}
+	tb.lineChanges = []LineChange{}
 	return renderChanges
 }
 
