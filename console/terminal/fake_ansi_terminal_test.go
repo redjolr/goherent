@@ -54,6 +54,18 @@ func TestPrintBasic(t *testing.T) {
 		fakeTerminal.Print("World")
 		assert.Equal(fakeTerminal.Text(), "Hello\nWorld")
 	}, t)
+
+	Test(`it should print "AAA\nBAA"
+		if we print "AAA\n", then "AAA", then MoveCursorUpNRows(1), then "\n", then "B"
+	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("AAA\n")
+		fakeTerminal.Print("AAA")
+		fakeTerminal.Print(terminal.MoveCursorUpNRows(1))
+		fakeTerminal.Print("\n")
+		fakeTerminal.Print("B")
+		assert.Equal(fakeTerminal.Text(), "AAA\nBAA")
+	}, t)
 }
 
 func TestPrintWithCursorToHomePosEscapeCode(t *testing.T) {

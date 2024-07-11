@@ -30,7 +30,9 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
-			fat.lines = append(fat.lines, "")
+			if fat.coords.Y == len(fat.lines)-1 {
+				fat.lines = append(fat.lines, "")
+			}
 			fat.coords.OffsetY(1)
 			fat.coords.X = 0
 			continue

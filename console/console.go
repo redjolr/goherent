@@ -2,6 +2,7 @@ package console
 
 import (
 	"slices"
+	"strings"
 
 	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
@@ -30,16 +31,16 @@ func NewConsole(terminal terminal.Terminal, cursor *cursor.Cursor) Console {
 	}
 }
 
-func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
-	unorderedList := elements.NewUnorderedList(id, headingText)
-	unorderedListElement := alignedElement{
-		coords:  c.cursor.Coordinates(),
-		element: &unorderedList,
-	}
-	c.alignedElements = append(c.alignedElements, &unorderedListElement)
+// func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
+// 	unorderedList := elements.NewUnorderedList(id, headingText)
+// 	unorderedListElement := alignedElement{
+// 		coords:  c.cursor.Coordinates(),
+// 		element: &unorderedList,
+// 	}
+// 	c.alignedElements = append(c.alignedElements, &unorderedListElement)
 
-	return &unorderedList
-}
+// 	return &unorderedList
+// }
 
 func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 	textBlock := elements.NewTextBlock(id, text)
@@ -56,20 +57,41 @@ func (c *Console) Render() {
 		return
 	}
 	c.cursor.GoToOrigin()
+
+	overallLineIndex := 0
 	for _, alignedElement := range c.alignedElements {
+
 		if alignedElement.element.HasChanged() {
-			lineChanges := alignedElement.element.Render()
-			for lineIndex, lineChange := range lineChanges {
-				if len(lineChange.After) < len(lineChange.Before) {
-					c.terminal.Print(utils.StrRightPad(lineChange.After, " ", len(lineChange.Before)))
-				} else {
-					c.terminal.Print(lineChange.After)
-				}
-				if lineIndex < len(lineChanges)-1 {
+			lines := alignedElement.element.Render()
+			for _, line := range lines {
+				if overallLineIndex != 0 {
 					c.terminal.Print("\n")
 				}
+				if overallLineIndex > len(c.renderedLines)-1 {
+					c.renderedLines = append(c.renderedLines, line)
+					c.terminal.Print(line)
+				} else if line != c.renderedLines[overallLineIndex] {
+
+					if len(line) < len(c.renderedLines[overallLineIndex]) {
+						c.renderedLines[overallLineIndex] = utils.StrRightPad(line, " ", len(c.renderedLines[overallLineIndex]))
+						c.terminal.Print(c.renderedLines[overallLineIndex])
+					} else if len(line) >= len(c.renderedLines[overallLineIndex]) {
+						c.renderedLines[overallLineIndex] = line
+						c.terminal.Print(line)
+					}
+				}
+				overallLineIndex += 1
 			}
+		} else {
+			overallLineIndex += alignedElement.element.Height()
 		}
+	}
+	for ; overallLineIndex < len(c.renderedLines); overallLineIndex++ {
+		c.cursor.GoToOrigin()
+		c.cursor.MoveDown(overallLineIndex)
+		whitespacesOverwrite := strings.Repeat(" ", len(c.renderedLines[overallLineIndex]))
+		c.terminal.Print(whitespacesOverwrite)
+		c.renderedLines[overallLineIndex] = whitespacesOverwrite
 	}
 }
 

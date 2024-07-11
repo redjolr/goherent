@@ -5,28 +5,18 @@ import (
 )
 
 type Textblock struct {
-	id          string
-	lines       []string
-	lineChanges []LineChange
-	rendered    bool
+	id       string
+	lines    []string
+	rendered bool
 }
 
 func NewTextBlock(id string, text string) Textblock {
 	lines := utils.SplitStringByNewLine(text)
-	lineChanges := []LineChange{}
-	for _, line := range lines {
-		lineChanges = append(lineChanges, LineChange{
-			Before:     "",
-			After:      line,
-			IsAnUpdate: false,
-		})
-	}
 
 	return Textblock{
-		id:          id,
-		lines:       lines,
-		lineChanges: lineChanges,
-		rendered:    false,
+		id:       id,
+		lines:    lines,
+		rendered: false,
 	}
 }
 
@@ -58,26 +48,7 @@ func (tb *Textblock) longestLine() string {
 
 func (tb *Textblock) Edit(text string) {
 	lines := utils.SplitStringByNewLine(text)
-	lineChanges := []LineChange{}
-	for i, line := range lines {
-		if i < len(tb.lines) && tb.lines[i] != line {
-			lineChanges = append(lineChanges, LineChange{
-				Before:     tb.lines[i],
-				After:      line,
-				IsAnUpdate: true,
-			})
-		} else if i >= len(tb.lines) {
-			lineChanges = append(lineChanges, LineChange{
-				Before:     "",
-				After:      line,
-				IsAnUpdate: false,
-			})
-		}
-
-	}
-
-	tb.rendered = false
-	tb.lineChanges = lineChanges
+	tb.rendered = false // Test it when you edit it with the same text
 	tb.lines = lines
 }
 
@@ -85,15 +56,8 @@ func (tb *Textblock) HasChanged() bool {
 	return !tb.rendered
 }
 
-func (tb *Textblock) Render() []LineChange {
-	if tb.rendered {
-		return []LineChange{}
-	}
-	renderChanges := make([]LineChange, len(tb.lineChanges))
-	copy(renderChanges, tb.lineChanges)
-	tb.rendered = true
-	tb.lineChanges = []LineChange{}
-	return renderChanges
+func (tb *Textblock) Render() []string {
+	return tb.lines
 }
 
 func (tb *Textblock) IsRendered() bool {
