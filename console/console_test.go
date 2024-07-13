@@ -247,6 +247,26 @@ func TestTextBlockRender(t *testing.T) {
 
 func TestMultipleTextblocksRender(t *testing.T) {
 	assert := assert.New(t)
+
+	Test(`The terminal should print "\n", if we create two textblocks "" and "" and render the console`, func(t *testing.T) {
+		console, fakeTerminal, _ := setup()
+		console.NewTextBlock("id1", "")
+		console.NewTextBlock("id2", "")
+		console.Render()
+
+		assert.Equal(fakeTerminal.Text(), "\n")
+	}, t)
+
+	Test(`The terminal should print "\n", if we create three "" textblocks and render the console`, func(t *testing.T) {
+		console, fakeTerminal, _ := setup()
+		console.NewTextBlock("id1", "")
+		console.NewTextBlock("id2", "")
+		console.NewTextBlock("id3", "")
+
+		console.Render()
+		assert.Equal(fakeTerminal.Text(), "\n\n")
+	}, t)
+
 	Test(`The terminal should print Hello\nWorld, if we create two textblocks "Hello" and "World"`, func(t *testing.T) {
 		console, fakeTerminal, _ := setup()
 		console.NewTextBlock("id1", "Hello")
