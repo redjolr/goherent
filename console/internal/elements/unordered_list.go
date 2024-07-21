@@ -7,30 +7,27 @@ import (
 )
 
 type UnorderedList struct {
-	id                  string
-	headingText         string
-	items               []*ListItem
-	headingTextRendered bool
+	id           string
+	name         string
+	items        []*ListItem
+	nameRendered bool
 }
 
-func NewUnorderedList(id string, headingText string) UnorderedList {
+func NewUnorderedList(id string, name string) UnorderedList {
 	return UnorderedList{
-		id:                  id,
-		headingText:         headingText,
-		items:               []*ListItem{},
-		headingTextRendered: false,
+		id:           id,
+		name:         name,
+		items:        []*ListItem{},
+		nameRendered: false,
 	}
 }
 
 func (ul *UnorderedList) NewItem(text string) *ListItem {
+	lines := utils.SplitStringByNewLine(text)
 	item := ListItem{
 		order:    len(ul.items),
-		text:     text,
+		lines:    lines,
 		rendered: false,
-		lineChange: LineChange{
-			Before: "",
-			After:  text,
-		},
 	}
 
 	ul.items = append(ul.items, &item)
@@ -52,33 +49,21 @@ func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {
 	return ul.items[listItemIndex]
 }
 
-func (ul *UnorderedList) Render() []LineChange {
-	renderChanges := []LineChange{}
-	currentRenderedHeight := 0
-	if !ul.headingTextRendered {
-		renderChanges = append(renderChanges, LineChange{
-			After: ul.headingText,
-		})
-		ul.headingTextRendered = true
-	}
-	currentRenderedHeight += utils.StrLinesCount(ul.headingText)
+func (ul *UnorderedList) EditName(newName string) {
+	ul.nameRendered = false
+	ul.name = newName
+}
 
+func (ul *UnorderedList) Render() []string {
+	lines := utils.SplitStringByNewLine(ul.name)
 	for _, item := range ul.items {
-		if !item.IsRendered() {
-			renderChange := item.Render()
-			renderChanges = append(
-				renderChanges,
-				LineChange{
-					After: "\t" + renderChange.After,
-				},
-			)
-			if renderChange.IsAnUpdate && renderChange.HasLineCountChanged() {
-				ul.markForRerenderStartingAtItem(item)
-			}
+		for _, itemLine := range item.Render() {
+			lines = append(lines, "\t"+itemLine)
+
 		}
-		currentRenderedHeight += utils.StrLinesCount(item.Text())
 	}
-	return renderChanges
+	ul.nameRendered = true
+	return lines
 }
 
 func (ul *UnorderedList) HasChanged() bool {
@@ -89,7 +74,7 @@ func (ul *UnorderedList) IsRendered() bool {
 	atLeastOneItemUnrendered := slices.ContainsFunc(ul.items, func(item *ListItem) bool {
 		return !item.IsRendered()
 	})
-	return !atLeastOneItemUnrendered && ul.headingTextRendered
+	return !atLeastOneItemUnrendered && ul.nameRendered
 }
 
 func (ul *UnorderedList) HasId(id string) bool {

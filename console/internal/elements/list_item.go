@@ -1,32 +1,31 @@
 package elements
 
+import (
+	"strings"
+
+	"github.com/redjolr/goherent/console/internal/utils"
+)
+
 type ListItem struct {
-	order      int
-	text       string
-	rendered   bool
-	lineChange LineChange
+	order    int
+	lines    []string
+	rendered bool
 }
 
 func (li *ListItem) Text() string {
-	return li.text
+	return strings.Join(li.lines, "\n")
 }
 
 func (li *ListItem) Edit(newText string) {
-	li.rendered = false
-	li.lineChange = LineChange{
-		Before:     li.text,
-		After:      newText,
-		IsAnUpdate: true,
-	}
-	li.text = newText
+	lines := utils.SplitStringByNewLine(newText)
+	li.rendered = false // Test it when you edit it with the same text
+	li.lines = lines
 
 }
 
-func (li *ListItem) Render() LineChange {
-	renderChange := li.lineChange
+func (li *ListItem) Render() []string {
 	li.rendered = true
-	li.lineChange = LineChange{}
-	return renderChange
+	return li.lines
 }
 
 func (li *ListItem) IsRendered() bool {
@@ -35,8 +34,4 @@ func (li *ListItem) IsRendered() bool {
 
 func (li *ListItem) MarkUnrendered() {
 	li.rendered = false
-	li.lineChange = LineChange{
-		Before: li.text,
-		After:  li.text,
-	}
 }

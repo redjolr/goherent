@@ -9,6 +9,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/console"
+	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
@@ -17,8 +18,10 @@ import (
 
 func setupE2e() (cmd.EventsHandler, terminal.FakeAnsiTerminal) {
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	cursor := cursor.NewCursor()
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&cursor)
+	cursorOrigin := coordinates.Origin()
+
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&cursorOrigin)
+	cursor := cursor.NewCursor(&fakeAnsiTerminal, &cursorOrigin)
 
 	outputConsole := console.NewConsole(&fakeAnsiTerminal, &cursor)
 	terminalPresenter := cmd.NewTerminalPresenter(&outputConsole)

@@ -57,6 +57,7 @@ func (tb *Textblock) HasChanged() bool {
 }
 
 func (tb *Textblock) Render() []string {
+	tb.rendered = true
 	return tb.lines
 }
 

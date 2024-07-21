@@ -7,6 +7,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/console"
+	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/terminal"
 )
@@ -17,8 +18,11 @@ type Router struct {
 }
 
 func NewRouter() Router {
-	cursor := cursor.NewCursor()
 	ansiTerminal := terminal.NewAnsiTerminal()
+	cursorOrigin := coordinates.Origin()
+
+	cursor := cursor.NewCursor(&ansiTerminal, &cursorOrigin)
+
 	container := console.NewConsole(&ansiTerminal, &cursor)
 	terminalPresenter := NewTerminalPresenter(&container)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()

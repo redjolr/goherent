@@ -31,16 +31,16 @@ func NewConsole(terminal terminal.Terminal, cursor *cursor.Cursor) Console {
 	}
 }
 
-// func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
-// 	unorderedList := elements.NewUnorderedList(id, headingText)
-// 	unorderedListElement := alignedElement{
-// 		coords:  c.cursor.Coordinates(),
-// 		element: &unorderedList,
-// 	}
-// 	c.alignedElements = append(c.alignedElements, &unorderedListElement)
+func (c *Console) NewUnorderedList(id string, headingText string) *elements.UnorderedList {
+	unorderedList := elements.NewUnorderedList(id, headingText)
+	unorderedListElement := alignedElement{
+		coords:  c.cursor.Coordinates(),
+		element: &unorderedList,
+	}
+	c.alignedElements = append(c.alignedElements, &unorderedListElement)
 
-// 	return &unorderedList
-// }
+	return &unorderedList
+}
 
 func (c *Console) NewTextBlock(id string, text string) *elements.Textblock {
 	textBlock := elements.NewTextBlock(id, text)
