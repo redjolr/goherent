@@ -6,7 +6,7 @@ import (
 
 	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/cursor"
-	"github.com/redjolr/goherent/console/internal/elements"
+	"github.com/redjolr/goherent/console/elements"
 	"github.com/redjolr/goherent/console/internal/utils"
 	"github.com/redjolr/goherent/console/terminal"
 )
@@ -106,4 +106,15 @@ func (c *Console) HasElementWithId(id string) bool {
 	return slices.ContainsFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
 		return alignedElement.element.HasId(id)
 	})
+}
+
+func (c *Console) GetElementWithId(id string) Element {
+	idx := slices.IndexFunc(c.alignedElements, func(alignedElement *alignedElement) bool {
+		return alignedElement.element.HasId(id)
+	})
+
+	if idx == -1 {
+		return nil
+	}
+	return c.alignedElements[idx].element
 }

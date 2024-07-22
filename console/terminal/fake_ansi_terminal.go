@@ -21,8 +21,7 @@ func NewFakeAnsiTerminal(origin *coordinates.Coordinates) FakeAnsiTerminal {
 }
 
 func (fat *FakeAnsiTerminal) Print(text string) {
-	// fmt.Println("\nCursor of Fake ansi terminal", fat.coords)
-	for len(text) > 0 {
+	for len(strings.Split(text, "")) > 0 {
 		if strings.HasPrefix(text, CursorToHomePosEscapeCode) {
 			text, _ = strings.CutPrefix(text, CursorToHomePosEscapeCode)
 			fat.coords.SetToOrigin()
@@ -126,7 +125,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
 			fat.lines[fat.coords.Y] += strings.Repeat(" ", emptySpacesToAdd)
 			fat.lines[fat.coords.Y] += firstChar
-			fat.coords.OffsetX(1)
+			fat.coords.OffsetX(len(firstChar))
 			text = strings.Join(remainingChars, "")
 		} else {
 			lineChars := strings.Split(fat.lines[fat.coords.Y], "")

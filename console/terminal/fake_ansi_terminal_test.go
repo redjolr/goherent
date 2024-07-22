@@ -25,6 +25,50 @@ func TestNewFakeAnsiTerminal(t *testing.T) {
 
 func TestPrintBasic(t *testing.T) {
 	assert := assert.New(t)
+
+	Test(`It should store the string "A ", if we print "A "	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("A ")
+		assert.Equal(fakeTerminal.Text(), "A ")
+	}, t)
+
+	Test(`It should store the string "🚀", if we print "🚀"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("🚀")
+		assert.Equal(fakeTerminal.Text(), "🚀")
+	}, t)
+
+	Test(`It should store the string "\n🚀", if we print "\n🚀"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("\n🚀")
+		assert.Equal(fakeTerminal.Text(), "\n🚀")
+	}, t)
+
+	Test(`It should store the string "🚀A", if we print "🚀A"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("🚀A")
+		assert.Equal(fakeTerminal.Text(), "🚀A")
+	}, t)
+
+	Test(`It should store the string "🚀🚀A", if we print "🚀🚀A"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("🚀🚀A")
+		assert.Equal(fakeTerminal.Text(), "🚀🚀A")
+	}, t)
+
+	Test(`It should store the string "A🚀🚀A", if we print "A🚀🚀A"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("A🚀🚀A")
+		assert.Equal(fakeTerminal.Text(), "A🚀🚀A")
+	}, t)
+
+	Test(`It should store the string "\n🚀 Starting... 2006-01-02 15:04:05.000\n\n", 
+		if we print "\n🚀 Starting... 2006-01-02 15:04:05.000\n\n"	`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("\n🚀 Starting... 2006-01-02 15:04:05.000\n\n")
+		assert.Equal(fakeTerminal.Text(), "\n🚀 Starting... 2006-01-02 15:04:05.000\n\n")
+	}, t)
+
 	Test(`it should store the string "Hello", if we print "Hello".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")

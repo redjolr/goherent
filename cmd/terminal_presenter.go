@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/console"
+	"github.com/redjolr/goherent/console/elements"
 )
 
 const testsListId string = "testsList"
@@ -30,7 +31,7 @@ func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
 
 func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
 	if !tp.console.HasElementWithId(testsListId) {
-		tp.console.NewUnorderedList(testsListId, fmt.Sprintf("📦⏳ %s\n", packageName))
+		tp.console.NewUnorderedList(testsListId, fmt.Sprintf("📦⏳ %s", packageName))
 	}
 	tp.console.Render()
 }
@@ -39,12 +40,30 @@ func (pressenter *TerminalPresenter) CtestStartedRunning(testName string) {
 	fmt.Printf("\t⏳ %s\n\n", testName)
 }
 
-func (presenter *TerminalPresenter) CtestPassed(testName string, testDuration float64) {
-	fmt.Printf("\t✅ %s\n \t%f\n\n", testName, testDuration)
+func (tp *TerminalPresenter) CtestPassed(testName string, testDuration float64) {
+	var testsList *elements.UnorderedList
+	if tp.console.HasElementWithId(testsListId) {
+		existingElement := tp.console.GetElementWithId(testsListId)
+		testsList = existingElement.(*elements.UnorderedList)
+	} else {
+		panic("Test list does not exist")
+	}
+	testsList.NewItem(fmt.Sprintf("✅ %s", testName))
+	testsList.NewItem(fmt.Sprintf("  %.2fs", testDuration))
+	tp.console.Render()
 }
 
-func (presenter *TerminalPresenter) CtestFailed(testName string, testDuration float64) {
-	fmt.Printf("\t❌ %s\n \t%f\n\n", testName, testDuration)
+func (tp *TerminalPresenter) CtestFailed(testName string, testDuration float64) {
+	var testsList *elements.UnorderedList
+	if tp.console.HasElementWithId(testsListId) {
+		existingElement := tp.console.GetElementWithId(testsListId)
+		testsList = existingElement.(*elements.UnorderedList)
+	} else {
+		panic("Test list does not exist")
+	}
+	testsList.NewItem(fmt.Sprintf("❌ %s", testName))
+	testsList.NewItem(fmt.Sprintf("  %.2fs", testDuration))
+	tp.console.Render()
 }
 
 func (presenter *TerminalPresenter) CtestOutput(testName string, packageName string, output string) {

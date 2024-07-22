@@ -3,7 +3,7 @@ package elements_test
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/console/internal/elements"
+	"github.com/redjolr/goherent/console/elements"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
