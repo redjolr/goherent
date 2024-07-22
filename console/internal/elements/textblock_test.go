@@ -11,61 +11,51 @@ import (
 func TestTextBlockRender(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
-	it should render LineChange{ Before: "", After: "", coords: 0,0, IsAnUpdate: false },
-	if we pass an empty string`, func(t *testing.T) {
+	it should render the lines: "",
+	if we create a new Textblock with an empty string.`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "")
-		renderChanges := textBlock.Render()
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "", After: "", IsAnUpdate: false},
-		})
+		renderLines := textBlock.Render()
+		assert.Equal(renderLines, []string{""})
 	}, t)
 
 	Test(`
-	it should render LineChange{ Before: "", After: "A", coords: 0,0, IsAnUpdate: false },
-	if we pass the string "A"`, func(t *testing.T) {
+		it should render the lines: "A"
+		if we create a new Textblock with "A" as text.`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "A")
-		renderChanges := textBlock.Render()
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "", After: "A", IsAnUpdate: false},
-		})
+		renderLines := textBlock.Render()
+		assert.Equal(renderLines, []string{"A"})
+
 	}, t)
 
 	Test(`
-	it should render LineChange{ Before: "", After: "\n", coords: 0,0, IsAnUpdate: false },
-	if we pass the string "\n"`, func(t *testing.T) {
+		it should render two empty lines
+		if we create a new Textblock with "\n" as text.`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "\n")
-		renderChanges := textBlock.Render()
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "", After: "\n", IsAnUpdate: false},
-		})
+		renderLines := textBlock.Render()
+		assert.Equal(renderLines, []string{"", ""})
 	}, t)
 
 	Test(`
-	it should render LineChange{ Before: "", After: "\n\n", coords: 0,0, IsAnUpdate: false },
-	if we pass the string "\n\n"`, func(t *testing.T) {
+		it should render three empty lines
+		if we create a new Textblock with "\n\n" as text.`, func(t *testing.T) {
 		textBlock := elements.NewTextBlock("id", "\n\n")
-		renderChanges := textBlock.Render()
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "", After: "\n\n", IsAnUpdate: false},
-		})
+		renderLines := textBlock.Render()
+		assert.Equal(renderLines, []string{"", "", ""})
 	}, t)
 
 	Test(`
-	it should render LineChange{ Before: "", After: "Line1 \n Line2", coords: 0,0, IsAnUpdate: false },
-	if we pass the string "\n\n"`, func(t *testing.T) {
-		textBlock := elements.NewTextBlock("id", "Line1 \n Line2")
-		renderChanges := textBlock.Render()
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "", After: "Line1 \n Line2", IsAnUpdate: false},
-		})
+		it should render these lines: "Line 1", "Line 2"
+		if we create a new Textblock with "Line 1\nLine 2" as text.`, func(t *testing.T) {
+		textBlock := elements.NewTextBlock("id", "Line 1\nLine 2")
+		renderLines := textBlock.Render()
+		assert.Equal(renderLines, []string{"Line 1", "Line 2"})
 	}, t)
 
 	Test(`
 		Given that we have a rendered Textblock "First textblock"
 		And the textblock is edited to "Second textblock"
 		When we render the changes
-		Then the output should contain the following render changes:
-		- LineChange{ Before: "First textblock", After: "Second textblock", coords: 0,0, IsAnUpdate: true },
+		Then the output should contain the following line: "Second textblock"
 	`, func(t *testing.T) {
 		// Given
 		textBlock := elements.NewTextBlock("id", "First textblock")
@@ -73,11 +63,9 @@ func TestTextBlockRender(t *testing.T) {
 		textBlock.Edit("Second textblock")
 
 		// When
-		renderChanges := textBlock.Render()
+		renderLines := textBlock.Render()
 
 		// Then
-		assert.Equal(renderChanges, []elements.LineChange{
-			{Before: "First textblock", After: "Second textblock", IsAnUpdate: true},
-		})
+		assert.Equal(renderLines, []string{"Second textblock"})
 	}, t)
 }

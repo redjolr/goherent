@@ -263,10 +263,10 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 1")
 
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"List name", "\tItem 1"})
+		assert.Equal(renderLines, []string{"List name", "\tItem 1"})
 	}, t)
 
 	Test(`
@@ -284,10 +284,10 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 2")
 
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"List name", "\tItem 1", "\tItem 2"})
+		assert.Equal(renderLines, []string{"List name", "\tItem 1", "\tItem 2"})
 
 	}, t)
 
@@ -309,10 +309,10 @@ func TestRender(t *testing.T) {
 		list.NewItem("Item 3")
 
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"List name", "\tItem 1", "\tItem 2", "\tItem 3"})
+		assert.Equal(renderLines, []string{"List name", "\tItem 1", "\tItem 2", "\tItem 3"})
 	}, t)
 
 	Test(`
@@ -333,10 +333,10 @@ func TestRender(t *testing.T) {
 
 		// When
 		item2.Edit("Second item")
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"List name", "\tItem 1", "\tSecond item", "\tItem 3"})
+		assert.Equal(renderLines, []string{"List name", "\tItem 1", "\tSecond item", "\tItem 3"})
 	}, t)
 
 	Test(`
@@ -359,10 +359,10 @@ func TestRender(t *testing.T) {
 
 		// When
 		item2.Edit("Item 2")
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"List name", "\tItem 1", "\tItem 2", "\tItem 3", "\tItem 4"})
+		assert.Equal(renderLines, []string{"List name", "\tItem 1", "\tItem 2", "\tItem 3", "\tItem 4"})
 	}, t)
 }
 
@@ -377,9 +377,9 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "Line 1\nLine 2")
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 		// Then
-		assert.Equal(renderChanges, []string{"Line 1", "Line 2"})
+		assert.Equal(renderLines, []string{"Line 1", "Line 2"})
 	}, t)
 
 	Test(`
@@ -394,158 +394,135 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 		list := elements.NewUnorderedList("id", "Line 1\nLine 2")
 		list.NewItem("Item 1")
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 		// Then
-		assert.Equal(renderChanges, []string{"Line 1", "Line 2", "\tItem 1"})
+		assert.Equal(renderLines, []string{"Line 1", "Line 2", "\tItem 1"})
 
 	}, t)
 
 	Test(`
 		Given that we have a list with header text "Line 1\nLine 2\nLine 3\nLine 4" and one item "Item 1"
 		When we render the changes
-		The output should contain the following lines:
-		"Line 1", "Line 2", "Line 3", "Line 4", "\tItem 1"
+		The output should contain the following lines: "Line 1", "Line 2", "Line 3", "Line 4", "\tItem 1"
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "Line 1\nLine 2\nLine 3\nLine 4")
 		list.NewItem("Item 1")
 
 		// When
-		renderChanges := list.Render()
+		renderLines := list.Render()
 
 		// Then
-		assert.Equal(renderChanges, []string{"Line 1", "Line 2", "Line 3", "Line 4", "\tItem 1"})
+		assert.Equal(renderLines, []string{"Line 1", "Line 2", "Line 3", "Line 4", "\tItem 1"})
 	}, t)
 
-	// Test(`
-	// 	Given that we have a list with header text "List name" and two items: "Item 1 Line1 \n Line2" and "Item 2"
-	// 	When we render the changes
-	// 	The output should contain the following render changes:
-	// 	- "List name" at coords 0,0
-	// 	- "\tItem 1 Line1 \n Line2" at coords 0,1
-	// 	- "\tItem 2" at coords 0,3
-	// `, func(t *testing.T) {
-	// 	// Given
-	// 	list := elements.NewUnorderedList("id", "List name")
-	// 	list.NewItem("Item 1 Line1 \n Line2")
-	// 	list.NewItem("Item 2")
-	// 	// When
-	// 	renderChanges := list.Render()
-	// 	// Then
-	// 	assert.Equal(renderChanges, []elements.LineChange{
-	// 		{After: "List name"},
-	// 		{After: "\tItem 1 Line1 \n Line2"},
-	// 		{After: "\tItem 2"},
-	// 	})
-	// }, t)
+	Test(`
+		Given that we have a list with header text "List name" and two items: "Item 1 Line1\nLine2" and "Item 2"
+		When we render the changes
+		The output should contain the following 4 lines: 
+		"List name", "Item 1 Line1", "Line2", "Item 2"
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1 Line1\nLine2")
+		list.NewItem("Item 2")
+		// When
+		renderLines := list.Render()
+		// Then
+		assert.Equal(renderLines, []string{"List name", "\tItem 1 Line1", "\tLine2", "\tItem 2"})
+	}, t)
 
-	// Test(`
-	// 	Given that we have a list with header text "List L1 \n L2" and three items:
-	// 	- "Item 1 L1 \n L2 \n L3"
-	// 	- "Item 2 L1 \n L2 \n L3 \n L4"
-	// 	- "Item 3"
-	// 	When we render the changes
-	// 	The output should contain the following render changes:
-	// 	- "List L1 \n L2" at coords 0,0
-	// 	- "\tItem 1 L1 \n L2 \n L3" at coords 0,2
-	// 	- "\tItem 2 L1 \n L2 \n L3 \n L4" at coords 0,5
-	// 	- "\tItem 3" at coords 0,9
-	// `, func(t *testing.T) {
-	// 	// Given
-	// 	list := elements.NewUnorderedList("id", "List L1 \n L2")
-	// 	list.NewItem("Item 1 L1 \n L2 \n L3")
-	// 	list.NewItem("Item 2 L1 \n L2 \n L3 \n L4")
-	// 	list.NewItem("Item 3")
-	// 	// When
-	// 	renderChanges := list.Render()
-	// 	// Then
-	// 	assert.Equal(renderChanges, []elements.LineChange{
-	// 		{After: "List L1 \n L2"},
-	// 		{After: "\tItem 1 L1 \n L2 \n L3"},
-	// 		{After: "\tItem 2 L1 \n L2 \n L3 \n L4"},
-	// 		{After: "\tItem 3"},
-	// 	})
-	// }, t)
+	Test(`
+		Given that we have a list with header text "List L1\nL2" and three items:
+		- "Item 1 L1\nL2\nL3"
+		- "Item 2 L1\nL2\nL3\nL4"
+		- "Item 3"
+		When we render the changes
+		The output should contain the following lines: 
+		"List L1", "L2", "\tItem 1 L1", "\tL2", "\tL3", "\tItem 2 L1", "\tL2", "\tL3", "\tL4", "\tItem 3"
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List L1\nL2")
+		list.NewItem("Item 1 L1\nL2\nL3")
+		list.NewItem("Item 2 L1\nL2\nL3\nL4")
+		list.NewItem("Item 3")
+		// When
+		renderLines := list.Render()
+		// Then
+		assert.Equal(renderLines, []string{
+			"List L1", "L2", "\tItem 1 L1", "\tL2", "\tL3", "\tItem 2 L1", "\tL2", "\tL3", "\tL4", "\tItem 3",
+		})
+	}, t)
 
-	// Test(`
-	// 	Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
-	// 	When we edit the first item to a multi line text: "This \n is \n the \n first \n item" and we render the changes
-	// 	The output should contain 3 render changes:
-	// 	- "\tThis \n is \n the \n first \n item"  at coordinates 0, 1
-	// 	- "\t"Item 2"  at coordinates 0, 6
-	// 	- "\t"Item 3"  at coordinates 0, 7
-	// 	- "\t"Item 4"  at coordinates 0, 8
-	// `, func(t *testing.T) {
-	// 	// Given
-	// 	list := elements.NewUnorderedList("id", "List name")
-	// 	item1 := list.NewItem("Item 1")
-	// 	list.NewItem("Item 2")
-	// 	list.NewItem("Item 3")
-	// 	list.NewItem("Item 4")
-	// 	list.Render()
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
+		When we edit the first item to a multi line text: "This\nis\nthe\nfirst\nitem" and we render the changes
+		The output should contain the following lines: 
+		"List name", "\tThis", "\tis", "\tthe", "\tfirst", "\titem", "\tItem 2", "\tItem 3", "\tItem 4", 
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		item1 := list.NewItem("Item 1")
+		list.NewItem("Item 2")
+		list.NewItem("Item 3")
+		list.NewItem("Item 4")
+		list.Render()
 
-	// 	// When
-	// 	item1.Edit("This \n is \n the \n first \n item")
-	// 	renderChanges := list.Render()
+		// When
+		item1.Edit("This\nis\nthe\nfirst\nitem")
+		renderLines := list.Render()
 
-	// 	// Then
-	// 	assert.Equal(renderChanges, []elements.LineChange{
-	// 		{After: "\tThis \n is \n the \n first \n item"},
-	// 		{After: "\tItem 2"},
-	// 		{After: "\tItem 3"},
-	// 		{After: "\tItem 4"},
-	// 	})
-	// }, t)
+		// Then
+		assert.Equal(renderLines, []string{
+			"List name", "\tThis", "\tis", "\tthe", "\tfirst", "\titem", "\tItem 2", "\tItem 3", "\tItem 4",
+		})
+	}, t)
 
-	// Test(`
-	// 	Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
-	// 	When we edit the second item to a multi line text: "This \n is \n the \n second \n item" and we render the changes
-	// 	The output should contain 3 render changes:
-	// 	- "\tThis \n is \n the \n second \n item"  at coordinates 0, 2
-	// 	- "\t"Item 3"  at coordinates 0, 3
-	// 	- "\t"Item 4"  at coordinates 0, 4
-	// `, func(t *testing.T) {
-	// 	// Given
-	// 	list := elements.NewUnorderedList("id", "List name")
-	// 	list.NewItem("Item 1")
-	// 	item2 := list.NewItem("Item 2")
-	// 	list.NewItem("Item 3")
-	// 	list.NewItem("Item 4")
-	// 	list.Render()
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
+		When we edit the second item to a multi line text: "This\nis\nthe\nsecond\nitem" and we render the changes
+		The output should contain the following lines: 
+		"List name", "\tItem 1", "\tThis", "\tis", "\tthe", "\tsecond", "\titem", "\tItem 3", "\tItem 4", 
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		item2 := list.NewItem("Item 2")
+		list.NewItem("Item 3")
+		list.NewItem("Item 4")
+		list.Render()
 
-	// 	// When
-	// 	item2.Edit("This \n is \n the \n second \n item")
-	// 	renderChanges := list.Render()
+		// When
+		item2.Edit("This\nis\nthe\nsecond\nitem")
+		renderLines := list.Render()
 
-	// 	// Then
-	// 	assert.Equal(renderChanges, []elements.LineChange{
-	// 		{After: "\tThis \n is \n the \n second \n item"},
-	// 		{After: "\tItem 3"},
-	// 		{After: "\tItem 4"},
-	// 	})
-	// }, t)
+		// Then
+		assert.Equal(renderLines, []string{
+			"List name", "\tItem 1", "\tThis", "\tis", "\tthe", "\tsecond", "\titem", "\tItem 3", "\tItem 4",
+		})
+	}, t)
 
-	// Test(`
-	// 	Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
-	// 	When we edit the last item to a multi line text: "This \n is \n the \n last \n item" and we render the changes
-	// 	The output should contain 1 render change:
-	// 	- "\tThis \n is \n the \n last \n item"  at coordinates 0, 4
-	// `, func(t *testing.T) {
-	// 	// Given
-	// 	list := elements.NewUnorderedList("id", "List name")
-	// 	list.NewItem("Item 1")
-	// 	list.NewItem("Item 2")
-	// 	list.NewItem("Item 3")
-	// 	lastItem := list.NewItem("Item 4")
-	// 	list.Render()
+	Test(`
+		Given that we have a rendered list with header text "List name" and 4 items: "Item 1", "Item 2", "Item 3", "Item 4"
+		When we edit the last item to a multi line text: "This\nis\nthe\nlast\nitem" and we render the changes
+		The output should contain the following 10 lines: 
+		"List name", "\tItem 1", "\tItem 2", "\tItem 3", "\tThis", "\tis", "\tthe", "\tlast", "\titem",
+	`, func(t *testing.T) {
+		// Given
+		list := elements.NewUnorderedList("id", "List name")
+		list.NewItem("Item 1")
+		list.NewItem("Item 2")
+		list.NewItem("Item 3")
+		lastItem := list.NewItem("Item 4")
+		list.Render()
 
-	// 	// When
-	// 	lastItem.Edit("This \n is \n the \n last \n item")
-	// 	renderChanges := list.Render()
+		// When
+		lastItem.Edit("This\nis\nthe\nlast\nitem")
+		renderLines := list.Render()
 
-	// 	// Then
-	// 	assert.Equal(renderChanges, []elements.LineChange{
-	// 		{After: "\tThis \n is \n the \n last \n item"},
-	// 	})
-	// }, t)
+		// Then
+		assert.Equal(renderLines, []string{
+			"List name", "\tItem 1", "\tItem 2", "\tItem 3", "\tThis", "\tis", "\tthe", "\tlast", "\titem",
+		})
+	}, t)
 }
