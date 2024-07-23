@@ -21,7 +21,6 @@ func (li *ListItem) Edit(newText string) {
 	lines := utils.SplitStringByNewLine(newText)
 	li.rendered = false // Test it when you edit it with the same text
 	li.lines = lines
-
 }
 
 func (li *ListItem) Render() []string {

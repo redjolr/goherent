@@ -47,7 +47,7 @@ func (tp *TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
 	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, testDuration float64) {
+func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -57,14 +57,15 @@ func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, testDurati
 	}
 	listItem := testsList.FindItemById(ctest.Id())
 	if listItem == nil {
-		testsList.NewItem(ctest.Id(), fmt.Sprintf("✅ %s\n  %.2fs", ctest.Name(), testDuration))
+		testsList.NewItem(ctest.Id(), fmt.Sprintf("✅ %s", ctest.Name()))
+	} else {
+		listItem.Edit(fmt.Sprintf("✅ %s", ctest.Name()))
 	}
-	listItem.Edit(fmt.Sprintf("✅ %s\n  %.2fs", ctest.Name(), testDuration))
 
 	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, testDuration float64) {
+func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -72,7 +73,13 @@ func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, testDurati
 	} else {
 		panic("Test list does not exist")
 	}
-	testsList.NewItem(ctest.Id(), fmt.Sprintf("❌ %s\n  %.2fs", ctest.Name(), testDuration))
+
+	listItem := testsList.FindItemById(ctest.Id())
+	if listItem == nil {
+		testsList.NewItem(ctest.Id(), fmt.Sprintf("❌ %s", ctest.Name()))
+	} else {
+		listItem.Edit(fmt.Sprintf("❌ %s", ctest.Name()))
+	}
 	tp.console.Render()
 }
 
