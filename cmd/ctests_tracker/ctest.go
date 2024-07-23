@@ -7,11 +7,13 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/internal/uuidgen"
 )
 
 // Ctest stands for Client Test
 // It represents the tests that the client of the Goherent package runs
 type Ctest struct {
+	id          string
 	name        string
 	packageName string
 	events      []events.CtestEvent
@@ -23,6 +25,7 @@ type Ctest struct {
 
 func NewCtest(testName string, packageName string) Ctest {
 	return Ctest{
+		id:          uuidgen.NewString(),
 		name:        testName,
 		packageName: packageName,
 		events:      []events.CtestEvent{},
@@ -35,6 +38,7 @@ func NewCtest(testName string, packageName string) Ctest {
 
 func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
 	return Ctest{
+		id:          uuidgen.NewString(),
 		name:        ranEvt.CtestName(),
 		packageName: ranEvt.PackageName(),
 		events:      []events.CtestEvent{ranEvt},
@@ -47,6 +51,7 @@ func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
 
 func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
 	return Ctest{
+		id:          uuidgen.NewString(),
 		name:        passedEvt.CtestName(),
 		packageName: passedEvt.PackageName(),
 		events:      []events.CtestEvent{passedEvt},
@@ -59,6 +64,7 @@ func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
 
 func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
 	return Ctest{
+		id:          uuidgen.NewString(),
 		name:        passedEvt.CtestName(),
 		packageName: passedEvt.PackageName(),
 		events:      []events.CtestEvent{passedEvt},
@@ -67,6 +73,18 @@ func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
 		hasPassed:   false,
 		hasFailed:   true,
 	}
+}
+
+func (ctest *Ctest) Id() string {
+	return ctest.id
+}
+
+func (ctest *Ctest) Name() string {
+	return ctest.name
+}
+
+func (ctest *Ctest) PackageName() string {
+	return ctest.packageName
 }
 
 func (ctest *Ctest) HasName(name string) bool {

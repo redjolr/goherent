@@ -1,12 +1,16 @@
 package cmd
 
-import "time"
+import (
+	"time"
+
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
+)
 
 type OutputPort interface {
 	TestingStarted(timestamp time.Time)
 	PackageTestsStartedRunning(packageName string)
-	CtestPassed(testName string, testDuration float64)
-	CtestStartedRunning(testName string)
-	CtestFailed(testName string, testDuration float64)
-	CtestOutput(testName string, packageName string, output string)
+	CtestPassed(ctest *ctests_tracker.Ctest, testDuration float64)
+	CtestFailed(ctest *ctests_tracker.Ctest, testDuration float64)
+	CtestStartedRunning(ctest *ctests_tracker.Ctest)
+	CtestOutput(ctest *ctests_tracker.Ctest)
 }

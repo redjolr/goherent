@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/console"
 	"github.com/redjolr/goherent/console/elements"
 )
@@ -36,11 +37,17 @@ func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
 	tp.console.Render()
 }
 
-func (pressenter *TerminalPresenter) CtestStartedRunning(testName string) {
-	fmt.Printf("\t⏳ %s\n\n", testName)
+func (tp *TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
+	testsListElement := tp.console.GetElementWithId(testsListId)
+	if testsListElement == nil {
+		return
+	}
+	testsList := testsListElement.(*elements.UnorderedList)
+	testsList.NewItem(ctest.Id(), fmt.Sprintf("⏳ %s", ctest.Name()))
+	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestPassed(testName string, testDuration float64) {
+func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, testDuration float64) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -48,12 +55,16 @@ func (tp *TerminalPresenter) CtestPassed(testName string, testDuration float64) 
 	} else {
 		panic("Test list does not exist")
 	}
-	testsList.NewItem(fmt.Sprintf("✅ %s", testName))
-	testsList.NewItem(fmt.Sprintf("  %.2fs", testDuration))
+	listItem := testsList.FindItemById(ctest.Id())
+	if listItem == nil {
+		testsList.NewItem(ctest.Id(), fmt.Sprintf("✅ %s\n  %.2fs", ctest.Name(), testDuration))
+	}
+	listItem.Edit(fmt.Sprintf("✅ %s\n  %.2fs", ctest.Name(), testDuration))
+
 	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestFailed(testName string, testDuration float64) {
+func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, testDuration float64) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -61,11 +72,24 @@ func (tp *TerminalPresenter) CtestFailed(testName string, testDuration float64) 
 	} else {
 		panic("Test list does not exist")
 	}
-	testsList.NewItem(fmt.Sprintf("❌ %s", testName))
-	testsList.NewItem(fmt.Sprintf("  %.2fs", testDuration))
+	testsList.NewItem(ctest.Id(), fmt.Sprintf("❌ %s\n  %.2fs", ctest.Name(), testDuration))
 	tp.console.Render()
 }
 
-func (presenter *TerminalPresenter) CtestOutput(testName string, packageName string, output string) {
-	fmt.Printf("\t %s\n\n %s\n", testName, output)
+func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
+	testsListElement := tp.console.GetElementWithId(testsListId)
+	if testsListElement == nil {
+		return
+	}
+	testsList := testsListElement.(*elements.UnorderedList)
+	testItem := testsList.FindItemById(ctest.Id())
+
+	if testItem == nil {
+		return
+	}
+
+	testItem.Edit(
+		testItem.Text() + fmt.Sprintf("\n%s", ctest.Output()),
+	)
+	tp.console.Render()
 }

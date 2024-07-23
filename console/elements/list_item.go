@@ -7,6 +7,7 @@ import (
 )
 
 type ListItem struct {
+	id       string
 	order    int
 	lines    []string
 	rendered bool

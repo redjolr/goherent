@@ -30,7 +30,7 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 
 	if existingCtest != nil && existingCtest.IsRunning() {
 		existingCtest.MarkAsPassed(evt)
-		eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+		eh.output.CtestPassed(existingCtest, evt.TestDuration())
 		return
 	}
 
@@ -39,11 +39,11 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.PackageTestsStartedRunning(evt.PackageName())
-		eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+		eh.output.CtestPassed(&ctest, evt.TestDuration())
 		return
 	}
 
-	eh.output.CtestPassed(evt.CtestName(), evt.TestDuration())
+	eh.output.CtestPassed(&ctest, evt.TestDuration())
 }
 
 func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
@@ -56,10 +56,10 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
 
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.PackageTestsStartedRunning(evt.PackageName())
-		eh.output.CtestStartedRunning(evt.CtestName())
+		eh.output.CtestStartedRunning(&ctest)
 		return
 	}
-	eh.output.CtestStartedRunning(evt.CtestName())
+	eh.output.CtestStartedRunning(&ctest)
 }
 
 func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {
@@ -74,10 +74,10 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 		if eh.ctestsTracker.IsCtestFirstOfItsPackage(*existingCtest) {
 			eh.output.PackageTestsStartedRunning(evt.PackageName())
 		}
-		eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+		eh.output.CtestFailed(existingCtest, evt.TestDuration())
 
 		if existingCtest.ContainsOutput() {
-			eh.output.CtestOutput(evt.CtestName(), evt.PackageName(), existingCtest.Output())
+			eh.output.CtestOutput(existingCtest)
 		}
 		return
 	}
@@ -85,11 +85,11 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 	eh.ctestsTracker.InsertCtest(ctest)
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.PackageTestsStartedRunning(evt.PackageName())
-		eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+		eh.output.CtestFailed(&ctest, evt.TestDuration())
 		return
 	}
 
-	eh.output.CtestFailed(evt.CtestName(), evt.TestDuration())
+	eh.output.CtestFailed(&ctest, evt.TestDuration())
 }
 
 func (eh EventsHandler) HandleCtestOutputEvent(evt ctest_output_event.CtestOutputEvent) {

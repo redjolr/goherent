@@ -22,9 +22,10 @@ func NewUnorderedList(id string, name string) UnorderedList {
 	}
 }
 
-func (ul *UnorderedList) NewItem(text string) *ListItem {
+func (ul *UnorderedList) NewItem(id string, text string) *ListItem {
 	lines := utils.SplitStringByNewLine(text)
 	item := ListItem{
+		id:       id,
 		order:    len(ul.items),
 		lines:    lines,
 		rendered: false,
@@ -32,6 +33,21 @@ func (ul *UnorderedList) NewItem(text string) *ListItem {
 
 	ul.items = append(ul.items, &item)
 	return &item
+}
+
+func (ul *UnorderedList) FindItemById(id string) *ListItem {
+	if len(ul.items) == 0 {
+		return nil
+	}
+
+	listItemIndex := slices.IndexFunc(ul.items, func(item *ListItem) bool {
+		return item.id == id
+	})
+
+	if listItemIndex == -1 {
+		return nil
+	}
+	return ul.items[listItemIndex]
 }
 
 func (ul *UnorderedList) FindItemByOrder(order int) *ListItem {

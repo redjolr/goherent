@@ -12,7 +12,7 @@ func TestNewItem(t *testing.T) {
 	assert := assert.New(t)
 	Test("it should add a new item to a UnorderedList and the output should be a pointer to the item.", func(t *testing.T) {
 		list := elements.NewUnorderedList("list id", "List name")
-		item := list.NewItem("item1")
+		item := list.NewItem("id1", "item1")
 
 		assert.IsType(&elements.ListItem{}, item)
 	}, t)
@@ -30,7 +30,7 @@ func TestFindItemByOrder(t *testing.T) {
 	Test(`it should return nil,
 	if the UnorderedList has 1 item and you try to find the item with id 1.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("some text")
+		list.NewItem("id1", "some text")
 		item := list.FindItemByOrder(1)
 		assert.Nil(item)
 	}, t)
@@ -38,7 +38,7 @@ func TestFindItemByOrder(t *testing.T) {
 	Test(`it should return a ListItem,
 	if the UnorderedList has 1 item and you try to find the item with id 0.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("some text")
+		list.NewItem("id1", "some text")
 		item := list.FindItemByOrder(0)
 		assert.IsType(&elements.ListItem{}, item)
 	}, t)
@@ -49,8 +49,8 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First Item")
-		list.NewItem("Second Item")
+		list.NewItem("id1", "First Item")
+		list.NewItem("id2", "Second Item")
 
 		// When
 		item := list.FindItemByOrder(0)
@@ -65,8 +65,8 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First Item")
-		list.NewItem("Second Item")
+		list.NewItem("id1", "First Item")
+		list.NewItem("id2", "Second Item")
 
 		// When
 		item := list.FindItemByOrder(1)
@@ -81,8 +81,8 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First Item")
-		list.NewItem("Second Item")
+		list.NewItem("id1", "First Item")
+		list.NewItem("id2", "Second Item")
 
 		// When
 		item := list.FindItemByOrder(2)
@@ -97,12 +97,12 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First")
-		list.NewItem("Second")
-		list.NewItem("Third")
-		list.NewItem("Fourth")
-		list.NewItem("Fifth")
-		list.NewItem("Sixth")
+		list.NewItem("id1", "First")
+		list.NewItem("id2", "Second")
+		list.NewItem("id3", "Third")
+		list.NewItem("id4", "Fourth")
+		list.NewItem("id5", "Fifth")
+		list.NewItem("id6", "Sixth")
 
 		// When
 		item := list.FindItemByOrder(0)
@@ -117,12 +117,12 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First")
-		list.NewItem("Second")
-		list.NewItem("Third")
-		list.NewItem("Fourth")
-		list.NewItem("Fifth")
-		list.NewItem("Sixth")
+		list.NewItem("id1", "First")
+		list.NewItem("id2", "Second")
+		list.NewItem("id3", "Third")
+		list.NewItem("id4", "Fourth")
+		list.NewItem("id5", "Fifth")
+		list.NewItem("id6", "Sixth")
 
 		// When
 		item := list.FindItemByOrder(2)
@@ -137,12 +137,12 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First")
-		list.NewItem("Second")
-		list.NewItem("Third")
-		list.NewItem("Fourth")
-		list.NewItem("Fifth")
-		list.NewItem("Sixth")
+		list.NewItem("id1", "First")
+		list.NewItem("id2", "Second")
+		list.NewItem("id3", "Third")
+		list.NewItem("id4", "Fourth")
+		list.NewItem("id5", "Fifth")
+		list.NewItem("id6", "Sixth")
 
 		// When
 		item := list.FindItemByOrder(4)
@@ -157,12 +157,12 @@ func TestFindItemByOrder(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("First")
-		list.NewItem("Second")
-		list.NewItem("Third")
-		list.NewItem("Fourth")
-		list.NewItem("Fifth")
-		list.NewItem("Sixth")
+		list.NewItem("id1", "First")
+		list.NewItem("id2", "Second")
+		list.NewItem("id3", "Third")
+		list.NewItem("id4", "Fourth")
+		list.NewItem("id5", "Fifth")
+		list.NewItem("id6", "Sixth")
 
 		// When
 		item := list.FindItemByOrder(5)
@@ -185,7 +185,7 @@ func TestIsRendered(t *testing.T) {
 	Test(`it should return false, if:
 		the UnorderedList is created, it has one item and has NOT been rendered.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Some text")
+		list.NewItem("id1", "Some text")
 		assert.False(list.IsRendered())
 	}, t)
 
@@ -199,7 +199,7 @@ func TestIsRendered(t *testing.T) {
 	Test(`it should return true, if:
 		the UnorderedList is created, it has one item and has been rendered.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Some text")
+		list.NewItem("id1", "Some text")
 		list.Render()
 		assert.True(list.IsRendered())
 	}, t)
@@ -207,9 +207,9 @@ func TestIsRendered(t *testing.T) {
 	Test(`it should return false, if:
 		the UnorderedList is created, it has one item and has been rendered and then another item is added.`, func(t *testing.T) {
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Some text")
+		list.NewItem("id1", "Some text")
 		list.Render()
-		list.NewItem("Some other text")
+		list.NewItem("id2", "Some other text")
 		assert.False(list.IsRendered())
 	}, t)
 
@@ -220,10 +220,10 @@ func TestIsRendered(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		list.NewItem("This \n is \n multi \n line")
-		list.NewItem("Item 3")
-		list.NewItem("Item 4")
+		list.NewItem("id1", "Item 1")
+		list.NewItem("id2", "This \n is \n multi \n line")
+		list.NewItem("id3", "Item 3")
+		list.NewItem("id4", "Item 4")
 		list.Render()
 		// When
 		isRendered := list.IsRendered()
@@ -260,7 +260,7 @@ func TestRender(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
+		list.NewItem("id1", "Item 1")
 
 		// When
 		renderLines := list.Render()
@@ -280,8 +280,8 @@ func TestRender(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		list.NewItem("Item 2")
+		list.NewItem("id1", "Item 1")
+		list.NewItem("id2", "Item 2")
 
 		// When
 		renderLines := list.Render()
@@ -303,10 +303,10 @@ func TestRender(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		list.NewItem("Item 2")
+		list.NewItem("id1", "Item 1")
+		list.NewItem("id2", "Item 2")
 		list.Render()
-		list.NewItem("Item 3")
+		list.NewItem("id3", "Item 3")
 
 		// When
 		renderLines := list.Render()
@@ -326,9 +326,9 @@ func TestRender(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		item2 := list.NewItem("Item 2")
-		list.NewItem("Item 3")
+		list.NewItem("id1", "Item 1")
+		item2 := list.NewItem("id2", "Item 2")
+		list.NewItem("id3", "Item 3")
 		list.Render()
 
 		// When
@@ -351,10 +351,10 @@ func TestRender(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		item2 := list.NewItem("Multi \n line")
-		list.NewItem("Item 3")
-		list.NewItem("Item 4")
+		list.NewItem("id1", "Item 1")
+		item2 := list.NewItem("id2", "Multi \n line")
+		list.NewItem("id3", "Item 3")
+		list.NewItem("id4", "Item 4")
 		list.Render()
 
 		// When
@@ -392,7 +392,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "Line 1\nLine 2")
-		list.NewItem("Item 1")
+		list.NewItem("id1", "Item 1")
 		// When
 		renderLines := list.Render()
 		// Then
@@ -407,7 +407,7 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "Line 1\nLine 2\nLine 3\nLine 4")
-		list.NewItem("Item 1")
+		list.NewItem("id1", "Item 1")
 
 		// When
 		renderLines := list.Render()
@@ -424,8 +424,8 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1 Line1\nLine2")
-		list.NewItem("Item 2")
+		list.NewItem("id1", "Item 1 Line1\nLine2")
+		list.NewItem("id2", "Item 2")
 		// When
 		renderLines := list.Render()
 		// Then
@@ -443,9 +443,9 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List L1\nL2")
-		list.NewItem("Item 1 L1\nL2\nL3")
-		list.NewItem("Item 2 L1\nL2\nL3\nL4")
-		list.NewItem("Item 3")
+		list.NewItem("id1", "Item 1 L1\nL2\nL3")
+		list.NewItem("id2", "Item 2 L1\nL2\nL3\nL4")
+		list.NewItem("id3", "Item 3")
 		// When
 		renderLines := list.Render()
 		// Then
@@ -462,10 +462,10 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		item1 := list.NewItem("Item 1")
-		list.NewItem("Item 2")
-		list.NewItem("Item 3")
-		list.NewItem("Item 4")
+		item1 := list.NewItem("id1", "Item 1")
+		list.NewItem("id2", "Item 2")
+		list.NewItem("id3", "Item 3")
+		list.NewItem("id4", "Item 4")
 		list.Render()
 
 		// When
@@ -486,10 +486,10 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		item2 := list.NewItem("Item 2")
-		list.NewItem("Item 3")
-		list.NewItem("Item 4")
+		list.NewItem("id1", "Item 1")
+		item2 := list.NewItem("id2", "Item 2")
+		list.NewItem("id3", "Item 3")
+		list.NewItem("id4", "Item 4")
 		list.Render()
 
 		// When
@@ -510,10 +510,10 @@ func TestListRenderWithMultilineHeaderAndItems(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		list := elements.NewUnorderedList("id", "List name")
-		list.NewItem("Item 1")
-		list.NewItem("Item 2")
-		list.NewItem("Item 3")
-		lastItem := list.NewItem("Item 4")
+		list.NewItem("id1", "Item 1")
+		list.NewItem("id2", "Item 2")
+		list.NewItem("id3", "Item 3")
+		lastItem := list.NewItem("id4", "Item 4")
 		list.Render()
 
 		// When
