@@ -552,6 +552,55 @@ func TestCtestFailedEvent(t *testing.T) {
 			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s\n\tThis is some output.",
 		)
 	}, t)
+
+	Test(`
+		Given that a CtestRanEvent for Ctest1 with name "testName 1" from the package "Some package" has occourred
+		And another CtestRanEvent for Ctest2 with name "testName 2" from the same package "Some package" has occourred
+		When a CtestFailedEvent for the Ctest1 occurs
+		Then the user should be informed that the package "Some package" is being tested
+		And the Ctest1 has failed
+		And the Ctest2 is running
+		`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		testPassedElapsedTime := 2.3
+
+		ctestRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 1",
+			Package: "Some package",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestRanEvt2 := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 2",
+			Package: "Somepackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctest1PassedEvt := ctest_failed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName 1",
+				Package: "Some package",
+				Elapsed: &testPassedElapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctest1PassedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"📦⏳ Some package\n\t❌ testName 1\n\t\n\t2.30s\n\t⏳ testName 2\n\t\n\t",
+		)
+	}, t)
 }
 
 func TestCtestRanEvent(t *testing.T) {
