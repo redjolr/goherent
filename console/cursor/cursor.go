@@ -27,7 +27,7 @@ func (c *Cursor) GoToOrigin() {
 }
 
 func (c *Cursor) MoveLeft(n int) {
-	c.terminal.Print(terminal.MoveCursorLeftNCols(n))
+	c.coords.X -= n
 }
 
 func (c *Cursor) MoveAtBeginningOfLine() {
@@ -35,13 +35,13 @@ func (c *Cursor) MoveAtBeginningOfLine() {
 }
 
 func (c *Cursor) MoveRight(n int) {
-	c.terminal.Print(terminal.MoveCursorRightNCols(n))
+	c.coords.X += n
 }
 
 func (c *Cursor) MoveDown(n int) {
-	c.terminal.Print(terminal.MoveCursorDownNRows(n))
+	c.coords.Y += n
 }
 
 func (c *Cursor) MoveUp(n int) {
-	c.terminal.Print(terminal.MoveCursorUpNRows(n))
+	c.coords.Y -= n
 }

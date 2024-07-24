@@ -23,7 +23,7 @@ import (
 
 func setup() (*cmd.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	terminalOrigin := coordinates.Origin()
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&terminalOrigin)
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
 	cursor := cursor.NewCursor(&fakeAnsiTerminal, &terminalOrigin)
 	cons := console.NewConsole(&fakeAnsiTerminal, &cursor)
 

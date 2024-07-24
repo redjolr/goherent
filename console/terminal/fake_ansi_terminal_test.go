@@ -3,15 +3,13 @@ package terminal_test
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/console/coordinates"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup() terminal.FakeAnsiTerminal {
-	origin := coordinates.Origin()
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&origin)
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
 	return fakeAnsiTerminal
 }
 

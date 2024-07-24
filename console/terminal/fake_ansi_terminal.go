@@ -10,10 +10,11 @@ import (
 
 type FakeAnsiTerminal struct {
 	lines  []string
-	coords *coordinates.Coordinates
+	coords coordinates.Coordinates
 }
 
-func NewFakeAnsiTerminal(origin *coordinates.Coordinates) FakeAnsiTerminal {
+func NewFakeAnsiTerminal() FakeAnsiTerminal {
+	origin := coordinates.Origin()
 	return FakeAnsiTerminal{
 		lines:  []string{""},
 		coords: origin,
@@ -139,4 +140,20 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 
 func (fat *FakeAnsiTerminal) Text() string {
 	return strings.Join(fat.lines, "\n")
+}
+
+func (fat *FakeAnsiTerminal) GoToOrigin() {
+	fat.coords.SetToOrigin()
+}
+
+func (fat *FakeAnsiTerminal) MoveDown(n int) {
+	fat.coords.Y += n
+}
+
+func (fat *FakeAnsiTerminal) MoveLeft(n int) {
+	fat.coords.X -= n
+}
+
+func (fat *FakeAnsiTerminal) MoveUp(n int) {
+	fat.coords.Y -= n
 }

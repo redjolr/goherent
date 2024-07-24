@@ -13,7 +13,7 @@ import (
 
 func setup() (console.Console, *terminal.FakeAnsiTerminal, *cursor.Cursor) {
 	terminalOrigin := coordinates.Origin()
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(&terminalOrigin)
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
 	cursor := cursor.NewCursor(&fakeAnsiTerminal, &terminalOrigin)
 	return console.NewConsole(&fakeAnsiTerminal, &cursor), &fakeAnsiTerminal, &cursor
 }

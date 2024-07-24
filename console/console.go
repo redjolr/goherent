@@ -56,6 +56,10 @@ func (c *Console) Render() {
 	if c.IsRendered() {
 		return
 	}
+	goUp := c.cursor.Coordinates().Y
+	goLeft := c.cursor.Coordinates().X
+	c.terminal.MoveLeft(goLeft)
+	c.terminal.MoveUp(goUp)
 	c.cursor.GoToOrigin()
 
 	overallLineIndex := 0
@@ -66,18 +70,23 @@ func (c *Console) Render() {
 			for _, line := range lines {
 				if overallLineIndex != 0 {
 					c.terminal.Print("\n")
+					c.cursor.MoveDown(1)
+					c.cursor.MoveAtBeginningOfLine()
 				}
 				if overallLineIndex > len(c.renderedLines)-1 {
 					c.renderedLines = append(c.renderedLines, line)
 					c.terminal.Print(line)
+					c.cursor.MoveRight(len(line))
 				} else if line != c.renderedLines[overallLineIndex] {
-
 					if len(line) < len(c.renderedLines[overallLineIndex]) {
 						c.renderedLines[overallLineIndex] = utils.StrRightPad(line, " ", len(c.renderedLines[overallLineIndex]))
 						c.terminal.Print(c.renderedLines[overallLineIndex])
+						c.cursor.MoveRight(len(c.renderedLines[overallLineIndex]))
 					} else if len(line) >= len(c.renderedLines[overallLineIndex]) {
 						c.renderedLines[overallLineIndex] = line
 						c.terminal.Print(line)
+						c.cursor.MoveRight(len(line))
+
 					}
 				}
 				overallLineIndex += 1
@@ -87,11 +96,18 @@ func (c *Console) Render() {
 		}
 	}
 	for ; overallLineIndex < len(c.renderedLines); overallLineIndex++ {
+		goUp := c.cursor.Coordinates().Y
+		goLeft := c.cursor.Coordinates().X
+		c.terminal.MoveLeft(goLeft)
+		c.terminal.MoveUp(goUp)
+		c.terminal.MoveDown(overallLineIndex)
 		c.cursor.GoToOrigin()
 		c.cursor.MoveDown(overallLineIndex)
 		whitespacesOverwrite := strings.Repeat(" ", len(c.renderedLines[overallLineIndex]))
-		c.terminal.Print(whitespacesOverwrite)
 		c.renderedLines[overallLineIndex] = whitespacesOverwrite
+		c.terminal.Print(whitespacesOverwrite)
+		c.cursor.MoveRight(len(whitespacesOverwrite))
+		c.cursor.MoveDown(1)
 	}
 }
 
