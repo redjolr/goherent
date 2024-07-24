@@ -61,7 +61,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName",
+			"📦⏳ somePackage\n\t✅ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -102,7 +102,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName1\n\t✅ testName2",
+			"📦⏳ somePackage\n\t✅ testName1\n\t\n\t2.30s\n\t✅ testName2\n\t\n\t1.20s",
 		)
 	}, t)
 
@@ -133,7 +133,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName",
+			"📦⏳ somePackage\n\t✅ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -171,7 +171,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName",
+			"📦⏳ somePackage\n\t✅ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -209,7 +209,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName",
+			"📦⏳ somePackage\n\t✅ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -259,7 +259,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ Some package\n\t✅ testName 1\n\t⏳ testName 2",
+			"📦⏳ Some package\n\t✅ testName 1\n\t\n\t2.30s\n\t⏳ testName 2\n\t\n\t",
 		)
 	}, t)
 }
@@ -292,7 +292,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -330,7 +330,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName1\n\t❌ testName2",
+			"📦⏳ somePackage\n\t❌ testName1\n\t\n\t2.30s\n\t❌ testName2\n\t\n\t1.20s",
 		)
 	}, t)
 
@@ -360,7 +360,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -398,7 +398,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s",
 		)
 	}, t)
 
@@ -449,7 +449,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName\n\tThis is output 1.\n\tThis is output 2.",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s\n\tThis is output 1.\n\tThis is output 2.",
 		)
 	}, t)
 
@@ -500,7 +500,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName\n\tThis is output 1.\n\tThis is output 2.",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t1.20s\n\tThis is output 1.\n\tThis is output 2.",
 		)
 	}, t)
 
@@ -549,7 +549,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t❌ testName\n\tThis is some output.",
+			"📦⏳ somePackage\n\t❌ testName\n\t\n\t2.30s\n\tThis is some output.",
 		)
 	}, t)
 }
@@ -578,7 +578,7 @@ func TestCtestRanEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t⏳ testName",
+			"📦⏳ somePackage\n\t⏳ testName\n\t\n\t",
 		)
 	}, t)
 
@@ -614,14 +614,14 @@ func TestCtestRanEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t⏳ testName1\n\t⏳ testName2",
+			"📦⏳ somePackage\n\t⏳ testName1\n\t\n\t\n\t⏳ testName2\n\t\n\t",
 		)
 	}, t)
 
 	Test(`
 		Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
-		When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should be informed that the given test from the given package is running.
+		When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
+		Then the user should be informed only once that the given test from the given package is running.
 		`, func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
@@ -642,50 +642,9 @@ func TestCtestRanEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"📦⏳ somePackage\n\t⏳ testName",
+			"📦⏳ somePackage\n\t⏳ testName\n\t\n\t",
 		)
 	}, t)
-
-	Test(`
-		Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
-		And then a CtestPassedEvent has occurred for the same test
-		When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should not be informed about the second run, when the second event occurs
-		`, func(t *testing.T) {
-		eventsHandler, terminal, _ := setup()
-		elapsedTime := 2.3
-
-		// Given
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "run",
-				Test:    "testName",
-				Package: "somePackage",
-			},
-		)
-		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Test:    "testName",
-				Package: "somePackage",
-				Elapsed: &elapsedTime,
-			},
-		)
-		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
-
-		// When
-		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
-
-		// Then
-		assert.Equal(
-			terminal.Text(),
-			"📦⏳ somePackage\n\t✅ testName\n\t  2.30s",
-		)
-	}, t)
-
 }
 
 func TestCtestOutputEvent(t *testing.T) {

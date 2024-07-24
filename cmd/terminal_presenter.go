@@ -43,11 +43,11 @@ func (tp *TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
 		return
 	}
 	testsList := testsListElement.(*elements.UnorderedList)
-	testsList.NewItem(ctest.Id(), fmt.Sprintf("⏳ %s", ctest.Name()))
+	testsList.NewItem(ctest.Id(), fmt.Sprintf("⏳ %s\n\n", ctest.Name()))
 	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest) {
+func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -57,15 +57,15 @@ func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest) {
 	}
 	listItem := testsList.FindItemById(ctest.Id())
 	if listItem == nil {
-		testsList.NewItem(ctest.Id(), fmt.Sprintf("✅ %s", ctest.Name()))
+		testsList.NewItem(ctest.Id(), fmt.Sprintf("✅ %s\n\n%.2fs", ctest.Name(), duration))
 	} else {
-		listItem.Edit(fmt.Sprintf("✅ %s", ctest.Name()))
+		listItem.Edit(fmt.Sprintf("✅ %s\n\n%.2fs", ctest.Name(), duration))
 	}
 
 	tp.console.Render()
 }
 
-func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest) {
+func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	var testsList *elements.UnorderedList
 	if tp.console.HasElementWithId(testsListId) {
 		existingElement := tp.console.GetElementWithId(testsListId)
@@ -76,9 +76,9 @@ func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest) {
 
 	listItem := testsList.FindItemById(ctest.Id())
 	if listItem == nil {
-		testsList.NewItem(ctest.Id(), fmt.Sprintf("❌ %s", ctest.Name()))
+		testsList.NewItem(ctest.Id(), fmt.Sprintf("❌ %s\n\n%.2fs", ctest.Name(), duration))
 	} else {
-		listItem.Edit(fmt.Sprintf("❌ %s", ctest.Name()))
+		listItem.Edit(fmt.Sprintf("❌ %s\n\n%.2fs", ctest.Name(), duration))
 	}
 	tp.console.Render()
 }
