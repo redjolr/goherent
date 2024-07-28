@@ -1,14 +1,12 @@
 package cmd
 
 import (
+	"strings"
 	"time"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
-	"github.com/redjolr/goherent/console"
-	"github.com/redjolr/goherent/console/coordinates"
-	"github.com/redjolr/goherent/console/cursor"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
@@ -19,12 +17,7 @@ type Router struct {
 
 func NewRouter() Router {
 	ansiTerminal := terminal.NewAnsiTerminal()
-	cursorOrigin := coordinates.Origin()
-
-	cursor := cursor.NewCursor(&ansiTerminal, &cursorOrigin)
-
-	container := console.NewConsole(&ansiTerminal, &cursor)
-	terminalPresenter := NewTerminalPresenter(&container)
+	terminalPresenter := NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
 		eventsMapper:  NewEventsMapper(),
@@ -33,17 +26,17 @@ func NewRouter() Router {
 }
 
 func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
-	if jsonEvt.Test != nil && jsonEvt.Action == "pass" {
+	if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
 		ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 	}
 
-	if jsonEvt.Test != nil && jsonEvt.Action == "run" {
+	if jsonEvt.Test != nil && jsonEvt.Action == "run" && strings.Contains(*jsonEvt.Test, "/") {
 		ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestRanEvt(jsonEvt)
 		router.eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 	}
 
-	if jsonEvt.Test != nil && jsonEvt.Action == "fail" {
+	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 	}

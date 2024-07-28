@@ -17,6 +17,16 @@ func NewPackageUnderTest(name string) PackageUnderTest {
 	return newPack
 }
 
+func (packageUt *PackageUnderTest) RunningCtestsCount() int {
+	count := 0
+	for _, ctest := range packageUt.ctests {
+		if ctest.isRunning {
+			count++
+		}
+	}
+	return count
+}
+
 func (packageUt *PackageUnderTest) isCtestTheFirstOne(ctest Ctest) bool {
 	if len(packageUt.ctests) == 0 {
 		return false

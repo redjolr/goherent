@@ -199,6 +199,13 @@ func TestPrintWithCursorToHomePosEscapeCode(t *testing.T) {
 
 func TestPrintMoveCursorLeft(t *testing.T) {
 	assert := assert.New(t)
+	Test(`it should store the string "✅",
+		if we print "⏳"+MoveCursorLeftNCols(1)+"✅".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("⏳" + terminal.MoveCursorLeftNCols(1) + "✅")
+		assert.Equal(fakeTerminal.Text(), "✅")
+	}, t)
+
 	Test(`it should store the string "H",
 		if we print "H"+MoveCursorLeftNCols(1)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()

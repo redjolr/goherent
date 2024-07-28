@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"errors"
+
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
@@ -21,35 +23,32 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 	}
 }
 
-func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) {
+func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) error {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
 
-	if existingCtest != nil && existingCtest.HasPassed() {
-		return
+	if existingCtest == nil {
+		eh.output.GenericError()
+		return errors.New("No running test found for test pass event.")
 	}
-
-	if existingCtest != nil && existingCtest.IsRunning() {
+	if existingCtest.HasPassed() {
+		return nil
+	}
+	if existingCtest.IsRunning() {
 		existingCtest.MarkAsPassed(evt)
 		eh.output.CtestPassed(existingCtest, evt.TestDuration())
-		return
+		return nil
 	}
-
-	ctest := ctests_tracker.NewPassedCtest(evt)
-	eh.ctestsTracker.InsertCtest(ctest)
-
-	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		eh.output.PackageTestsStartedRunning(evt.PackageName())
-		eh.output.CtestPassed(&ctest, evt.TestDuration())
-		return
-	}
-
-	eh.output.CtestPassed(&ctest, evt.TestDuration())
+	return nil
 }
 
-func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
+func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) error {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
 	if existingCtest != nil {
-		return
+		return nil
+	}
+	if eh.ctestsTracker.RunningCtestsCount() > 0 {
+		eh.output.GenericError()
+		return errors.New("More than one running test detected.")
 	}
 	ctest := ctests_tracker.NewRunningCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
@@ -57,9 +56,11 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) {
 	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
 		eh.output.PackageTestsStartedRunning(evt.PackageName())
 		eh.output.CtestStartedRunning(&ctest)
-		return
+		return nil
 	}
 	eh.output.CtestStartedRunning(&ctest)
+
+	return nil
 }
 
 func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {

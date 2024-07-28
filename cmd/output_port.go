@@ -13,4 +13,5 @@ type OutputPort interface {
 	CtestFailed(ctest *ctests_tracker.Ctest, duration float64)
 	CtestStartedRunning(ctest *ctests_tracker.Ctest)
 	CtestOutput(ctest *ctests_tracker.Ctest)
+	GenericError()
 }

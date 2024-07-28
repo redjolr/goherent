@@ -78,6 +78,14 @@ func (tracker *CtestsTracker) FindCtestWithNameInPackage(ctestName string, packa
 	return nil
 }
 
+func (tracker *CtestsTracker) RunningCtestsCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		count += packageUt.RunningCtestsCount()
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
 	if !tracker.ContainsPackageUtWithName(packUt.name) {
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)

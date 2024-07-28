@@ -1,6 +1,7 @@
 package terminal
 
 import (
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -9,14 +10,14 @@ import (
 )
 
 type FakeAnsiTerminal struct {
-	lines  []string
+	lines  [][]string
 	coords coordinates.Coordinates
 }
 
 func NewFakeAnsiTerminal() FakeAnsiTerminal {
 	origin := coordinates.Origin()
 	return FakeAnsiTerminal{
-		lines:  []string{""},
+		lines:  [][]string{{}},
 		coords: origin,
 	}
 }
@@ -31,7 +32,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
 			if fat.coords.Y == len(fat.lines)-1 {
-				fat.lines = append(fat.lines, "")
+				fat.lines = append(fat.lines, []string{""})
 			}
 			fat.coords.OffsetY(1)
 			fat.coords.X = 0
@@ -48,11 +49,9 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			moveLeftCountAsStr, _ := strings.CutPrefix(moveCursorLeftSeq, "\033[")
 			moveLeftCountAsStr, _ = strings.CutSuffix(moveLeftCountAsStr, "D")
 			moveLeftCount, err := strconv.Atoi(moveLeftCountAsStr)
-
 			if err != nil {
 				panic("Cannot determine the number steps to move left.")
 			}
-
 			fat.coords.OffsetX(-min(moveLeftCount, fat.coords.X))
 			continue
 		}
@@ -89,7 +88,8 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			}
 			fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
 			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
-				fat.lines[fat.coords.Y] = fat.lines[fat.coords.Y] + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
+				newLineStr := strings.Join(fat.lines[fat.coords.Y], "") + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
+				fat.lines[fat.coords.Y] = strings.Split(newLineStr, "")
 			}
 			continue
 		}
@@ -114,9 +114,10 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		// Append empty strings to the right
 		if fat.coords.Y >= len(fat.lines) {
 			linesToAddCount := fat.coords.Y - len(fat.lines) + 1
-			fat.lines = append(fat.lines, make([]string, linesToAddCount)...)
+			fat.lines = append(fat.lines, make([][]string, linesToAddCount)...)
 			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
-				fat.lines[fat.coords.Y] = fat.lines[fat.coords.Y] + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
+				newLineStr := strings.Join(fat.lines[fat.coords.Y], "") + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
+				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], strings.Split(newLineStr, "")...)
 			}
 		}
 
@@ -124,36 +125,51 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		remainingChars := strings.Split(text, "")[1:]
 		if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
 			emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
-			fat.lines[fat.coords.Y] += strings.Repeat(" ", emptySpacesToAdd)
-			fat.lines[fat.coords.Y] += firstChar
-			fat.coords.OffsetX(len(firstChar))
+			for i := 0; i < emptySpacesToAdd; i++ {
+				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], " ")
+			}
+			fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], firstChar)
 			text = strings.Join(remainingChars, "")
+			fat.coords.OffsetX(1)
 		} else {
-			lineChars := strings.Split(fat.lines[fat.coords.Y], "")
+			lineChars := fat.lines[fat.coords.Y]
 			text = strings.Join(remainingChars, "")
 			lineChars[fat.coords.X] = firstChar
-			fat.lines[fat.coords.Y] = strings.Join(lineChars, "")
+			fat.lines[fat.coords.Y] = lineChars
 			fat.coords.OffsetX(1)
 		}
 	}
 }
 
 func (fat *FakeAnsiTerminal) Text() string {
-	return strings.Join(fat.lines, "\n")
+	text := ""
+	for lineIndex, line := range fat.lines {
+		for _, char := range line {
+			text += char
+		}
+		if lineIndex < len(fat.lines)-1 {
+			text += "\n"
+		}
+	}
+	return text
 }
 
 func (fat *FakeAnsiTerminal) GoToOrigin() {
 	fat.coords.SetToOrigin()
 }
 
+func (fat *FakeAnsiTerminal) MoveUp(n int) {
+	fat.Print(fmt.Sprintf("\033[%dA", n))
+}
+
 func (fat *FakeAnsiTerminal) MoveDown(n int) {
-	fat.coords.Y += n
+	fat.Print(fmt.Sprintf("\033[%dB", n))
+}
+
+func (fat *FakeAnsiTerminal) MoveRight(n int) {
+	fat.Print(fmt.Sprintf("\033[%dC", n))
 }
 
 func (fat *FakeAnsiTerminal) MoveLeft(n int) {
-	fat.coords.X -= n
-}
-
-func (fat *FakeAnsiTerminal) MoveUp(n int) {
-	fat.coords.Y -= n
+	fat.Print(fmt.Sprintf("\033[%dD", n))
 }

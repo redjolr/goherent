@@ -3,27 +3,41 @@ package experiment_test
 import (
 	"testing"
 
-	"github.com/redjolr/goherent/cmd/experiment"
 	. "github.com/redjolr/goherent/pkg"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestFoo(t *testing.T) {
-	assert := assert.New(t)
 	Test("Passing test", func(t *testing.T) {
-		assert.Equal(experiment.Foo(), "Foo")
 	}, t)
 
-	Test("Failing test 1", func(t *testing.T) {
-		assert.True(false)
+	Test("This is the first Failing test.", func(t *testing.T) {
+		t.Error("Failing test 1")
 	}, t)
 
-	Test("Failing test 2", func(t *testing.T) {
-		assert.True(false)
+	Test("This test is failing too", func(t *testing.T) {
+		t.Error("Failing test 1")
+	}, t)
+
+	Test(`This is a passing test. If you dont believe me,
+     check it for yourself.`, func(t *testing.T) {
 	}, t)
 
 	Test("Passing test 2", func(t *testing.T) {
-		assert.Equal(experiment.Foo(), "Foo")
+	}, t)
+
+	Test("This is the first Failing test.", func(t *testing.T) {
+		t.Error("Failing test 1")
+	}, t)
+
+	Test("This test is failing too", func(t *testing.T) {
+		t.Error("Failing test 1")
+	}, t)
+
+	Test(`This is a passing test. If you dont believe me,
+     check it for yourself.`, func(t *testing.T) {
+	}, t)
+
+	Test("Passing test 2", func(t *testing.T) {
 	}, t)
 
 }

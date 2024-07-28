@@ -6,6 +6,8 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
@@ -286,5 +288,225 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 
 		//Then
 		assert.True(isCtest1FirstInPackage1)
+	}, t)
+}
+
+func TestRunningTestsCount(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	Given that the CtestTracker does not have any Ctests in it
+	When we execute the RunningCtestsCount()
+	Then the return value should be 0
+	`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 0)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has a passed Ctests in it
+	When we execute the RunningCtestsCount()
+	Then the return value should be 0
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctest := ctests_tracker.NewPassedCtest(ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(ctest)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 0)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has a failed Ctests in it
+	When we execute the RunningCtestsCount()
+	Then the return value should be 0
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctest := ctests_tracker.NewFailedCtest(ctest_failed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(ctest)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 0)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has a running Ctest in it
+	When we execute the RunningCtestsCount()
+	Then the return value should be 1
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctest := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(ctest)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 1)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has two running Ctests in the same package named "somePackage"
+	When we execute the RunningCtestsCount()
+	Then the return value should be 2
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+			},
+		))
+
+		ctest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName2",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(ctest1)
+		tracker.InsertCtest(ctest2)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 2)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has two running Ctests in different packages
+	When we execute the RunningCtestsCount()
+	Then the return value should be 2
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+			},
+		))
+
+		ctest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage2",
+				Test:    "testName2",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(ctest1)
+		tracker.InsertCtest(ctest2)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 2)
+	}, t)
+
+	Test(`
+	Given that the CtestTracker has 1 passed test and a running test in package "somePackage"
+	And 1 running test in package "somePackage2"
+	When we execute the RunningCtestsCount()
+	Then the return value should be 2
+	`, func(t *testing.T) {
+		// Given
+		elapsedTime := 2.3
+		tracker := ctests_tracker.NewCtestsTracker()
+		runningCtest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName1",
+				Elapsed: &elapsedTime,
+			},
+		))
+
+		passingCtest := ctests_tracker.NewPassedCtest(ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage",
+				Test:    "testName2",
+				Elapsed: &elapsedTime,
+			},
+		))
+
+		runningCtest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Package: "somePackage2",
+				Test:    "testName3",
+				Elapsed: &elapsedTime,
+			},
+		))
+		tracker.InsertCtest(runningCtest1)
+		tracker.InsertCtest(passingCtest)
+		tracker.InsertCtest(runningCtest2)
+
+		// When
+		runningCtestsCnt := tracker.RunningCtestsCount()
+
+		// Then
+		assert.Equal(runningCtestsCnt, 2)
 	}, t)
 }
