@@ -39,28 +39,15 @@ func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration f
 }
 
 func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
-	fmt.Printf("\033[%dD", 1)
-	fmt.Printf("❌\n")
+	tp.terminal.MoveLeft(1)
+	tp.terminal.Print("❌\n")
 }
 
 func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
-	// testsListElement := tp.console.GetElementWithId(testsListId)
-	// if testsListElement == nil {
-	// 	return
-	// }
-	// testsList := testsListElement.(*elements.UnorderedList)
-	// testItem := testsList.FindItemById(ctest.Id())
 
-	// if testItem == nil {
-	// 	return
-	// }
-
-	// testItem.Edit(
-	// 	testItem.Text() + fmt.Sprintf("\n%s", ctest.Output()),
-	// )
-	// tp.console.Render()
+	tp.terminal.Print(ctest.Output())
 }
 
-func (tp *TerminalPresenter) GenericError() {
+func (tp *TerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }

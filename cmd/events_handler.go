@@ -27,8 +27,8 @@ func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedE
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
 
 	if existingCtest == nil {
-		eh.output.GenericError()
-		return errors.New("No running test found for test pass event.")
+		eh.output.Error()
+		return errors.New("No existing test found for test pass event.")
 	}
 	if existingCtest.HasPassed() {
 		return nil
@@ -47,7 +47,7 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) err
 		return nil
 	}
 	if eh.ctestsTracker.RunningCtestsCount() > 0 {
-		eh.output.GenericError()
+		eh.output.Error()
 		return errors.New("More than one running test detected.")
 	}
 	ctest := ctests_tracker.NewRunningCtest(evt)
@@ -63,34 +63,28 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) err
 	return nil
 }
 
-func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) {
+func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) error {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
 
-	if existingCtest != nil && existingCtest.HasFailed() {
-		return
+	if existingCtest == nil {
+		eh.output.Error()
+		return errors.New("There is no existing test.")
 	}
-	if existingCtest != nil {
-		existingCtest.MarkAsFailed(evt)
-
-		if eh.ctestsTracker.IsCtestFirstOfItsPackage(*existingCtest) {
-			eh.output.PackageTestsStartedRunning(evt.PackageName())
-		}
-		eh.output.CtestFailed(existingCtest, evt.TestDuration())
-
-		if existingCtest.ContainsOutput() {
-			eh.output.CtestOutput(existingCtest)
-		}
-		return
+	if existingCtest.HasFailed() {
+		return nil
 	}
-	ctest := ctests_tracker.NewFailedCtest(evt)
-	eh.ctestsTracker.InsertCtest(ctest)
-	if eh.ctestsTracker.IsCtestFirstOfItsPackage(ctest) {
-		eh.output.PackageTestsStartedRunning(evt.PackageName())
-		eh.output.CtestFailed(&ctest, evt.TestDuration())
-		return
+	if !existingCtest.IsRunning() {
+		eh.output.Error()
+		return errors.New("No running test found for test pass event.")
 	}
 
-	eh.output.CtestFailed(&ctest, evt.TestDuration())
+	existingCtest.MarkAsFailed(evt)
+	eh.output.CtestFailed(existingCtest, evt.TestDuration())
+
+	if existingCtest.ContainsOutput() {
+		eh.output.CtestOutput(existingCtest)
+	}
+	return nil
 }
 
 func (eh EventsHandler) HandleCtestOutputEvent(evt ctest_output_event.CtestOutputEvent) {
