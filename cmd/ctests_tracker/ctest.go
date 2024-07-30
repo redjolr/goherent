@@ -7,6 +7,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/internal/uuidgen"
 )
 
@@ -21,6 +22,7 @@ type Ctest struct {
 	isRunning   bool
 	hasPassed   bool
 	hasFailed   bool
+	isSkipped   bool
 }
 
 func NewCtest(testName string, packageName string) Ctest {
@@ -33,6 +35,7 @@ func NewCtest(testName string, packageName string) Ctest {
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   false,
+		isSkipped:   false,
 	}
 }
 
@@ -95,6 +98,10 @@ func (ctest *Ctest) IsRunning() bool {
 	return ctest.isRunning
 }
 
+func (ctest *Ctest) IsSkipped() bool {
+	return ctest.isSkipped
+}
+
 func (ctest *Ctest) HasPassed() bool {
 	return ctest.hasPassed
 }
@@ -119,6 +126,7 @@ func (ctest *Ctest) MarkAsPassed(passedEvt ctest_passed_event.CtestPassedEvent) 
 	ctest.isRunning = false
 	ctest.hasPassed = true
 	ctest.hasFailed = false
+	ctest.isSkipped = false
 	ctest.events = append(ctest.events, passedEvt)
 }
 
@@ -126,6 +134,15 @@ func (ctest *Ctest) MarkAsFailed(passedEvt ctest_failed_event.CtestFailedEvent) 
 	ctest.isRunning = false
 	ctest.hasPassed = false
 	ctest.hasFailed = true
+	ctest.isSkipped = false
+	ctest.events = append(ctest.events, passedEvt)
+}
+
+func (ctest *Ctest) MarkAsSkipped(passedEvt ctest_skipped_event.CtestSkippedEvent) {
+	ctest.isRunning = false
+	ctest.hasPassed = false
+	ctest.hasFailed = false
+	ctest.isSkipped = true
 	ctest.events = append(ctest.events, passedEvt)
 }
 

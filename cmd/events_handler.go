@@ -90,6 +90,15 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 
 func (eh EventsHandler) HandleCtestSkippedEvt(evt ctest_skipped_event.CtestSkippedEvent) error {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+	if existingCtest == nil {
+		eh.output.Error()
+		return errors.New("There is no existing test.")
+	}
+
+	if existingCtest.IsSkipped() {
+		return nil
+	}
+	existingCtest.MarkAsSkipped(evt)
 	eh.output.CtestSkipped(existingCtest)
 	return nil
 }
