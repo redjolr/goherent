@@ -669,164 +669,103 @@ func TestCtestSkippedEvent(t *testing.T) {
 		)
 	}, t)
 
-	// Test(`
-	// 	Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
-	// 	When a CtestFailedEvent of the same test/package occurs
-	// 	Then a user should be informed that the Ctest has failed
-	// 	And the output from the CtestOutputEvents should be presented
-	// 	`, func(t *testing.T) {
-	// 	// Given
-	// 	eventsHandler, terminal, _ := setup()
-	// 	elapsedTime := 2.3
+	Test(`
+		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+		When a CtestSkippedEvent of the same test/package occurs
+		Then a user should be informed that the Ctest has been skipped
+		`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 1.2
 
-	// 	ctestOutputEvt1 := ctest_output_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "output",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Output:  "This is output 1.",
-	// 		},
-	// 	)
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-	// 	ctestOutputEvt2 := ctest_output_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "output",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Output:  "This is output 2.",
-	// 		},
-	// 	)
-	// 	eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
-	// 	eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
+		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "testName",
+				Package: "somePackage",
+				Output:  "This is some output.",
+			},
+		)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 
-	// 	// When
-	// 	ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "fail",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Elapsed: &elapsedTime,
-	// 		},
-	// 	)
-	// 	err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-	// 	assert.Error(err)
+		// When
+		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-	// 	// Then
-	// 	assert.True(
-	// 		strings.Contains(terminal.Text(), "❗ Error."))
-	// }, t)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n",
+		)
+	}, t)
 
-	// Test(`
-	// 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	// 	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-	// 	When a CtestFailedEvent of the same test/package occurs
-	// 	Then a user should be informed that the Ctest has failed
-	// 	And the output from the CtestOutputEvents should be presented
-	// 	`, func(t *testing.T) {
-	// 	// Given
-	// 	eventsHandler, terminal, _ := setup()
-	// 	elapsedTime := 1.2
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And a CtestPassedEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	When a CtestSkippedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvents should be presented
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 1.2
 
-	// 	ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
-	// 		Time:    time.Now(),
-	// 		Action:  "run",
-	// 		Test:    "testName",
-	// 		Package: "somePackage",
-	// 	})
-	// 	eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-	// 	ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "output",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Output:  "This is some output.",
-	// 		},
-	// 	)
-	// 	eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
-	// 	// When
-	// 	ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "fail",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Elapsed: &elapsedTime,
-	// 		},
-	// 	)
-	// 	eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+		// When
+		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage",
+			},
+		)
 
-	// 	// Then
-	// 	assert.Equal(
-	// 		terminal.Text(),
-	// 		"📦 somePackage\n\n   • testName    ❌\nThis is some output.",
-	// 	)
-	// }, t)
+		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-	// Test(`
-	// 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	// 	And two CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-	// 	When a CtestFailedEvent of the same test/package occurs
-	// 	Then a user should be informed that the Ctest has failed
-	// 	And the output from the CtestOutputEvents should be presented
-	// 	`, func(t *testing.T) {
-	// 	// Given
-	// 	eventsHandler, terminal, _ := setup()
-	// 	elapsedTime := 2.3
+		// Then
+		assert.Error(err)
+		assert.True(
+			strings.Contains(terminal.Text(), "❗ Error."),
+		)
+	}, t)
 
-	// 	ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
-	// 		Time:    time.Now(),
-	// 		Action:  "run",
-	// 		Test:    "testName",
-	// 		Package: "somePackage",
-	// 	})
-	// 	eventsHandler.HandleCtestRanEvt(ctestRanEvt)
-
-	// 	ctestOutputEvt1 := ctest_output_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "output",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Output:  "Some output 1.",
-	// 		},
-	// 	)
-
-	// 	ctestOutputEvt2 := ctest_output_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "output",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Output:  "Some output 2.",
-	// 		},
-	// 	)
-	// 	eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
-	// 	eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
-
-	// 	// When
-	// 	ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
-	// 		events.JsonTestEvent{
-	// 			Time:    time.Now(),
-	// 			Action:  "fail",
-	// 			Test:    "testName",
-	// 			Package: "somePackage",
-	// 			Elapsed: &elapsedTime,
-	// 		},
-	// 	)
-	// 	eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-
-	// 	// Then
-	// 	assert.Equal(
-	// 		terminal.Text(),
-	// 		"📦 somePackage\n\n   • testName    ❌\nSome output 1.\nSome output 2.",
-	// 	)
-	// }, t)
 }
 
 func TestCtestOutputEvent(t *testing.T) {

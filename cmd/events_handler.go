@@ -98,6 +98,11 @@ func (eh EventsHandler) HandleCtestSkippedEvt(evt ctest_skipped_event.CtestSkipp
 	if existingCtest.IsSkipped() {
 		return nil
 	}
+
+	if !existingCtest.IsRunning() {
+		eh.output.Error()
+		return errors.New("No running test found for test pass event.")
+	}
 	existingCtest.MarkAsSkipped(evt)
 	eh.output.CtestSkipped(existingCtest)
 	return nil
