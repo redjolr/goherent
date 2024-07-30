@@ -5,6 +5,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 )
 
 type EventsMapper struct {
@@ -49,6 +50,18 @@ func (evtMapper EventsMapper) JsonTestEvt2CtestFailedEvt(jsonEvt events.JsonEven
 			Test:    *jsonEvt.Test,
 			Elapsed: jsonEvt.Elapsed,
 			Output:  jsonEvt.Output,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2CtestSkippedEvt(jsonEvt events.JsonEvent) ctest_skipped_event.CtestSkippedEvent {
+	return ctest_skipped_event.NewFromJsonTestEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Action:  jsonEvt.Action,
+			Package: jsonEvt.Package,
+			Test:    *jsonEvt.Test,
+			Elapsed: jsonEvt.Elapsed,
 		},
 	)
 }

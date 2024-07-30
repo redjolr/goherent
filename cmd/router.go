@@ -40,6 +40,11 @@ func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 	}
+
+	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
+		router.eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+	}
 }
 
 func (router Router) RouteTestingStartedEvent(timestamp time.Time) {

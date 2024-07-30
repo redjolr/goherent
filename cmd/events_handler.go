@@ -8,6 +8,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 )
 
@@ -21,24 +22,6 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 		output:        output,
 		ctestsTracker: ctestTracker,
 	}
-}
-
-func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) error {
-	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
-
-	if existingCtest == nil {
-		eh.output.Error()
-		return errors.New("No existing test found for test pass event.")
-	}
-	if existingCtest.HasPassed() {
-		return nil
-	}
-	if existingCtest.IsRunning() {
-		existingCtest.MarkAsPassed(evt)
-		eh.output.CtestPassed(existingCtest, evt.TestDuration())
-		return nil
-	}
-	return nil
 }
 
 func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) error {
@@ -63,6 +46,24 @@ func (eh EventsHandler) HandleCtestRanEvt(evt ctest_ran_event.CtestRanEvent) err
 	return nil
 }
 
+func (eh EventsHandler) HandleCtestPassedEvt(evt ctest_passed_event.CtestPassedEvent) error {
+	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+
+	if existingCtest == nil {
+		eh.output.Error()
+		return errors.New("No existing test found for test pass event.")
+	}
+	if existingCtest.HasPassed() {
+		return nil
+	}
+	if existingCtest.IsRunning() {
+		existingCtest.MarkAsPassed(evt)
+		eh.output.CtestPassed(existingCtest, evt.TestDuration())
+		return nil
+	}
+	return nil
+}
+
 func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedEvent) error {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
 
@@ -84,6 +85,12 @@ func (eh EventsHandler) HandleCtestFailedEvt(evt ctest_failed_event.CtestFailedE
 	if existingCtest.ContainsOutput() {
 		eh.output.CtestOutput(existingCtest)
 	}
+	return nil
+}
+
+func (eh EventsHandler) HandleCtestSkippedEvt(evt ctest_skipped_event.CtestSkippedEvent) error {
+	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.CtestName(), evt.PackageName())
+	eh.output.CtestSkipped(existingCtest)
 	return nil
 }
 

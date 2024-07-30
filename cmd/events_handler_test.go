@@ -13,6 +13,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
@@ -547,6 +548,47 @@ func TestCtestFailedEvent(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"📦 somePackage\n\n   • testName    ❌\nSome output 1.\nSome output 2.",
+		)
+	}, t)
+}
+
+func TestCtestSkippedEvent(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+		When a CtestSkippedEvent of the same test/package occurs
+		Then the user should be informed that the test for the "somePackage" package have started
+		And then that the Ctest with name "testName" is skipped
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 2.3
+
+		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n",
 		)
 	}, t)
 }

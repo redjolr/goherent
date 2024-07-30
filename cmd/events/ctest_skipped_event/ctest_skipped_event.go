@@ -32,6 +32,10 @@ func (evt CtestSkippedEvent) CtestName() string {
 	return evt.testName
 }
 
+func (evt CtestSkippedEvent) PackageName() string {
+	return evt.packageName
+}
+
 func (evt CtestSkippedEvent) Timestamp() time.Time {
 	return evt.time
 }
