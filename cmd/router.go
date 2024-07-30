@@ -6,6 +6,7 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/console/terminal"
 )
@@ -50,4 +51,9 @@ func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
 func (router Router) RouteTestingStartedEvent(timestamp time.Time) {
 	testingStartedEvt := testing_started_event.NewTestingStartedEvent(timestamp)
 	router.eventsHandler.HandleTestingStarted(testingStartedEvt)
+}
+
+func (router Router) RouteTestingFinishedEvent(duration time.Duration) {
+	testingFinishedEvt := testing_finished_event.NewTestingFinishedEvent(duration)
+	router.eventsHandler.HandleTestingFinished(testingFinishedEvt)
 }

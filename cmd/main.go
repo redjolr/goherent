@@ -28,6 +28,7 @@ func Main(extraCmdArgs []string) int {
 		fmt.Printf("Error starting command: %v\n", err)
 		return 1
 	}
+	startTime := time.Now()
 	router.RouteTestingStartedEvent(time.Now())
 
 	scanner := bufio.NewScanner(stdout)
@@ -44,5 +45,7 @@ func Main(extraCmdArgs []string) int {
 		router.RouteJsonEvent(jsonEvt)
 	}
 	cmd.Wait()
+	elapsed := time.Since(startTime)
+	router.RouteTestingFinishedEvent(elapsed)
 	return 0
 }
