@@ -54,41 +54,36 @@ func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 
 func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 
-	if summary.failedTestsCount == 0 && summary.passedTestsCount != 0 {
-		tp.terminal.Print(
-			fmt.Sprintf(
-				ANSI_BOLD+"\nPackages:"+ANSI_RESET_BOLD+ANSI_GREEN+" %d passed"+ANSI_COLOR_RESET+", %d total\n"+
-					ANSI_BOLD+"Tests:"+ANSI_RESET_BOLD+ANSI_GREEN+"    %d passed"+ANSI_COLOR_RESET+", %d total\n"+
-					ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs\n"+
-					"Ran all tests.",
-				summary.passedPackagesCount, summary.packagesCount, summary.passedTestsCount, summary.testsCount, summary.durationS,
-			),
-		)
+	packagesSummary := ANSI_BOLD + "\nPackages:" + ANSI_RESET_BOLD + " "
+	testsSummary := ANSI_BOLD + "Tests:" + ANSI_RESET_BOLD + "    "
+	timeSummary := fmt.Sprintf(ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs", summary.durationS)
+
+	if summary.failedPackagesCount > 0 {
+		packagesSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedPackagesCount) + ANSI_COLOR_RESET + ", "
+	}
+	if summary.failedTestsCount > 0 {
+		testsSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedTestsCount) + ANSI_COLOR_RESET + ", "
+	}
+	if summary.passedPackagesCount > 0 {
+		packagesSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedPackagesCount) + ANSI_COLOR_RESET + ", "
+
 	}
 
-	if summary.failedTestsCount != 0 && summary.passedTestsCount == 0 {
-		tp.terminal.Print(
-			fmt.Sprintf(
-				ANSI_BOLD+"\nPackages:"+ANSI_RESET_BOLD+ANSI_RED+" %d failed"+ANSI_COLOR_RESET+", %d total\n"+
-					ANSI_BOLD+"Tests:"+ANSI_RESET_BOLD+ANSI_RED+"    %d failed"+ANSI_COLOR_RESET+", %d total\n"+
-					ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs\n"+
-					"Ran all tests.",
-				summary.failedPackagesCount, summary.packagesCount, summary.failedTestsCount, summary.testsCount, summary.durationS,
-			),
-		)
+	if summary.passedTestsCount > 0 {
+		testsSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedTestsCount) + ANSI_COLOR_RESET + ", "
 	}
 
-	if summary.failedTestsCount == 0 && summary.passedTestsCount == 0 {
-		tp.terminal.Print(
-			fmt.Sprintf(
-				ANSI_BOLD+"\nPackages:"+ANSI_RESET_BOLD+" %d total\n"+
-					ANSI_BOLD+"Tests:"+ANSI_RESET_BOLD+"    %d total\n"+
-					ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs\n"+
-					"Ran all tests.",
-				summary.packagesCount, summary.testsCount, summary.durationS,
-			),
-		)
-	}
+	packagesSummary += fmt.Sprintf("%d total", summary.packagesCount)
+	testsSummary += fmt.Sprintf("%d total", summary.testsCount)
+
+	tp.terminal.Print(
+		fmt.Sprintf(
+			packagesSummary + "\n" +
+				testsSummary + "\n" +
+				timeSummary + "\n" +
+				"Ran all tests.",
+		),
+	)
 }
 
 func (tp *TerminalPresenter) Error() {

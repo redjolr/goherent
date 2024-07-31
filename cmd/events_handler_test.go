@@ -849,7 +849,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		Then a test summary should be presented
 		And that summary should present that there was 1 tested package in total, 1 has passed
 		And 1 test was run in total and 1 has passed
-		And the tests execution time was 1.2 seconds 
+		And the tests execution time was 1.2 seconds
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -883,8 +883,8 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"📦 somePackage\n\n   • testName    ✅\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+" 1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+"    1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
@@ -897,7 +897,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		Then a test summary should be presented
 		And that summary should present that there was 1 tested package in total, 1 has passed
 		And 2 tests were run in total and 2 have passed
-		And the tests execution time was 1.2 seconds 
+		And the tests execution time was 1.2 seconds
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -952,8 +952,8 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"📦 somePackage\n\n   • testName 1    ✅\n\n   • testName 2    ✅\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+" 1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+"    2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
@@ -967,7 +967,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		Then a test summary should be presented
 		And that summary should present that there were 2 tested packages in total, 2 have passed
 		And 2 tests were run in total and 2 have passed
-		And the tests execution time was 1.2 seconds 
+		And the tests execution time was 1.2 seconds
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -1024,8 +1024,8 @@ func TestHandleTestingFinished(t *testing.T) {
 			"📦 somePackage 1\n\n   • testName 1    ✅\n"+
 				"📦 somePackage 2\n\n   • testName 2    ✅\n"+
 
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+" 2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_GREEN+"    2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
@@ -1037,7 +1037,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		Then a test summary should be presented
 		And that summary should present that there was 1 tested package in total, 1 has failed
 		And 1 test was run in total and 1 has failed
-		And the tests execution time was 1.2 seconds 
+		And the tests execution time was 1.2 seconds
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -1071,8 +1071,8 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"📦 somePackage\n\n   • testName    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+" 1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+"    1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
@@ -1085,7 +1085,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		Then a test summary should be presented
 		And that summary should present that there was 1 tested package in total, 1 has failed
 		And 2 tests were run in total and 2 have failed
-		And the tests execution time was 1.2 seconds 
+		And the tests execution time was 1.2 seconds
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -1140,8 +1140,8 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"📦 somePackage\n\n   • testName 1    ❌\n\n   • testName 2    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+" 1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+"    2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
@@ -1212,8 +1212,147 @@ func TestHandleTestingFinished(t *testing.T) {
 			"📦 somePackage 1\n\n   • testName 1    ❌\n"+
 				"📦 somePackage 2\n\n   • testName 2    ❌\n"+
 
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+" 2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+cmd.ANSI_RED+"    2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+		Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+		And the first Ctest has passed and the second has failed
+		When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+		Then a test summary should be presented
+		And that summary should present that there was 1 tested package in total, 1 has failed
+		And 2 tests were run in total, 1 has passed and 1 has failed
+		And the tests execution time was 1.2 seconds
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 1.2
+		ctest1RanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 1",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+
+		ctest1PassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName 1",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+
+		ctest2RanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 2",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+
+		ctest2FailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName 2",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctest1RanEvt)
+		eventsHandler.HandleCtestPassedEvt(ctest1PassedEvt)
+		eventsHandler.HandleCtestRanEvt(ctest2RanEvt)
+		eventsHandler.HandleCtestFailedEvt(ctest2FailedEvt)
+
+		// When
+		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		eventsHandler.HandleTestingFinished(testingFinishedEvent)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"📦 somePackage\n\n   • testName 1    ✅\n\n   • testName 2    ❌\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+		Given that there are two Ctests: "testName 1" from package "somePackage 1" and "testName 2" from package "somePackage 2"
+		And the first Ctest has passed and the second has failed
+		When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+		Then a test summary should be presented
+		And that summary should present that there were 2 tested package in total, 1 has failed, 1 has passed
+		And 2 tests were run in total, 1 has passed and 1 has failed
+		And the tests execution time was 1.2 seconds
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 1.2
+		ctest1RanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 1",
+			Package: "somePackage 1",
+			Output:  "Some output",
+		})
+
+		ctest1PassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName 1",
+				Package: "somePackage 1",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+
+		ctest2RanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 2",
+			Package: "somePackage 2",
+			Output:  "Some output",
+		})
+
+		ctest2FailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName 2",
+				Package: "somePackage 2",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestRanEvt(ctest1RanEvt)
+		eventsHandler.HandleCtestPassedEvt(ctest1PassedEvt)
+		eventsHandler.HandleCtestRanEvt(ctest2RanEvt)
+		eventsHandler.HandleCtestFailedEvt(ctest2FailedEvt)
+
+		// When
+		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		eventsHandler.HandleTestingFinished(testingFinishedEvent)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"📦 somePackage 1\n\n   • testName 1    ✅\n"+
+				"📦 somePackage 2\n\n   • testName 2    ❌\n"+
+				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
 				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
