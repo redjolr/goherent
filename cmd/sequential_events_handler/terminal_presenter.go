@@ -1,4 +1,4 @@
-package cmd
+package sequential_events_handler
 
 import (
 	"fmt"

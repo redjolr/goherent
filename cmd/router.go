@@ -8,21 +8,22 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
+	"github.com/redjolr/goherent/cmd/sequential_events_handler"
 	"github.com/redjolr/goherent/console/terminal"
 )
 
 type Router struct {
 	eventsMapper  EventsMapper
-	eventsHandler EventsHandler
+	eventsHandler sequential_events_handler.EventsHandler
 }
 
 func NewRouter() Router {
 	ansiTerminal := terminal.NewAnsiTerminal()
-	terminalPresenter := NewTerminalPresenter(&ansiTerminal)
+	terminalPresenter := sequential_events_handler.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	return Router{
 		eventsMapper:  NewEventsMapper(),
-		eventsHandler: NewEventsHandler(&terminalPresenter, &ctestsTracker),
+		eventsHandler: sequential_events_handler.NewEventsHandler(&terminalPresenter, &ctestsTracker),
 	}
 }
 

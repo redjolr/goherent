@@ -1,4 +1,4 @@
-package cmd
+package sequential_events_handler
 
 const ANSI_RED string = "\033[31m"
 const ANSI_GREEN string = "\033[32m"

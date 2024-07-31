@@ -1,4 +1,4 @@
-package cmd_test
+package sequential_events_handler_test
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/redjolr/goherent/cmd"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
@@ -16,16 +15,17 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
+	"github.com/redjolr/goherent/cmd/sequential_events_handler"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() (*cmd.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup() (*sequential_events_handler.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
-	fakeAnsiTerminalPresenter := cmd.NewTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := sequential_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := cmd.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := sequential_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
 }
 
@@ -589,7 +589,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n",
 		)
 	}, t)
 
@@ -666,7 +666,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n",
 		)
 	}, t)
 
@@ -714,7 +714,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n",
 		)
 	}, t)
 
@@ -836,9 +836,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" 0 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    0 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+			sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" 0 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    0 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -883,9 +883,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • testName    ✅\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -952,9 +952,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • testName 1    ✅\n\n   • testName 2    ✅\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_GREEN+"2 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1024,9 +1024,9 @@ func TestHandleTestingFinished(t *testing.T) {
 			"\n\n📦 somePackage 1\n\n   • testName 1    ✅\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ✅\n"+
 
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_GREEN+"2 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_GREEN+"2 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_GREEN+"2 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1071,9 +1071,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • testName    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1140,9 +1140,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • testName 1    ❌\n\n   • testName 2    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"2 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1212,9 +1212,9 @@ func TestHandleTestingFinished(t *testing.T) {
 			"\n\n📦 somePackage 1\n\n   • testName 1    ❌\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ❌\n"+
 
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"2 failed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"2 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"2 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1281,9 +1281,9 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • testName 1    ✅\n\n   • testName 2    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1351,9 +1351,9 @@ func TestHandleTestingFinished(t *testing.T) {
 			terminal.Text(),
 			"\n\n📦 somePackage 1\n\n   • testName 1    ✅\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ❌\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1394,10 +1394,10 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+			"\n\n📦 somePackage\n\n   • testName    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1457,10 +1457,10 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName 1    "+cmd.ANSI_YELLOW_CIRCLE+"\n\n   • testName 2    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", 1 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_YELLOW+"2 skipped"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+			"\n\n📦 somePackage\n\n   • testName 1    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n\n   • testName 2    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 1 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_YELLOW+"2 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1520,11 +1520,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage 1\n\n   • testName 1    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				"\n\n📦 somePackage 2\n\n   • testName 2    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_YELLOW+"2 skipped"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_YELLOW+"2 skipped"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+			"\n\n📦 somePackage 1\n\n   • testName 1    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				"\n\n📦 somePackage 2\n\n   • testName 2    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_YELLOW+"2 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_YELLOW+"2 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1585,11 +1585,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage 1\n\n   • testName 1    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
+			"\n\n📦 somePackage 1\n\n   • testName 1    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ✅\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1671,10 +1671,10 @@ func TestHandleTestingFinished(t *testing.T) {
 			terminal.Text(),
 			"\n\n📦 somePackage 1\n\n   • testName 1    ❌\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ✅\n"+
-				"\n\n📦 somePackage 3\n\n   • testName 3    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 3 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_GREEN+"1 passed"+cmd.ANSI_COLOR_RESET+", 3 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				"\n\n📦 somePackage 3\n\n   • testName 3    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 3 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_GREEN+"1 passed"+sequential_events_handler.ANSI_COLOR_RESET+", 3 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
@@ -1736,10 +1736,10 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage 1\n\n   • testName 1    ❌\n"+
-				"\n\n📦 somePackage 2\n\n   • testName 2    "+cmd.ANSI_YELLOW_CIRCLE+"\n"+
-				cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    "+cmd.ANSI_RED+"1 failed"+cmd.ANSI_COLOR_RESET+", "+cmd.ANSI_YELLOW+"1 skipped"+cmd.ANSI_COLOR_RESET+", 2 total\n"+
-				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				"\n\n📦 somePackage 2\n\n   • testName 2    "+sequential_events_handler.ANSI_YELLOW_CIRCLE+"\n"+
+				sequential_events_handler.ANSI_BOLD+"\nPackages:"+sequential_events_handler.ANSI_RESET_BOLD+" "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Tests:"+sequential_events_handler.ANSI_RESET_BOLD+"    "+sequential_events_handler.ANSI_RED+"1 failed"+sequential_events_handler.ANSI_COLOR_RESET+", "+sequential_events_handler.ANSI_YELLOW+"1 skipped"+sequential_events_handler.ANSI_COLOR_RESET+", 2 total\n"+
+				sequential_events_handler.ANSI_BOLD+"Time:"+sequential_events_handler.ANSI_RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
