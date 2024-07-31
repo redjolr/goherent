@@ -52,6 +52,12 @@ func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 	tp.terminal.Print(ctest.Output())
 }
 
+func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
+	tp.terminal.Print(
+		fmt.Sprintf("\nPackages: %d total\nTests:    %d total\nTime:     %.3fs\nRan all test suites.", summary.packagesCount, summary.testsCount, summary.durationS),
+	)
+}
+
 func (tp *TerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }

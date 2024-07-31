@@ -14,6 +14,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
+	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/console/terminal"
 	. "github.com/redjolr/goherent/pkg"
@@ -594,8 +595,8 @@ func TestCtestSkippedEvent(t *testing.T) {
 
 	Test(`
 		Given that no events have happened
-		When a CtestFailedEvent occurs with test name "testName" from "packageName"
-		Then the HandleCtestFailedEvt should produce an error
+		When a CtestSkippedEvent occurs with test name "testName" from "packageName"
+		Then the HandleCtestSkippedEvt should produce an error
 		And an error should be displayed in the terminal.
 		`, func(t *testing.T) {
 		// Given
@@ -721,8 +722,8 @@ func TestCtestSkippedEvent(t *testing.T) {
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And a CtestPassedEvent for Ctest with name "testName" of package "somePackage" has also occurred
 	When a CtestSkippedEvent of the same test/package occurs
-	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented
+	Then the HandleCtestSkippedEvt should produce an error
+	And an error should be displayed in the terminal.
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -811,6 +812,31 @@ func TestHandleTestingStarted(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			fmt.Sprintf("\n🚀 Starting... %s\n\n", now.Format("2006-01-02 15:04:05.000")),
+		)
+	}, t)
+}
+
+func TestHandleTestingFinished(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+		Given that no test events have occurred
+		When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+		Then a test summary should be presented
+		And that summary should present that 0 packages have been tested, 0 tests have been run
+		And the tests execution time was 1.2 seconds 
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+
+		// When
+		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		eventsHandler.HandleTestingFinished(testingFinishedEvent)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\nPackages: 0 total\nTests:    0 total\nTime:     1.200s\nRan all test suites.",
 		)
 	}, t)
 }

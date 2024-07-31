@@ -11,3 +11,7 @@ func NewTestingFinishedEvent(duration time.Duration) TestingFinishedEvent {
 		duration: duration,
 	}
 }
+
+func (evt TestingFinishedEvent) DurationS() float32 {
+	return float32(evt.duration.Seconds())
+}

@@ -8,6 +8,7 @@ import (
 
 type OutputPort interface {
 	TestingStarted(timestamp time.Time)
+	TestingFinishedSummary(summary TestingSummary)
 	PackageTestsStartedRunning(packageName string)
 	CtestPassed(ctest *ctests_tracker.Ctest, duration float64)
 	CtestFailed(ctest *ctests_tracker.Ctest, duration float64)

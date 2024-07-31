@@ -56,6 +56,14 @@ func (tracker *CtestsTracker) PackagesCount() int {
 	return len(tracker.packagesUnderTest)
 }
 
+func (tracker *CtestsTracker) CtestsCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		count += packageUt.CtestsCount()
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) PackageUnderTest(name string) PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
 		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {

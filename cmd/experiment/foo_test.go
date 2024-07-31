@@ -23,6 +23,7 @@ func TestFoo(t *testing.T) {
 	}, t)
 
 	Test("Passing test 2", func(t *testing.T) {
+		t.Skip()
 	}, t)
 
 	Test("This is the first Failing test.", func(t *testing.T) {
@@ -35,6 +36,7 @@ func TestFoo(t *testing.T) {
 
 	Test(`This is a passing test. If you dont believe me,
      check it for yourself.`, func(t *testing.T) {
+		t.Skip()
 	}, t)
 
 	Test("Passing test 2", func(t *testing.T) {

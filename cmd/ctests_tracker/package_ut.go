@@ -27,6 +27,10 @@ func (packageUt *PackageUnderTest) RunningCtestsCount() int {
 	return count
 }
 
+func (packageUt *PackageUnderTest) CtestsCount() int {
+	return len(packageUt.ctests)
+}
+
 func (packageUt *PackageUnderTest) isCtestTheFirstOne(ctest Ctest) bool {
 	if len(packageUt.ctests) == 0 {
 		return false
