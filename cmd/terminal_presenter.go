@@ -66,6 +66,18 @@ func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 		)
 	}
 
+	if summary.failedTestsCount != 0 && summary.passedTestsCount == 0 {
+		tp.terminal.Print(
+			fmt.Sprintf(
+				ANSI_BOLD+"\nPackages:"+ANSI_RESET_BOLD+ANSI_RED+" %d failed"+ANSI_COLOR_RESET+", %d total\n"+
+					ANSI_BOLD+"Tests:"+ANSI_RESET_BOLD+ANSI_RED+"    %d failed"+ANSI_COLOR_RESET+", %d total\n"+
+					ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs\n"+
+					"Ran all tests.",
+				summary.failedPackagesCount, summary.packagesCount, summary.failedTestsCount, summary.testsCount, summary.durationS,
+			),
+		)
+	}
+
 	if summary.failedTestsCount == 0 && summary.passedTestsCount == 0 {
 		tp.terminal.Print(
 			fmt.Sprintf(
