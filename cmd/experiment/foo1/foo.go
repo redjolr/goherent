@@ -1,4 +1,4 @@
-package experiment
+package foo
 
 func Foo() string {
 	return "Foo"

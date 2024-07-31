@@ -1,4 +1,4 @@
-package experiment_test
+package foo_test
 
 import (
 	"testing"
