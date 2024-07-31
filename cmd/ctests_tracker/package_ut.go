@@ -27,6 +27,35 @@ func (packageUt *PackageUnderTest) RunningCtestsCount() int {
 	return count
 }
 
+func (packageUt *PackageUnderTest) PassedCtestsCount() int {
+	count := 0
+	for _, ctest := range packageUt.ctests {
+		if ctest.hasPassed {
+			count++
+		}
+	}
+	return count
+}
+
+func (packageUt *PackageUnderTest) FailedCtestsCount() int {
+	count := 0
+	for _, ctest := range packageUt.ctests {
+		if ctest.hasFailed {
+			count++
+		}
+	}
+	return count
+}
+
+func (packageUt *PackageUnderTest) HasFailedTests() bool {
+	for _, ctest := range packageUt.ctests {
+		if ctest.hasFailed {
+			return true
+		}
+	}
+	return false
+}
+
 func (packageUt *PackageUnderTest) CtestsCount() int {
 	return len(packageUt.ctests)
 }

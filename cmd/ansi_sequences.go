@@ -1,5 +1,7 @@
 package cmd
 
+const ANSI_RED string = "\033[31m"
+const ANSI_GREEN string = "\033[32m"
 const ANSI_YELLOW string = "\u001B[33m"
 const ANSI_COLOR_RESET string = "\033[0m"
 

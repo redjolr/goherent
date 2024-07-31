@@ -64,6 +64,42 @@ func (tracker *CtestsTracker) CtestsCount() int {
 	return count
 }
 
+func (tracker *CtestsTracker) PassedCtestsCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		count += packageUt.PassedCtestsCount()
+	}
+	return count
+}
+
+func (tracker *CtestsTracker) FailedCtestsCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		count += packageUt.FailedCtestsCount()
+	}
+	return count
+}
+
+func (tracker *CtestsTracker) PassedPackagesCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		if !packageUt.HasFailedTests() {
+			count += 1
+		}
+	}
+	return count
+}
+
+func (tracker *CtestsTracker) FailedPackagesCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		if packageUt.HasFailedTests() {
+			count += 1
+		}
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) PackageUnderTest(name string) PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
 		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
