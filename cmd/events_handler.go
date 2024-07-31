@@ -128,13 +128,17 @@ func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingSt
 func (eh EventsHandler) HandleTestingFinished(evt testing_finished_event.TestingFinishedEvent) {
 
 	summary := TestingSummary{
-		packagesCount:       eh.ctestsTracker.PackagesCount(),
-		passedPackagesCount: eh.ctestsTracker.PassedPackagesCount(),
-		failedPackagesCount: eh.ctestsTracker.FailedPackagesCount(),
-		testsCount:          eh.ctestsTracker.CtestsCount(),
-		passedTestsCount:    eh.ctestsTracker.PassedCtestsCount(),
-		failedTestsCount:    eh.ctestsTracker.FailedCtestsCount(),
-		durationS:           evt.DurationS(),
+		packagesCount:        eh.ctestsTracker.PackagesCount(),
+		passedPackagesCount:  eh.ctestsTracker.PassedPackagesCount(),
+		failedPackagesCount:  eh.ctestsTracker.FailedPackagesCount(),
+		skippedPackagesCount: eh.ctestsTracker.SkippedPackagesCount(),
+
+		testsCount:        eh.ctestsTracker.CtestsCount(),
+		passedTestsCount:  eh.ctestsTracker.PassedCtestsCount(),
+		failedTestsCount:  eh.ctestsTracker.FailedCtestsCount(),
+		skippedTestsCount: eh.ctestsTracker.SkippedCtestsCount(),
+
+		durationS: evt.DurationS(),
 	}
 	eh.output.TestingFinishedSummary(summary)
 }

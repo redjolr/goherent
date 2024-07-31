@@ -61,18 +61,22 @@ func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 	if summary.failedPackagesCount > 0 {
 		packagesSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedPackagesCount) + ANSI_COLOR_RESET + ", "
 	}
-	if summary.failedTestsCount > 0 {
-		testsSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedTestsCount) + ANSI_COLOR_RESET + ", "
+	if summary.skippedPackagesCount > 0 {
+		packagesSummary += ANSI_YELLOW + fmt.Sprintf("%d skipped", summary.skippedPackagesCount) + ANSI_COLOR_RESET + ", "
 	}
 	if summary.passedPackagesCount > 0 {
 		packagesSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedPackagesCount) + ANSI_COLOR_RESET + ", "
-
 	}
 
+	if summary.failedTestsCount > 0 {
+		testsSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedTestsCount) + ANSI_COLOR_RESET + ", "
+	}
+	if summary.skippedTestsCount > 0 {
+		testsSummary += ANSI_YELLOW + fmt.Sprintf("%d skipped", summary.skippedTestsCount) + ANSI_COLOR_RESET + ", "
+	}
 	if summary.passedTestsCount > 0 {
 		testsSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedTestsCount) + ANSI_COLOR_RESET + ", "
 	}
-
 	packagesSummary += fmt.Sprintf("%d total", summary.packagesCount)
 	testsSummary += fmt.Sprintf("%d total", summary.testsCount)
 

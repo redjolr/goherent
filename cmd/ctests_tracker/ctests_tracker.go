@@ -80,10 +80,18 @@ func (tracker *CtestsTracker) FailedCtestsCount() int {
 	return count
 }
 
+func (tracker *CtestsTracker) SkippedCtestsCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		count += packageUt.SkippedCtestsCount()
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) PassedPackagesCount() int {
 	count := 0
 	for _, packageUt := range tracker.packagesUnderTest {
-		if !packageUt.HasFailedTests() {
+		if packageUt.HasPassed() {
 			count += 1
 		}
 	}
@@ -94,6 +102,16 @@ func (tracker *CtestsTracker) FailedPackagesCount() int {
 	count := 0
 	for _, packageUt := range tracker.packagesUnderTest {
 		if packageUt.HasFailedTests() {
+			count += 1
+		}
+	}
+	return count
+}
+
+func (tracker *CtestsTracker) SkippedPackagesCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		if packageUt.IsSkipped() {
 			count += 1
 		}
 	}
