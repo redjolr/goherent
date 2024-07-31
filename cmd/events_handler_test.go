@@ -836,7 +836,10 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\nPackages: 0 total\nTests:    0 total\nTime:     1.200s\nRan all test suites.",
+			cmd.ANSI_BOLD+"\nPackages:"+cmd.ANSI_RESET_BOLD+" 0 total\n"+
+				cmd.ANSI_BOLD+"Tests:"+cmd.ANSI_RESET_BOLD+"    0 total\n"+
+				cmd.ANSI_BOLD+"Time:"+cmd.ANSI_RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
 		)
 	}, t)
 }

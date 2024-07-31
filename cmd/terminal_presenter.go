@@ -54,7 +54,13 @@ func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 
 func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 	tp.terminal.Print(
-		fmt.Sprintf("\nPackages: %d total\nTests:    %d total\nTime:     %.3fs\nRan all test suites.", summary.packagesCount, summary.testsCount, summary.durationS),
+		fmt.Sprintf(
+			ANSI_BOLD+"\nPackages:"+ANSI_RESET_BOLD+" %d total\n"+
+				ANSI_BOLD+"Tests:"+ANSI_RESET_BOLD+"    %d total\n"+
+				ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs\n"+
+				"Ran all tests.",
+			summary.packagesCount, summary.testsCount, summary.durationS,
+		),
 	)
 }
 
