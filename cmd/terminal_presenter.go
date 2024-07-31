@@ -22,11 +22,11 @@ func NewTerminalPresenter(term terminal.Terminal) TerminalPresenter {
 }
 
 func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
-	tp.terminal.Print(fmt.Sprintf("\n🚀 Starting... %s\n", timestamp.Format("2006-01-02 15:04:05.000")))
+	tp.terminal.Print(fmt.Sprintf("\n🚀 Starting... %s", timestamp.Format("2006-01-02 15:04:05.000")))
 }
 
 func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
-	tp.terminal.Print(fmt.Sprintf("\n📦 %s\n", packageName))
+	tp.terminal.Print(fmt.Sprintf("\n\n📦 %s\n", packageName))
 }
 
 func (tp *TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
