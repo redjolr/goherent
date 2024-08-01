@@ -122,36 +122,78 @@ func TestPrintEraseScreen(t *testing.T) {
 
 	}, t)
 
-	Test(`it should store the string " ",
+	Test(`it should store the string "",
      if we print "A", and then ERASE_SCREEN.`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), " ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
-	Test(`it should store the string "  " (2 white spaces),
+	Test(`it should store the string "",
      if we print "AB", and then ERASE_SCREEN.`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("AB")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), "  ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
-	Test(`it should store the string " \n " (2 lines with 1 white space each),
+	Test(`it should store the string "",
      if we print "A\nB", and then ERASE_SCREEN.`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A\nB")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), " \n ")
+		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
-	Test(`it should store the string "     \n   ",
+	Test(`it should store the string "A", if we print  ERASE_SCREEN and then print "A".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("A")
+		assert.Equal(fakeTerminal.Text(), "A")
+
+	}, t)
+
+	Test(`it should store the string "B", if we print "A", and then ERASE_SCREEN and then print "B".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("A")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("B")
+		assert.Equal(fakeTerminal.Text(), "B")
+	}, t)
+
+	Test(`it should store the string "C", if we print "AB", and then ERASE_SCREEN and then print "A".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("AB")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("C")
+		assert.Equal(fakeTerminal.Text(), "C")
+	}, t)
+
+	Test(`it should store the string "",
      if we print "Hello\nBob", and then ERASE_SCREEN.`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello\nBob")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), "     \n   ")
+		assert.Equal(fakeTerminal.Text(), "")
+	}, t)
+
+	Test(`it should store the string "A",
+     if we print "Hello\nBob", and then ERASE_SCREEN and then print "A".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("Hello\nBob")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("A")
+		assert.Equal(fakeTerminal.Text(), "A")
+	}, t)
+
+	Test(`it should store the string "Line 1\nLine 2",
+     if we print "Hello\nBob", and then ERASE_SCREEN and then print "Line 1\nLine 2".`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("Hello\nBob")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("Line 1\nLine 2")
+		assert.Equal(fakeTerminal.Text(), "Line 1\nLine 2")
 	}, t)
 }
 

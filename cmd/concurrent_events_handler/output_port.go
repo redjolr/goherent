@@ -9,4 +9,7 @@ import (
 type OutputPort interface {
 	TestingStarted(timestamp time.Time)
 	PackageStarted(packageUt ctests_tracker.PackageUnderTest)
+	EraseScreen()
+	Packages(packages []ctests_tracker.PackageUnderTest)
+	Error()
 }

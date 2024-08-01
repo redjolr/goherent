@@ -35,7 +35,6 @@ func Main(extraCmdArgs []string) int {
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
 		m := scanner.Text()
-		fmt.Println(m)
 		var jsonEvt events.JsonEvent
 		err := json.Unmarshal([]byte(m), &jsonEvt)
 
@@ -43,7 +42,7 @@ func Main(extraCmdArgs []string) int {
 			log.Fatalf("Unable to marshal JSON due to %s", err)
 		}
 
-		// router.RouteJsonEvent(jsonEvt)
+		router.RouteJsonEvent(jsonEvt)
 	}
 	cmd.Wait()
 	elapsed := time.Since(startTime)

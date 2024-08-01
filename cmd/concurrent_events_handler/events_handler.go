@@ -1,7 +1,10 @@
 package concurrent_events_handler
 
 import (
+	"errors"
+
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
+	"github.com/redjolr/goherent/cmd/events/package_passed_event"
 	"github.com/redjolr/goherent/cmd/events/package_started_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 )
@@ -31,5 +34,15 @@ func (eh EventsHandler) HandlePackageStartedEvent(evt package_started_event.Pack
 	packageUt := eh.ctestsTracker.InsertPackageUt(evt.PackageName())
 	eh.output.PackageStarted(packageUt)
 
+	return nil
+}
+func (eh EventsHandler) HandlePackagePassed(evt package_passed_event.PackagePassedEvent) error {
+	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
+	if existingPackageUt == nil {
+		eh.output.Error()
+		return errors.New("No existing test found for test pass event.")
+	}
+	eh.output.EraseScreen()
+	eh.output.Packages(eh.ctestsTracker.Packages())
 	return nil
 }

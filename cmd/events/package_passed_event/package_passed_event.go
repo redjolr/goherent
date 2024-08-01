@@ -1,4 +1,4 @@
-package package_ctests_passed_event
+package package_passed_event
 
 import (
 	"reflect"
@@ -7,33 +7,33 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 )
 
-type PackageCtestsPassedEvent struct {
+type PackagePassedEvent struct {
 	time        time.Time
 	packageName string
 	elapsed     *float64
 }
 
-func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) PackageCtestsPassedEvent {
-	return PackageCtestsPassedEvent{
+func NewFromJsonTestEvent(jsonEvt events.JsonTestEvent) PackagePassedEvent {
+	return PackagePassedEvent{
 		time:        jsonEvt.Time,
 		packageName: jsonEvt.Package,
 		elapsed:     jsonEvt.Elapsed,
 	}
 }
 
-func (evt PackageCtestsPassedEvent) Pictogram() string {
+func (evt PackagePassedEvent) Pictogram() string {
 	return "📦✅"
 }
 
-func (evt PackageCtestsPassedEvent) PackageName() string {
+func (evt PackagePassedEvent) PackageName() string {
 	return evt.packageName
 }
 
-func (evt PackageCtestsPassedEvent) Timestamp() time.Time {
+func (evt PackagePassedEvent) Timestamp() time.Time {
 	return evt.time
 }
 
-func (evt PackageCtestsPassedEvent) Equals(otherEvt events.PackageEvent) bool {
+func (evt PackagePassedEvent) Equals(otherEvt events.PackageEvent) bool {
 	return evt.Pictogram() == otherEvt.Pictogram() &&
 		evt.PackageName() == otherEvt.PackageName() &&
 		evt.Timestamp() == otherEvt.Timestamp() &&

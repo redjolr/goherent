@@ -31,6 +31,10 @@ func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
 	return ctest
 }
 
+func (tracker *CtestsTracker) Packages() []PackageUnderTest {
+	return tracker.packagesUnderTest
+}
+
 func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
 	existingPackageUt := tracker.FindPackageWithName(name)
 	if existingPackageUt != nil {

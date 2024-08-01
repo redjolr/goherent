@@ -6,6 +6,7 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
 
 const testsListId string = "testsList"
@@ -27,4 +28,21 @@ func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
 
 func (tp *TerminalPresenter) PackageStarted(packageUt ctests_tracker.PackageUnderTest) {
 	tp.terminal.Print(fmt.Sprintf("\n⏳ %s", packageUt.Name()))
+}
+
+func (tp *TerminalPresenter) Error() {
+	tp.terminal.Print("\n\n❗ Error.")
+}
+
+func (tp *TerminalPresenter) EraseScreen() {
+	tp.terminal.Print(ansi_escape.ERASE_SCREEN)
+	tp.terminal.Print(ansi_escape.CURSOR_TO_HOME)
+}
+
+func (tp *TerminalPresenter) Packages(packages []ctests_tracker.PackageUnderTest) {
+	for _, packageUt := range packages {
+		if packageUt.HasPassed() {
+			tp.terminal.Print(fmt.Sprintf("\n✅ %s", packageUt.Name()))
+		}
+	}
 }
