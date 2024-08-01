@@ -23,7 +23,12 @@ func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingSt
 }
 
 func (eh EventsHandler) HandlePackageStartedEvent(evt package_started_event.PackageStartedEvent) error {
-	packageUt := ctests_tracker.NewPackageUnderTest(evt.PackageName())
+	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
+	if existingPackageUt != nil {
+		return nil
+	}
+
+	packageUt := eh.ctestsTracker.InsertPackageUt(evt.PackageName())
 	eh.output.PackageStarted(packageUt)
 
 	return nil

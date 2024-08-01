@@ -31,6 +31,16 @@ func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
 	return ctest
 }
 
+func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
+	existingPackageUt := tracker.FindPackageWithName(name)
+	if existingPackageUt != nil {
+		return *existingPackageUt
+	}
+	packUt := NewPackageUnderTest(name)
+	tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+	return packUt
+}
+
 func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName()) {
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, NewPackageUnderTest(evt.PackageName()))
@@ -50,6 +60,15 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 		return packUt.name == name
 	})
 	return indexOfPackUttWithName != -1
+}
+
+func (tracker *CtestsTracker) FindPackageWithName(packageName string) *PackageUnderTest {
+	for _, packUt := range tracker.packagesUnderTest {
+		if packUt.name == packageName {
+			return &packUt
+		}
+	}
+	return nil
 }
 
 func (tracker *CtestsTracker) PackagesCount() int {

@@ -66,6 +66,32 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
+     Given that a HandlePackageStartedEvent for package "somePackage" has occurred
+	 When a HandlePackageStartedEvent occurs for package "somePackage"
+	 Then the user should be informed only once that the tests for the "somePackage" package are running
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		// When
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n⏳ somePackage",
+		)
+	}, t)
+
+	Test(`
      Given that a HandlePackageStartedEvent for package "somePackage 1" has occured
 	 When a HandlePackageStartedEvent for package "somePackage 2" occurs
 	 Then the user should be informed that the tests for that package are running
