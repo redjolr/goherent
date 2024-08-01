@@ -4,6 +4,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
 
 type FakeAnsiTerminal struct {
@@ -21,8 +23,8 @@ func NewFakeAnsiTerminal() FakeAnsiTerminal {
 
 func (fat *FakeAnsiTerminal) Print(text string) {
 	for len(strings.Split(text, "")) > 0 {
-		if strings.HasPrefix(text, ANSI_CURSOR_TO_HOME) {
-			text, _ = strings.CutPrefix(text, ANSI_CURSOR_TO_HOME)
+		if strings.HasPrefix(text, ansi_escape.CURSOR_TO_HOME) {
+			text, _ = strings.CutPrefix(text, ansi_escape.CURSOR_TO_HOME)
 			fat.coords.SetToOrigin()
 			continue
 		}
@@ -156,17 +158,17 @@ func (fat *FakeAnsiTerminal) GoToOrigin() {
 }
 
 func (fat *FakeAnsiTerminal) MoveUp(n int) {
-	fat.Print(MoveCursorUpNRowsAnsiSequence(n))
+	fat.Print(ansi_escape.MoveCursorUpNRows(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveDown(n int) {
-	fat.Print(MoveCursorDownNRowsAnsiSequence(n))
+	fat.Print(ansi_escape.MoveCursorDownNRows(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveRight(n int) {
-	fat.Print(MoveCursorRightNColsAnsiSequence(n))
+	fat.Print(ansi_escape.MoveCursorRightNCols(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveLeft(n int) {
-	fat.Print(MoveCursorLeftNColsAnsiSequence(n))
+	fat.Print(ansi_escape.MoveCursorLeftNCols(n))
 }

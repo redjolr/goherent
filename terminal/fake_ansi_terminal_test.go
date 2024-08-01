@@ -5,6 +5,7 @@ import (
 
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -98,12 +99,12 @@ func TestPrintBasic(t *testing.T) {
 	}, t)
 
 	Test(`it should print "AAA\nBAA"
-		if we print "AAA\n", then "AAA", then MoveCursorUpNRowsAnsiSequence(1), then "\n", then "B"
+		if we print "AAA\n", then "AAA", then MoveCursorUpNRows(1), then "\n", then "B"
 	`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("AAA\n")
 		fakeTerminal.Print("AAA")
-		fakeTerminal.Print(terminal.MoveCursorUpNRowsAnsiSequence(1))
+		fakeTerminal.Print(ansi_escape.MoveCursorUpNRows(1))
 		fakeTerminal.Print("\n")
 		fakeTerminal.Print("B")
 		assert.Equal(fakeTerminal.Text(), "AAA\nBAA")
@@ -116,7 +117,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "J")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "J")
 		assert.Equal(fakeTerminal.Text(), "Jello")
 	}, t)
 
@@ -124,7 +125,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME)
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
 		fakeTerminal.Print("J")
 		assert.Equal(fakeTerminal.Text(), "Jello")
 	}, t)
@@ -133,7 +134,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Cond".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "Cond")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Cond")
 		assert.Equal(fakeTerminal.Text(), "Condo")
 	}, t)
 
@@ -141,7 +142,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Cond".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME)
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
 		fakeTerminal.Print("Cond")
 		assert.Equal(fakeTerminal.Text(), "Condo")
 	}, t)
@@ -150,7 +151,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Candy".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "Candy")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Candy")
 		assert.Equal(fakeTerminal.Text(), "Candy")
 	}, t)
 
@@ -158,7 +159,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Candy".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME)
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
 		fakeTerminal.Print("Candy")
 		assert.Equal(fakeTerminal.Text(), "Candy")
 	}, t)
@@ -167,7 +168,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Granny".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "Granny")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Granny")
 		assert.Equal(fakeTerminal.Text(), "Granny")
 	}, t)
 
@@ -175,7 +176,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Granny".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME)
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
 		fakeTerminal.Print("Granny")
 		assert.Equal(fakeTerminal.Text(), "Granny")
 	}, t)
@@ -184,7 +185,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello\nWor;d", and then ANSI_CURSOR_TO_HOME+"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello\nWorld")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "J")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "J")
 		assert.Equal(fakeTerminal.Text(), "Jello\nWorld")
 	}, t)
 
@@ -192,7 +193,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 		if we print "Hello\nWor;d", and then ANSI_CURSOR_TO_HOME+"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello\nWorld")
-		fakeTerminal.Print(terminal.ANSI_CURSOR_TO_HOME + "Candy")
+		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Candy")
 		assert.Equal(fakeTerminal.Text(), "Candy\nWorld")
 	}, t)
 }
@@ -200,83 +201,83 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 func TestPrintMoveCursorLeft(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "✅",
-		if we print "⏳"+MoveCursorLeftNColsAnsiSequence(1)+"✅".`, func(t *testing.T) {
+		if we print "⏳"+MoveCursorLeftNCols(1)+"✅".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("⏳" + terminal.MoveCursorLeftNColsAnsiSequence(1) + "✅")
+		fakeTerminal.Print("⏳" + ansi_escape.MoveCursorLeftNCols(1) + "✅")
 		assert.Equal(fakeTerminal.Text(), "✅")
 	}, t)
 
 	Test(`it should store the string "H",
-		if we print "H"+MoveCursorLeftNColsAnsiSequence(1)+"A".`, func(t *testing.T) {
+		if we print "H"+MoveCursorLeftNCols(1)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("H" + terminal.MoveCursorLeftNColsAnsiSequence(1) + "A")
+		fakeTerminal.Print("H" + ansi_escape.MoveCursorLeftNCols(1) + "A")
 		assert.Equal(fakeTerminal.Text(), "A")
 	}, t)
 
 	Test(`it should store the string "H",
-		if we print "H"+MoveCursorLeftNColsAnsiSequence(2)+"A".`, func(t *testing.T) {
+		if we print "H"+MoveCursorLeftNCols(2)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("H" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "A")
+		fakeTerminal.Print("H" + ansi_escape.MoveCursorLeftNCols(2) + "A")
 		assert.Equal(fakeTerminal.Text(), "A")
 	}, t)
 
 	Test(`it should store the string "AR",
-		if we print "RR"+MoveCursorLeftNColsAnsiSequence(n>>1)+"A".`, func(t *testing.T) {
+		if we print "RR"+MoveCursorLeftNCols(n>>1)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RR" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "A")
+		fakeTerminal.Print("RR" + ansi_escape.MoveCursorLeftNCols(2) + "A")
 		assert.Equal(fakeTerminal.Text(), "AR")
 
 		fakeTerminal = setup()
-		fakeTerminal.Print("RR" + terminal.MoveCursorLeftNColsAnsiSequence(10000) + "A")
+		fakeTerminal.Print("RR" + ansi_escape.MoveCursorLeftNCols(10000) + "A")
 		assert.Equal(fakeTerminal.Text(), "AR")
 	}, t)
 
 	Test(`it should store the string "RA",
-		if we print "RR"+MoveCursorLeftNColsAnsiSequence(1)+"A".`, func(t *testing.T) {
+		if we print "RR"+MoveCursorLeftNCols(1)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RR" + terminal.MoveCursorLeftNColsAnsiSequence(1) + "A")
+		fakeTerminal.Print("RR" + ansi_escape.MoveCursorLeftNCols(1) + "A")
 		assert.Equal(fakeTerminal.Text(), "RA")
 	}, t)
 
 	Test(`it should store the string "RAR",
-		if we print "RRR"+MoveCursorLeftNColsAnsiSequence(2)+"A".`, func(t *testing.T) {
+		if we print "RRR"+MoveCursorLeftNCols(2)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RRR" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "A")
+		fakeTerminal.Print("RRR" + ansi_escape.MoveCursorLeftNCols(2) + "A")
 		assert.Equal(fakeTerminal.Text(), "RAR")
 	}, t)
 
 	Test(`it should store the string "RAA",
-		if we print "RRR"+MoveCursorLeftNColsAnsiSequence(2)+"AA".`, func(t *testing.T) {
+		if we print "RRR"+MoveCursorLeftNCols(2)+"AA".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RRR" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "AA")
+		fakeTerminal.Print("RRR" + ansi_escape.MoveCursorLeftNCols(2) + "AA")
 		assert.Equal(fakeTerminal.Text(), "RAA")
 	}, t)
 
 	Test(`it should store the string "RAAA",
-		if we print "RRR"+MoveCursorLeftNColsAnsiSequence(2)+"AAA".`, func(t *testing.T) {
+		if we print "RRR"+MoveCursorLeftNCols(2)+"AAA".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RRR" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "AAA")
+		fakeTerminal.Print("RRR" + ansi_escape.MoveCursorLeftNCols(2) + "AAA")
 		assert.Equal(fakeTerminal.Text(), "RAAA")
 	}, t)
 
 	Test(`it should store the string "RRA",
-		if we print "RR"+MoveCursorLeftNColsAnsiSequence(0)+"A".`, func(t *testing.T) {
+		if we print "RR"+MoveCursorLeftNCols(0)+"A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("RR" + terminal.MoveCursorLeftNColsAnsiSequence(0) + "A")
+		fakeTerminal.Print("RR" + ansi_escape.MoveCursorLeftNCols(0) + "A")
 		assert.Equal(fakeTerminal.Text(), "RRA")
 	}, t)
 
 	Test(`it should store the string "Hella",
-		if we print "Hello"+MoveCursorLeftNColsAnsiSequence(1)+"a".`, func(t *testing.T) {
+		if we print "Hello"+MoveCursorLeftNCols(1)+"a".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("Hello" + terminal.MoveCursorLeftNColsAnsiSequence(1) + "a")
+		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorLeftNCols(1) + "a")
 		assert.Equal(fakeTerminal.Text(), "Hella")
 	}, t)
 
 	Test(`it should store the string "Juice",
-		if we print "Hello"+MoveCursorLeftNColsAnsiSequence(5)+"Juice".`, func(t *testing.T) {
+		if we print "Hello"+MoveCursorLeftNCols(5)+"Juice".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("Hello" + terminal.MoveCursorLeftNColsAnsiSequence(5) + "Juice")
+		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorLeftNCols(5) + "Juice")
 		assert.Equal(fakeTerminal.Text(), "Juice")
 	}, t)
 }
@@ -284,30 +285,30 @@ func TestPrintMoveCursorLeft(t *testing.T) {
 func TestPrintMoveCursorRight(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "" (empty string),
-		if we print MoveCursorRightNColsAnsiSequence(1).`, func(t *testing.T) {
+		if we print MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print(terminal.MoveCursorRightNColsAnsiSequence(1))
+		fakeTerminal.Print(ansi_escape.MoveCursorRightNCols(1))
 		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "" empty string,
-		if we print MoveCursorRightNColsAnsiSequence(3).`, func(t *testing.T) {
+		if we print MoveCursorRightNCols(3).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print(terminal.MoveCursorRightNColsAnsiSequence(3))
+		fakeTerminal.Print(ansi_escape.MoveCursorRightNCols(3))
 		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R R",
-		if we print "R"+MoveCursorRightNColsAnsiSequence(1)+"R".`, func(t *testing.T) {
+		if we print "R"+MoveCursorRightNCols(1)+"R".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorRightNColsAnsiSequence(1) + "R")
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorRightNCols(1) + "R")
 		assert.Equal(fakeTerminal.Text(), "R R")
 	}, t)
 
 	Test(`it should store the string "Hello   World",
-		if we print "Hello"+MoveCursorRightNColsAnsiSequence(3)+"World".`, func(t *testing.T) {
+		if we print "Hello"+MoveCursorRightNCols(3)+"World".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("Hello" + terminal.MoveCursorRightNColsAnsiSequence(3) + "World")
+		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorRightNCols(3) + "World")
 		assert.Equal(fakeTerminal.Text(), "Hello   World")
 	}, t)
 }
@@ -315,51 +316,51 @@ func TestPrintMoveCursorRight(t *testing.T) {
 func TestPrintMoveCursorLeftAndRight(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "" (empty space),
-			if we print MoveCursorLeftNColsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(1).`, func(t *testing.T) {
+			if we print MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print(terminal.MoveCursorLeftNColsAnsiSequence(1) + terminal.MoveCursorRightNColsAnsiSequence(1))
+		fakeTerminal.Print(ansi_escape.MoveCursorLeftNCols(1) + ansi_escape.MoveCursorRightNCols(1))
 		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R",
-			if we print "R"+ MoveCursorLeftNColsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(1).`, func(t *testing.T) {
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorLeftNColsAnsiSequence(1) + terminal.MoveCursorRightNColsAnsiSequence(1))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorLeftNCols(1) + ansi_escape.MoveCursorRightNCols(1))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "R",
-			if we print "R"+ MoveCursorLeftNColsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(2).`, func(t *testing.T) {
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(2).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorLeftNColsAnsiSequence(1) + terminal.MoveCursorRightNColsAnsiSequence(2))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorLeftNCols(1) + ansi_escape.MoveCursorRightNCols(2))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "RR",
-		if we print "R"+ MoveCursorLeftNColsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(1)+"R".`, func(t *testing.T) {
+		if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(1)+"R".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorLeftNColsAnsiSequence(1) + terminal.MoveCursorRightNColsAnsiSequence(1) + "R")
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorLeftNCols(1) + ansi_escape.MoveCursorRightNCols(1) + "R")
 		assert.Equal(fakeTerminal.Text(), "RR")
 	}, t)
 
 	Test(`it should store the string "R",
-			if we print "R"+ MoveCursorLeftNColsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(4).`, func(t *testing.T) {
+			if we print "R"+ MoveCursorLeftNCols(1) + MoveCursorRightNCols(4).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorLeftNColsAnsiSequence(1) + terminal.MoveCursorRightNColsAnsiSequence(4))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorLeftNCols(1) + ansi_escape.MoveCursorRightNCols(4))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "Hellp" ,
-			if we print "Hello"+ MoveCursorLeftNColsAnsiSequence(2) + MoveCursorRightNColsAnsiSequence(1) + "p".`, func(t *testing.T) {
+			if we print "Hello"+ MoveCursorLeftNCols(2) + MoveCursorRightNCols(1) + "p".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("Hello" + terminal.MoveCursorLeftNColsAnsiSequence(2) + terminal.MoveCursorRightNColsAnsiSequence(1) + "p")
+		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorLeftNCols(2) + ansi_escape.MoveCursorRightNCols(1) + "p")
 		assert.Equal(fakeTerminal.Text(), "Hellp")
 	}, t)
 
 	Test(`it should store the string "Helix shaped" ,
-		if we print "Hello"+ MoveCursorLeftNColsAnsiSequence(2) + "ix" + MoveCursorRightNColsAnsiSequence(1) + "shaped".`, func(t *testing.T) {
+		if we print "Hello"+ MoveCursorLeftNCols(2) + "ix" + MoveCursorRightNCols(1) + "shaped".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("Hello" + terminal.MoveCursorLeftNColsAnsiSequence(2) + "ix" + terminal.MoveCursorRightNColsAnsiSequence(1) + "shaped")
+		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorLeftNCols(2) + "ix" + ansi_escape.MoveCursorRightNCols(1) + "shaped")
 		assert.Equal(fakeTerminal.Text(), "Helix shaped")
 	}, t)
 }
@@ -367,184 +368,184 @@ func TestPrintMoveCursorLeftAndRight(t *testing.T) {
 func TestPrintMoveCursorUp(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "" (empty space),
-		if we print MoveCursorUpNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print MoveCursorUpNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print(terminal.MoveCursorUpNRowsAnsiSequence(1))
+		fakeTerminal.Print(ansi_escape.MoveCursorUpNRows(1))
 		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R",
-		if we print "R"+MoveCursorUpNRowsAnsiSequence(10).`, func(t *testing.T) {
+		if we print "R"+MoveCursorUpNRows(10).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorUpNRowsAnsiSequence(10))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorUpNRows(10))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "A\nB",
-		if we print "A\nB"+MoveCursorUpNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print "A\nB"+MoveCursorUpNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\nB" + terminal.MoveCursorUpNRowsAnsiSequence(1))
+		fakeTerminal.Print("A\nB" + ansi_escape.MoveCursorUpNRows(1))
 		assert.Equal(fakeTerminal.Text(), "A\nB")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "A\n"+MoveCursorUpNRowsAnsiSequence(1)+"B".`, func(t *testing.T) {
+		if we print "A\n"+MoveCursorUpNRows(1)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.MoveCursorUpNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "B\n")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "A\n"+MoveCursorUpNRowsAnsiSequence(2)+"B".`, func(t *testing.T) {
+		if we print "A\n"+MoveCursorUpNRows(2)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.MoveCursorUpNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "B\n")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "A\n"+MoveCursorUpNRowsAnsiSequence(10)+"B".`, func(t *testing.T) {
+		if we print "A\n"+MoveCursorUpNRows(10)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.MoveCursorUpNRowsAnsiSequence(10) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.MoveCursorUpNRows(10) + "B")
 		assert.Equal(fakeTerminal.Text(), "B\n")
 	}, t)
 
 	Test(`it should store the string "CD\n",
-		if we print "AB\n"+MoveCursorUpNRowsAnsiSequence(1)+"CD".`, func(t *testing.T) {
+		if we print "AB\n"+MoveCursorUpNRows(1)+"CD".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("AB\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "CD")
+		fakeTerminal.Print("AB\n" + ansi_escape.MoveCursorUpNRows(1) + "CD")
 		assert.Equal(fakeTerminal.Text(), "CD\n")
 	}, t)
 
 	Test(`it should store the string "CDE\n",
-		if we print "AB\n"+MoveCursorUpNRowsAnsiSequence(1)+"CDE".`, func(t *testing.T) {
+		if we print "AB\n"+MoveCursorUpNRows(1)+"CDE".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("AB\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "CDE")
+		fakeTerminal.Print("AB\n" + ansi_escape.MoveCursorUpNRows(1) + "CDE")
 		assert.Equal(fakeTerminal.Text(), "CDE\n")
 	}, t)
 
 	Test(`it should store the string "\n",
-		if we print "\n"+MoveCursorUpNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print "\n"+MoveCursorUpNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.MoveCursorUpNRowsAnsiSequence(1))
+		fakeTerminal.Print("\n" + ansi_escape.MoveCursorUpNRows(1))
 		assert.Equal(fakeTerminal.Text(), "\n")
 	}, t)
 
 	Test(`it should store the string "A\n",
-		if we print "\n"+MoveCursorUpNRowsAnsiSequence(1) + "A".`, func(t *testing.T) {
+		if we print "\n"+MoveCursorUpNRows(1) + "A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "A")
+		fakeTerminal.Print("\n" + ansi_escape.MoveCursorUpNRows(1) + "A")
 		assert.Equal(fakeTerminal.Text(), "A\n")
 	}, t)
 
 	Test(`it should store the string "AAA\n",
-		if we print "\n" + MoveCursorUpNRowsAnsiSequence + "AAA"`, func(t *testing.T) {
+		if we print "\n" + MoveCursorUpNRows + "AAA"`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "AAA")
+		fakeTerminal.Print("\n" + ansi_escape.MoveCursorUpNRows(1) + "AAA")
 		assert.Equal(fakeTerminal.Text(), "AAA\n")
 	}, t)
 
 	Test(`it should store the string " B\nA",
-		if we print "\nA" + MoveCursorUpNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "\nA" + MoveCursorUpNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.MoveCursorUpNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), " B\nA")
 	}, t)
 
 	Test(`it should store the string " B\nA",
-		if we print "\nA" + MoveCursorUpNRowsAnsiSequence(2) + "B".`, func(t *testing.T) {
+		if we print "\nA" + MoveCursorUpNRows(2) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.MoveCursorUpNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), " B\nA")
 	}, t)
 
 	Test(`it should store the string " B\nA",
-		if we print "\nA" + MoveCursorUpNRowsAnsiSequence(5) + "B".`, func(t *testing.T) {
+		if we print "\nA" + MoveCursorUpNRows(5) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.MoveCursorUpNRowsAnsiSequence(5) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.MoveCursorUpNRows(5) + "B")
 		assert.Equal(fakeTerminal.Text(), " B\nA")
 	}, t)
 
 	Test(`it should store the string " B\nA",
-		if we print "\nAA" + MoveCursorUpNRowsAnsiSequence(2) + "B".`, func(t *testing.T) {
+		if we print "\nAA" + MoveCursorUpNRows(2) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAA" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("\nAA" + ansi_escape.MoveCursorUpNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "  B\nAA")
 	}, t)
 
 	Test(`it should store the string "     BBB\nAAAAA",
-		if we print "\nAAAAA" + MoveCursorUpNRowsAnsiSequence(2) + "BBB".`, func(t *testing.T) {
+		if we print "\nAAAAA" + MoveCursorUpNRows(2) + "BBB".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAAAA" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "BBB")
+		fakeTerminal.Print("\nAAAAA" + ansi_escape.MoveCursorUpNRows(2) + "BBB")
 		assert.Equal(fakeTerminal.Text(), "     BBB\nAAAAA")
 	}, t)
 
 	Test(`it should store the string "\nAB\nA",
-		if we print "\nA\nA" + MoveCursorUpNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "\nA\nA" + MoveCursorUpNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA\nA" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("\nA\nA" + ansi_escape.MoveCursorUpNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nAB\nA")
 	}, t)
 
 	Test(`it should store the string "\nAA   C\nBBBBB",
-		if we print "\nAA\nBBBBB" + MoveCursorUpNRowsAnsiSequence(1) + "C".`, func(t *testing.T) {
+		if we print "\nAA\nBBBBB" + MoveCursorUpNRows(1) + "C".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAA\nBBBBB" + terminal.MoveCursorUpNRowsAnsiSequence(1) + "C")
+		fakeTerminal.Print("\nAA\nBBBBB" + ansi_escape.MoveCursorUpNRows(1) + "C")
 		assert.Equal(fakeTerminal.Text(), "\nAA   C\nBBBBB")
 	}, t)
 
 	Test(`it should store the string "\nA D\nB\nCC",
-		if we print "\nA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\nA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\nA\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nA D\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "\n  D\nB\nCC",
-		if we print "\n\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\n\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\n\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\n  D\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "\nAAD\nB\nCC",
-		if we print "\nAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\nAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\nAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nAAD\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "",
-		if we print "\nAAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\nAAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\nAAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nAAD\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "",
-		if we print "\nAAAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\nAAAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\nAAAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nAADA\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "\nAADAA\nB\nCC",
-		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(2) + "D".`, func(t *testing.T) {
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(2) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAAAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(2) + "D")
+		fakeTerminal.Print("\nAAAAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(2) + "D")
 		assert.Equal(fakeTerminal.Text(), "\nAADAA\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "\nAADAA\nB\nCC",
-		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(3) + "D".`, func(t *testing.T) {
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(3) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAAAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(3) + "D")
+		fakeTerminal.Print("\nAAAAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(3) + "D")
 		assert.Equal(fakeTerminal.Text(), "  D\nAAAAA\nB\nCC")
 	}, t)
 
 	Test(`it should store the string "\nAADAA\nB\nCC",
-		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRowsAnsiSequence(4) + "D".`, func(t *testing.T) {
+		if we print "\nAAAAA\nB\nCC" + MoveCursorUpNRows(4) + "D".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAAAAA\nB\nCC" + terminal.MoveCursorUpNRowsAnsiSequence(4) + "D")
+		fakeTerminal.Print("\nAAAAA\nB\nCC" + ansi_escape.MoveCursorUpNRows(4) + "D")
 		assert.Equal(fakeTerminal.Text(), "  D\nAAAAA\nB\nCC")
 	}, t)
 }
@@ -552,203 +553,203 @@ func TestPrintMoveCursorUp(t *testing.T) {
 func TestPrintMoveCursorDown(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "" (empty space),
-		if we print MoveCursorDownNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print MoveCursorDownNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print(terminal.MoveCursorDownNRowsAnsiSequence(1))
+		fakeTerminal.Print(ansi_escape.MoveCursorDownNRows(1))
 		assert.Equal(fakeTerminal.Text(), "")
 	}, t)
 
 	Test(`it should store the string "R",
-		if we print "R"+MoveCursorDownNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print "R"+MoveCursorDownNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorDownNRowsAnsiSequence(1))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorDownNRows(1))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "R",
-		if we print "R"+MoveCursorDownNRowsAnsiSequence(2).`, func(t *testing.T) {
+		if we print "R"+MoveCursorDownNRows(2).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("R" + terminal.MoveCursorDownNRowsAnsiSequence(2))
+		fakeTerminal.Print("R" + ansi_escape.MoveCursorDownNRows(2))
 		assert.Equal(fakeTerminal.Text(), "R")
 	}, t)
 
 	Test(`it should store the string "A\nB",
-		if we print "A\n"+MoveCursorUpNRowsAnsiSequence(1)+MoveCursorDwonNRows(1)+"B".`, func(t *testing.T) {
+		if we print "A\n"+MoveCursorUpNRows(1)+MoveCursorDwonNRows(1)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.MoveCursorUpNRowsAnsiSequence(1) + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.MoveCursorUpNRows(1) + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\nB")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nB")
 	}, t)
 
 	Test(`it should store the string "\nA\nB",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(2)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nA\nB")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(2)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nA" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(5) + "B")
+		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(5) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nA\n\n\n\nB")
 	}, t)
 
 	Test(`it should store the string "\nCD",
-		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1)+"CD".`, func(t *testing.T) {
+		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CD".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAB" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "CD")
+		fakeTerminal.Print("\nAB" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "CD")
 		assert.Equal(fakeTerminal.Text(), "\nCD")
 	}, t)
 
 	Test(`it should store the string "\nCDE",
-		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1)+"CDE".`, func(t *testing.T) {
+		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CDE".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\nAB" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "CDE")
+		fakeTerminal.Print("\nAB" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "CDE")
 		assert.Equal(fakeTerminal.Text(), "\nCDE")
 	}, t)
 
 	Test(`it should store the string "\n",
-		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1).`, func(t *testing.T) {
+		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1))
+		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1))
 		assert.Equal(fakeTerminal.Text(), "\n")
 	}, t)
 
 	Test(`it should store the string "\nA",
-		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1) + "A".`, func(t *testing.T) {
+		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "A".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "A")
+		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "A")
 		assert.Equal(fakeTerminal.Text(), "\nA")
 	}, t)
 
 	Test(`it should store the string "\nAAA",
-		if we print "\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1) + "AAA"`, func(t *testing.T) {
+		if we print "\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "AAA"`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "AAA")
+		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "AAA")
 		assert.Equal(fakeTerminal.Text(), "\nAAA")
 	}, t)
 
 	Test(`it should store the string "A\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\nB")
 	}, t)
 
 	Test(`it should store the string "A\n\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(2) + "B".`, func(t *testing.T) {
+		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n\nB")
 	}, t)
 
 	Test(`it should store the string "A\n\n\n\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(5) + "B".`, func(t *testing.T) {
+		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(5) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(5) + "B")
+		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(5) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n\n\n\n\nB")
 	}, t)
 
 	Test(`it should store the string "A\n B",
-		if we print "A" + MoveCursorDownNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "A" + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A" + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("A" + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n B")
 	}, t)
 
 	Test(`it should store the string "A\n\n B",
-		if we print "A" + MoveCursorDownNRowsAnsiSequence(2) + "B".`, func(t *testing.T) {
+		if we print "A" + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A" + terminal.MoveCursorDownNRowsAnsiSequence(2) + "B")
+		fakeTerminal.Print("A" + ansi_escape.MoveCursorDownNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n\n B")
 	}, t)
 
 	Test(`it should store the string "AA\n  B",
-		if we print "AA" + MoveCursorDownNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "AA" + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("AA" + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("AA" + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "AA\n  B")
 	}, t)
 
 	Test(`it should store the string "AA\n\n\n  B",
-		if we print "AA" + MoveCursorDownNRowsAnsiSequence(3) + "B".`, func(t *testing.T) {
+		if we print "AA" + MoveCursorDownNRows(3) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("AA" + terminal.MoveCursorDownNRowsAnsiSequence(3) + "B")
+		fakeTerminal.Print("AA" + ansi_escape.MoveCursorDownNRows(3) + "B")
 		assert.Equal(fakeTerminal.Text(), "AA\n\n\n  B")
 	}, t)
 
 	Test(`it should store the string "AAAAA\n\n     BBB",
-		if we print "AAAAA" + MoveCursorDownNRowsAnsiSequence(2) + "BBB".`, func(t *testing.T) {
+		if we print "AAAAA" + MoveCursorDownNRows(2) + "BBB".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("AAAAA" + terminal.MoveCursorDownNRowsAnsiSequence(2) + "BBB")
+		fakeTerminal.Print("AAAAA" + ansi_escape.MoveCursorDownNRows(2) + "BBB")
 		assert.Equal(fakeTerminal.Text(), "AAAAA\n\n     BBB")
 	}, t)
 
 	Test(`it should store the string "A\nB\n",
-		if we print "A\nA\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRowsAnsiSequence(1) + "B".`, func(t *testing.T) {
+		if we print "A\nA\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
-		fakeTerminal.Print("A\nA\n" + terminal.ANSI_CURSOR_TO_HOME + terminal.MoveCursorDownNRowsAnsiSequence(1) + "B")
+		fakeTerminal.Print("A\nA\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\nB\n")
 	}, t)
 
 	Test(`it should store the string "BBBBB\nAA C",
-		if we print "BBBBB\nAA" + MoveCursorUpNRowsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(1) MoveCursorDownNRowsAnsiSequence(1) + "C".
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(1) MoveCursorDownNRows(1) + "C".
 	`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print(
 			"BBBBB\nAA" +
-				terminal.MoveCursorUpNRowsAnsiSequence(1) +
-				terminal.MoveCursorRightNColsAnsiSequence(1) +
-				terminal.MoveCursorDownNRowsAnsiSequence(1) +
+				ansi_escape.MoveCursorUpNRows(1) +
+				ansi_escape.MoveCursorRightNCols(1) +
+				ansi_escape.MoveCursorDownNRows(1) +
 				"C",
 		)
 		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA C")
 	}, t)
 
 	Test(`it should store the string "BBBBB\nAA  C",
-		if we print "BBBBB\nAA" + MoveCursorUpNRowsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(2) MoveCursorDownNRowsAnsiSequence(1) + "C".
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(2) MoveCursorDownNRows(1) + "C".
 	`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print(
 			"BBBBB\nAA" +
-				terminal.MoveCursorUpNRowsAnsiSequence(1) +
-				terminal.MoveCursorRightNColsAnsiSequence(2) +
-				terminal.MoveCursorDownNRowsAnsiSequence(1) +
+				ansi_escape.MoveCursorUpNRows(1) +
+				ansi_escape.MoveCursorRightNCols(2) +
+				ansi_escape.MoveCursorDownNRows(1) +
 				"C",
 		)
 		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA  C")
 	}, t)
 
 	Test(`it should store the string "BBBBB\nAA  C",
-		if we print "BBBBB\nAA" + MoveCursorUpNRowsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(3) MoveCursorDownNRowsAnsiSequence(1) + "C".
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(3) MoveCursorDownNRows(1) + "C".
 	`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print(
 			"BBBBB\nAA" +
-				terminal.MoveCursorUpNRowsAnsiSequence(1) +
-				terminal.MoveCursorRightNColsAnsiSequence(3) +
-				terminal.MoveCursorDownNRowsAnsiSequence(1) +
+				ansi_escape.MoveCursorUpNRows(1) +
+				ansi_escape.MoveCursorRightNCols(3) +
+				ansi_escape.MoveCursorDownNRows(1) +
 				"C",
 		)
 		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA   C")
 	}, t)
 
 	Test(`it should store the string "BBBBB\nAA C",
-		if we print "BBBBB\nAA" + MoveCursorUpNRowsAnsiSequence(1) + MoveCursorRightNColsAnsiSequence(6) MoveCursorDownNRowsAnsiSequence(1) + "C".
+		if we print "BBBBB\nAA" + MoveCursorUpNRows(1) + MoveCursorRightNCols(6) MoveCursorDownNRows(1) + "C".
 	`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print(
 			"BBBBB\nAA" +
-				terminal.MoveCursorUpNRowsAnsiSequence(1) +
-				terminal.MoveCursorRightNColsAnsiSequence(6) +
-				terminal.MoveCursorDownNRowsAnsiSequence(1) +
+				ansi_escape.MoveCursorUpNRows(1) +
+				ansi_escape.MoveCursorRightNCols(6) +
+				ansi_escape.MoveCursorDownNRows(1) +
 				"C",
 		)
 		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA      C")

@@ -6,6 +6,7 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
 
 const testsListId string = "testsList"
@@ -45,7 +46,7 @@ func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration f
 
 func (tp *TerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	tp.terminal.MoveLeft(1)
-	tp.terminal.Print(ANSI_YELLOW_CIRCLE + "\n")
+	tp.terminal.Print(ansi_escape.YELLOW_CIRCLE + "\n")
 }
 
 func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
@@ -54,28 +55,40 @@ func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 
 func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 
-	packagesSummary := ANSI_BOLD + "\nPackages:" + ANSI_RESET_BOLD + " "
-	testsSummary := ANSI_BOLD + "Tests:" + ANSI_RESET_BOLD + "    "
-	timeSummary := fmt.Sprintf(ANSI_BOLD+"Time:"+ANSI_RESET_BOLD+"     %.3fs", summary.durationS)
+	packagesSummary := ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " "
+	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
+	timeSummary := fmt.Sprintf(ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     %.3fs", summary.durationS)
 
 	if summary.failedPackagesCount > 0 {
-		packagesSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedPackagesCount) + ANSI_COLOR_RESET + ", "
+		packagesSummary += ansi_escape.RED +
+			fmt.Sprintf("%d failed", summary.failedPackagesCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 	if summary.skippedPackagesCount > 0 {
-		packagesSummary += ANSI_YELLOW + fmt.Sprintf("%d skipped", summary.skippedPackagesCount) + ANSI_COLOR_RESET + ", "
+		packagesSummary += ansi_escape.YELLOW +
+			fmt.Sprintf("%d skipped", summary.skippedPackagesCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 	if summary.passedPackagesCount > 0 {
-		packagesSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedPackagesCount) + ANSI_COLOR_RESET + ", "
+		packagesSummary += ansi_escape.GREEN +
+			fmt.Sprintf("%d passed", summary.passedPackagesCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 
 	if summary.failedTestsCount > 0 {
-		testsSummary += ANSI_RED + fmt.Sprintf("%d failed", summary.failedTestsCount) + ANSI_COLOR_RESET + ", "
+		testsSummary += ansi_escape.RED +
+			fmt.Sprintf("%d failed", summary.failedTestsCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 	if summary.skippedTestsCount > 0 {
-		testsSummary += ANSI_YELLOW + fmt.Sprintf("%d skipped", summary.skippedTestsCount) + ANSI_COLOR_RESET + ", "
+		testsSummary += ansi_escape.YELLOW +
+			fmt.Sprintf("%d skipped", summary.skippedTestsCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 	if summary.passedTestsCount > 0 {
-		testsSummary += ANSI_GREEN + fmt.Sprintf("%d passed", summary.passedTestsCount) + ANSI_COLOR_RESET + ", "
+		testsSummary += ansi_escape.GREEN +
+			fmt.Sprintf("%d passed", summary.passedTestsCount) +
+			ansi_escape.COLOR_RESET + ", "
 	}
 	packagesSummary += fmt.Sprintf("%d total", summary.packagesCount)
 	testsSummary += fmt.Sprintf("%d total", summary.testsCount)
