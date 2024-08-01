@@ -127,6 +127,8 @@ func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingSt
 
 func (eh EventsHandler) HandleTestingFinished(evt testing_finished_event.TestingFinishedEvent) {
 
+	eh.ctestsTracker.MarkAllPackagesAsFinished()
+
 	summary := TestingSummary{
 		packagesCount:        eh.ctestsTracker.PackagesCount(),
 		passedPackagesCount:  eh.ctestsTracker.PassedPackagesCount(),

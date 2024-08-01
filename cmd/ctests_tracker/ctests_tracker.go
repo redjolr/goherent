@@ -7,31 +7,30 @@ import (
 )
 
 type CtestsTracker struct {
-	packagesUnderTest []PackageUnderTest
+	packagesUnderTest []*PackageUnderTest
 }
 
 func NewCtestsTracker() CtestsTracker {
 	return CtestsTracker{
-		packagesUnderTest: []PackageUnderTest{},
+		packagesUnderTest: []*PackageUnderTest{},
 	}
 }
 
 func (tracker *CtestsTracker) InsertCtest(ctest Ctest) Ctest {
-	var packUt PackageUnderTest
 	if tracker.ContainsPackageUtWithName(ctest.packageName) {
-		packUt = tracker.PackageUnderTest(ctest.packageName)
-		packUt.insertCtest(ctest)
-		tracker.replacePackageWith(ctest.packageName, packUt)
+		existingPackUt := tracker.PackageUnderTest(ctest.packageName)
+		existingPackUt.insertCtest(ctest)
+		tracker.replacePackageWith(ctest.packageName, existingPackUt)
 	} else {
-		packUt = NewPackageUnderTest(ctest.packageName)
+		packUt := NewPackageUnderTest(ctest.packageName)
 		packUt.insertCtest(ctest)
-		tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
 
 	return ctest
 }
 
-func (tracker *CtestsTracker) Packages() []PackageUnderTest {
+func (tracker *CtestsTracker) Packages() []*PackageUnderTest {
 	return tracker.packagesUnderTest
 }
 
@@ -41,13 +40,14 @@ func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
 		return *existingPackageUt
 	}
 	packUt := NewPackageUnderTest(name)
-	tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+	tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	return packUt
 }
 
 func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName()) {
-		tracker.packagesUnderTest = append(tracker.packagesUnderTest, NewPackageUnderTest(evt.PackageName()))
+		packUt := NewPackageUnderTest(evt.PackageName())
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
 }
 
@@ -60,16 +60,22 @@ func (tracker *CtestsTracker) IsCtestFirstOfItsPackage(ctest Ctest) bool {
 }
 
 func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
-	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
+	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 		return packUt.name == name
 	})
 	return indexOfPackUttWithName != -1
 }
 
+func (tracker *CtestsTracker) MarkAllPackagesAsFinished() {
+	for _, packageUt := range tracker.packagesUnderTest {
+		packageUt.MarkAsFinished()
+	}
+}
+
 func (tracker *CtestsTracker) FindPackageWithName(packageName string) *PackageUnderTest {
 	for _, packUt := range tracker.packagesUnderTest {
 		if packUt.name == packageName {
-			return &packUt
+			return packUt
 		}
 	}
 	return nil
@@ -141,9 +147,9 @@ func (tracker *CtestsTracker) SkippedPackagesCount() int {
 	return count
 }
 
-func (tracker *CtestsTracker) PackageUnderTest(name string) PackageUnderTest {
+func (tracker *CtestsTracker) PackageUnderTest(name string) *PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
-		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
+		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 			return packUt.name == name
 		})
 		return tracker.packagesUnderTest[indexOfPackUtWithName]
@@ -173,12 +179,12 @@ func (tracker *CtestsTracker) RunningCtestsCount() int {
 
 func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
 	if !tracker.ContainsPackageUtWithName(packUt.name) {
-		tracker.packagesUnderTest = append(tracker.packagesUnderTest, packUt)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
 }
 
-func (tracker *CtestsTracker) replacePackageWith(packageName string, replacement PackageUnderTest) {
-	packageIndex := slices.IndexFunc(tracker.packagesUnderTest, func(packUt PackageUnderTest) bool {
+func (tracker *CtestsTracker) replacePackageWith(packageName string, replacement *PackageUnderTest) {
+	packageIndex := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 		return packUt.name == packageName
 	})
 	if packageIndex == -1 {

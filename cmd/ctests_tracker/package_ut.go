@@ -5,20 +5,30 @@ import (
 )
 
 type PackageUnderTest struct {
-	name   string
-	ctests []Ctest
+	name            string
+	ctests          []Ctest
+	testingFinished bool
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
 	newPack := PackageUnderTest{
-		name:   name,
-		ctests: []Ctest{},
+		name:            name,
+		ctests:          []Ctest{},
+		testingFinished: false,
 	}
 	return newPack
 }
 
 func (packageUt *PackageUnderTest) Name() string {
 	return packageUt.name
+}
+
+func (packageUt *PackageUnderTest) TestsAreRunning() bool {
+	return !packageUt.testingFinished
+}
+
+func (packageUt *PackageUnderTest) MarkAsFinished() {
+	packageUt.testingFinished = true
 }
 
 func (packageUt *PackageUnderTest) RunningCtestsCount() int {
@@ -71,7 +81,7 @@ func (packageUt *PackageUnderTest) HasFailedTests() bool {
 }
 
 func (packageUt *PackageUnderTest) HasPassed() bool {
-	return packageUt.PassedCtestsCount() == len(packageUt.ctests)
+	return !packageUt.TestsAreRunning() && packageUt.PassedCtestsCount() == len(packageUt.ctests)
 }
 
 func (packageUt *PackageUnderTest) IsSkipped() bool {

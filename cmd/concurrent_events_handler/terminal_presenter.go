@@ -39,8 +39,12 @@ func (tp *TerminalPresenter) EraseScreen() {
 	tp.terminal.Print(ansi_escape.CURSOR_TO_HOME)
 }
 
-func (tp *TerminalPresenter) Packages(packages []ctests_tracker.PackageUnderTest) {
+func (tp *TerminalPresenter) Packages(packages []*ctests_tracker.PackageUnderTest) {
+	fmt.Println("\n\n\n packages", packages)
 	for _, packageUt := range packages {
+		if packageUt.TestsAreRunning() {
+			tp.terminal.Print(fmt.Sprintf("\n⏳ %s", packageUt.Name()))
+		}
 		if packageUt.HasPassed() {
 			tp.terminal.Print(fmt.Sprintf("\n✅ %s", packageUt.Name()))
 		}

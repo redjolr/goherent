@@ -185,10 +185,9 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-     Given that a PackageStartedEvent has occurred for "somePackage"
-     When a PackagePassedEvent for package "somePackage" occurs
-     Then the current screen will be erased
-     And the user will be informed that the package tests have passed
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 And the user will be informed that the package tests have passed
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
@@ -216,6 +215,92 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		assert.Equal(
 			fakeTerminal.Text(),
 			"\n✅ somePackage",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent for package "somePackage 1" has occured
+	 And a PackageStartedEvent for package "somePackage 2" has occured
+	 When a PackagePassedEvent for package "somePackage 2" occurs again
+	 Then the user should be informed that the tests are running for "somePackage 1" and passed for "somePackage 2"`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		timeElapsed := 1.2
+		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 1",
+			},
+		)
+		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 2",
+			},
+		)
+
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
+
+		// When
+		packPassedEvt2 := package_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage 2",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandlePackagePassed(packPassedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n⏳ somePackage 1\n✅ somePackage 2",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent for package "somePackage 1" has occured
+	 And a PackageStartedEvent for package "somePackage 2" has occured
+	 When a PackagePassedEvent for package "somePackage 1" occurs
+	 Then the user should be informed that the tests are running for "somePackage 1" and passed for "somePackage 2"`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		timeElapsed := 1.2
+		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 1",
+			},
+		)
+		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 2",
+			},
+		)
+
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
+
+		// When
+		packPassedEvt1 := package_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage 1",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandlePackagePassed(packPassedEvt1)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n✅ somePackage 1\n⏳ somePackage 2",
 		)
 	}, t)
 }

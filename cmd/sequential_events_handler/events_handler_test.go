@@ -821,12 +821,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-			Given that no test events have occurred
-			When a TestingFinishedEvent with a duration of 1.2 seconds occurs
-			Then a test summary should be presented
-			And that summary should present that 0 packages have been tested, 0 tests have been run
-			And the tests execution time was 1.2 seconds
-		`, func(t *testing.T) {
+     Given that no test events have occurred
+     When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+     Then a test summary should be presented
+     And that summary should present that 0 packages have been tested, 0 tests have been run
+     And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 
@@ -845,13 +844,12 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-			Given that a Ctest with name "testName" in package "somePackage" has passed
-			When a TestingFinishedEvent with a duration of 1.2 seconds occurs
-			Then a test summary should be presented
-			And that summary should present that there was 1 tested package in total, 1 has passed
-			And 1 test was run in total and 1 has passed
-			And the tests execution time was 1.2 seconds
-		`, func(t *testing.T) {
+     Given that a Ctest with name "testName" in package "somePackage" has passed
+     When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+     Then a test summary should be presented
+     And that summary should present that there was 1 tested package in total, 1 has passed
+     And 1 test was run in total and 1 has passed
+     And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
@@ -892,14 +890,13 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-			Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
-			And both those tests have passed
-			When a TestingFinishedEvent with a duration of 1.2 seconds occurs
-			Then a test summary should be presented
-			And that summary should present that there was 1 tested package in total, 1 has passed
-			And 2 tests were run in total and 2 have passed
-			And the tests execution time was 1.2 seconds
-		`, func(t *testing.T) {
+	Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+	And both those tests have passed
+	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
+	Then a test summary should be presented
+	And that summary should present that there was 1 tested package in total, 1 has passed
+	And 2 tests were run in total and 2 have passed
+	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2

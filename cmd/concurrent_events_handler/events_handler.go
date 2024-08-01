@@ -36,12 +36,14 @@ func (eh EventsHandler) HandlePackageStartedEvent(evt package_started_event.Pack
 
 	return nil
 }
+
 func (eh EventsHandler) HandlePackagePassed(evt package_passed_event.PackagePassedEvent) error {
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
 	if existingPackageUt == nil {
 		eh.output.Error()
 		return errors.New("No existing test found for test pass event.")
 	}
+	existingPackageUt.MarkAsFinished()
 	eh.output.EraseScreen()
 	eh.output.Packages(eh.ctestsTracker.Packages())
 	return nil
