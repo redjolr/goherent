@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/terminal"
 )
 
@@ -22,4 +23,8 @@ func NewTerminalPresenter(term terminal.Terminal) TerminalPresenter {
 
 func (tp *TerminalPresenter) TestingStarted(timestamp time.Time) {
 	tp.terminal.Print(fmt.Sprintf("\n🚀 Starting... %s", timestamp.Format("2006-01-02 15:04:05.000")))
+}
+
+func (tp *TerminalPresenter) PackageStarted(packageUt ctests_tracker.PackageUnderTest) {
+	tp.terminal.Print(fmt.Sprintf("\n⏳ %s", packageUt.Name()))
 }

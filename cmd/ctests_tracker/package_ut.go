@@ -17,6 +17,10 @@ func NewPackageUnderTest(name string) PackageUnderTest {
 	return newPack
 }
 
+func (packageUt *PackageUnderTest) Name() string {
+	return packageUt.name
+}
+
 func (packageUt *PackageUnderTest) RunningCtestsCount() int {
 	count := 0
 	for _, ctest := range packageUt.ctests {

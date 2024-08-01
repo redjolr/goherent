@@ -2,6 +2,7 @@ package concurrent_events_handler
 
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
+	"github.com/redjolr/goherent/cmd/events/package_started_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 )
 
@@ -19,4 +20,11 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 
 func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingStartedEvent) {
 	eh.output.TestingStarted(evt.Timestamp())
+}
+
+func (eh EventsHandler) HandlePackageStartedEvent(evt package_started_event.PackageStartedEvent) error {
+	packageUt := ctests_tracker.NewPackageUnderTest(evt.PackageName())
+	eh.output.PackageStarted(packageUt)
+
+	return nil
 }
