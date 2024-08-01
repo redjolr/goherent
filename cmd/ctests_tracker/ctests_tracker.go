@@ -130,7 +130,7 @@ func (tracker *CtestsTracker) PassedPackagesCount() int {
 func (tracker *CtestsTracker) FailedPackagesCount() int {
 	count := 0
 	for _, packageUt := range tracker.packagesUnderTest {
-		if packageUt.HasFailedTests() {
+		if packageUt.HasAtLeastOneFailedTest() {
 			count += 1
 		}
 	}

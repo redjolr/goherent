@@ -6,6 +6,9 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
+	"github.com/redjolr/goherent/cmd/events/package_failed_event"
+	"github.com/redjolr/goherent/cmd/events/package_passed_event"
+	"github.com/redjolr/goherent/cmd/events/package_started_event"
 )
 
 type EventsMapper struct {
@@ -62,6 +65,35 @@ func (evtMapper EventsMapper) JsonTestEvt2CtestSkippedEvt(jsonEvt events.JsonEve
 			Package: jsonEvt.Package,
 			Test:    *jsonEvt.Test,
 			Elapsed: jsonEvt.Elapsed,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2PackagePassedEvt(jsonEvt events.JsonEvent) package_passed_event.PackagePassedEvent {
+	return package_passed_event.NewFromJsonTestEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Action:  jsonEvt.Action,
+			Package: jsonEvt.Package,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2PackageFailedEvt(jsonEvt events.JsonEvent) package_failed_event.PackageFailedEvent {
+	return package_failed_event.NewFromJsonTestEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Action:  jsonEvt.Action,
+			Package: jsonEvt.Package,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2PackageStartedEvt(jsonEvt events.JsonEvent) package_started_event.PackageStartedEvent {
+	return package_started_event.NewFromJsonTestEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Package: jsonEvt.Package,
 		},
 	)
 }
