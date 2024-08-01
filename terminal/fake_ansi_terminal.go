@@ -1,21 +1,18 @@
 package terminal
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/redjolr/goherent/console/coordinates"
 )
 
 type FakeAnsiTerminal struct {
 	lines  [][]string
-	coords coordinates.Coordinates
+	coords Coordinates
 }
 
 func NewFakeAnsiTerminal() FakeAnsiTerminal {
-	origin := coordinates.Origin()
+	origin := Origin()
 	return FakeAnsiTerminal{
 		lines:  [][]string{{}},
 		coords: origin,
@@ -24,8 +21,8 @@ func NewFakeAnsiTerminal() FakeAnsiTerminal {
 
 func (fat *FakeAnsiTerminal) Print(text string) {
 	for len(strings.Split(text, "")) > 0 {
-		if strings.HasPrefix(text, CursorToHomePosEscapeCode) {
-			text, _ = strings.CutPrefix(text, CursorToHomePosEscapeCode)
+		if strings.HasPrefix(text, ANSI_CURSOR_TO_HOME) {
+			text, _ = strings.CutPrefix(text, ANSI_CURSOR_TO_HOME)
 			fat.coords.SetToOrigin()
 			continue
 		}
@@ -159,17 +156,17 @@ func (fat *FakeAnsiTerminal) GoToOrigin() {
 }
 
 func (fat *FakeAnsiTerminal) MoveUp(n int) {
-	fat.Print(fmt.Sprintf("\033[%dA", n))
+	fat.Print(MoveCursorUpNRowsAnsiSequence(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveDown(n int) {
-	fat.Print(fmt.Sprintf("\033[%dB", n))
+	fat.Print(MoveCursorDownNRowsAnsiSequence(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveRight(n int) {
-	fat.Print(fmt.Sprintf("\033[%dC", n))
+	fat.Print(MoveCursorRightNColsAnsiSequence(n))
 }
 
 func (fat *FakeAnsiTerminal) MoveLeft(n int) {
-	fat.Print(fmt.Sprintf("\033[%dD", n))
+	fat.Print(MoveCursorLeftNColsAnsiSequence(n))
 }

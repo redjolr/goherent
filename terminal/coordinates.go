@@ -1,4 +1,4 @@
-package coordinates
+package terminal
 
 type Coordinates struct {
 	X int

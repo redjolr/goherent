@@ -16,13 +16,13 @@ func (at *AnsiTerminal) Print(text string) {
 }
 
 func (at *AnsiTerminal) MoveDown(n int) {
-	fmt.Print(MoveCursorDownNRows(n))
+	fmt.Print(MoveCursorDownNRowsAnsiSequence(n))
 }
 
 func (at *AnsiTerminal) MoveUp(n int) {
-	fmt.Print(MoveCursorUpNRows(n))
+	fmt.Print(MoveCursorUpNRowsAnsiSequence(n))
 }
 
 func (at *AnsiTerminal) MoveLeft(n int) {
-	fmt.Print(MoveCursorLeftNCols(n))
+	fmt.Print(MoveCursorLeftNColsAnsiSequence(n))
 }

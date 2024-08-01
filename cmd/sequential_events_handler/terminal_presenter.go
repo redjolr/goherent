@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
-	"github.com/redjolr/goherent/console/terminal"
+	"github.com/redjolr/goherent/terminal"
 )
 
 const testsListId string = "testsList"

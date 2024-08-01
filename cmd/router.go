@@ -9,7 +9,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
-	"github.com/redjolr/goherent/console/terminal"
+	"github.com/redjolr/goherent/terminal"
 )
 
 type Router struct {

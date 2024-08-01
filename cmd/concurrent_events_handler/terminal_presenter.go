@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/redjolr/goherent/console/terminal"
+	"github.com/redjolr/goherent/terminal"
 )
 
 const testsListId string = "testsList"
