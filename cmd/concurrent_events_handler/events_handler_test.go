@@ -93,7 +93,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	Test(`
      Given that a HandlePackageStartedEvent for package "somePackage 1" has occured
      When a HandlePackageStartedEvent for package "somePackage 2" occurs
-     Then the user should be informed that the tests for that package are running`, func(t *testing.T) {
+     Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
@@ -124,10 +124,12 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 
 	Test(`
      Given that a PackageStartedEvent for package "somePackage 1" has occured
+	 And a PackagePassedEvent for package "somePackage 1" has occurred
      When a PackageStartedEvent for package "somePackage 2" occurs
-     Then the user should be informed that the tests for that package are running`, func(t *testing.T) {
+     Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
+		timeElapsed := 1.2
 		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -136,6 +138,15 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
+
+		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage 1",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandlePackagePassed(packagePassedEvt)
 
 		// When
 		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
@@ -150,7 +161,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n⏳ somePackage 1\n⏳ somePackage 2",
+			"\n✅ somePackage 1\n⏳ somePackage 2",
 		)
 	}, t)
 }
@@ -195,7 +206,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
-				Action:  "output",
+				Action:  "start",
 				Package: "somePackage",
 			},
 		)
