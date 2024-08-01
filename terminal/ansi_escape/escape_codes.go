@@ -3,6 +3,7 @@ package ansi_escape
 import "fmt"
 
 const CURSOR_TO_HOME = "\033[H"
+const ERASE_SCREEN = "\033[2J"
 const RED string = "\033[31m"
 const GREEN string = "\033[32m"
 const YELLOW string = "\u001B[33m"

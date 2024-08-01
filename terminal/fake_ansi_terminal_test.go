@@ -111,10 +111,54 @@ func TestPrintBasic(t *testing.T) {
 	}, t)
 }
 
-func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
+func TestPrintEraseScreen(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`it should store the string "",
+     if we print  ERASE_SCREEN.`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		assert.Equal(fakeTerminal.Text(), "")
+
+	}, t)
+
+	Test(`it should store the string " ",
+     if we print "A", and then ERASE_SCREEN.`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("A")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		assert.Equal(fakeTerminal.Text(), " ")
+	}, t)
+
+	Test(`it should store the string "  " (2 white spaces),
+     if we print "AB", and then ERASE_SCREEN.`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("AB")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		assert.Equal(fakeTerminal.Text(), "  ")
+	}, t)
+
+	Test(`it should store the string " \n " (2 lines with 1 white space each),
+     if we print "A\nB", and then ERASE_SCREEN.`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("A\nB")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		assert.Equal(fakeTerminal.Text(), " \n ")
+	}, t)
+
+	Test(`it should store the string "     \n   ",
+     if we print "Hello\nBob", and then ERASE_SCREEN.`, func(t *testing.T) {
+		fakeTerminal := setup()
+		fakeTerminal.Print("Hello\nBob")
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		assert.Equal(fakeTerminal.Text(), "     \n   ")
+	}, t)
+}
+
+func TestPrintCursorToHome(t *testing.T) {
 	assert := assert.New(t)
 	Test(`it should store the string "Jello",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "J".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME + "J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "J")
@@ -122,7 +166,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Jello",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then"J".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME, and then"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
@@ -131,7 +175,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Condo",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Cond".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME + "Cond".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Cond")
@@ -139,7 +183,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Condo",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Cond".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME, and then "Cond".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
@@ -148,7 +192,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Condo",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Candy".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME + "Candy".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Candy")
@@ -156,7 +200,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Candy",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Candy".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME, and then "Candy".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
@@ -165,7 +209,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Granny",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME + "Granny".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME + "Granny".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Granny")
@@ -173,7 +217,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Granny",
-		if we print "Hello", and then ANSI_CURSOR_TO_HOME, and then "Granny".`, func(t *testing.T) {
+		if we print "Hello", and then CURSOR_TO_HOME, and then "Granny".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME)
@@ -182,7 +226,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Jello\nWorld",
-		if we print "Hello\nWor;d", and then ANSI_CURSOR_TO_HOME+"J".`, func(t *testing.T) {
+		if we print "Hello\nWor;d", and then CURSOR_TO_HOME+"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello\nWorld")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "J")
@@ -190,7 +234,7 @@ func TestPrintWithANSI_CURSOR_TO_HOME(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "Candy\nWorld",
-		if we print "Hello\nWor;d", and then ANSI_CURSOR_TO_HOME+"J".`, func(t *testing.T) {
+		if we print "Hello\nWor;d", and then CURSOR_TO_HOME+"J".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("Hello\nWorld")
 		fakeTerminal.Print(ansi_escape.CURSOR_TO_HOME + "Candy")
@@ -581,77 +625,77 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ CURSOR_TO_HOME + MoveCursorDownNRows(1)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nB")
 	}, t)
 
 	Test(`it should store the string "\nA\nB",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nA\nB")
 	}, t)
 
 	Test(`it should store the string "B\n",
-		if we print "\nA"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
+		if we print "\nA"+ CURSOR_TO_HOME + MoveCursorDownNRows(2)+"B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\nA" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(5) + "B")
 		assert.Equal(fakeTerminal.Text(), "\nA\n\n\n\nB")
 	}, t)
 
 	Test(`it should store the string "\nCD",
-		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CD".`, func(t *testing.T) {
+		if we print "\nAB"+ CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CD".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\nAB" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "CD")
 		assert.Equal(fakeTerminal.Text(), "\nCD")
 	}, t)
 
 	Test(`it should store the string "\nCDE",
-		if we print "\nAB"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CDE".`, func(t *testing.T) {
+		if we print "\nAB"+ CURSOR_TO_HOME + MoveCursorDownNRows(1)+"CDE".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\nAB" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "CDE")
 		assert.Equal(fakeTerminal.Text(), "\nCDE")
 	}, t)
 
 	Test(`it should store the string "\n",
-		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1).`, func(t *testing.T) {
+		if we print "\n"+ CURSOR_TO_HOME + MoveCursorDownNRows(1).`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1))
 		assert.Equal(fakeTerminal.Text(), "\n")
 	}, t)
 
 	Test(`it should store the string "\nA",
-		if we print "\n"+ ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "A".`, func(t *testing.T) {
+		if we print "\n"+ CURSOR_TO_HOME + MoveCursorDownNRows(1) + "A".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "A")
 		assert.Equal(fakeTerminal.Text(), "\nA")
 	}, t)
 
 	Test(`it should store the string "\nAAA",
-		if we print "\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "AAA"`, func(t *testing.T) {
+		if we print "\n" + CURSOR_TO_HOME + MoveCursorDownNRows(1) + "AAA"`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "AAA")
 		assert.Equal(fakeTerminal.Text(), "\nAAA")
 	}, t)
 
 	Test(`it should store the string "A\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		if we print "A\n" + CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\nB")
 	}, t)
 
 	Test(`it should store the string "A\n\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
+		if we print "A\n" + CURSOR_TO_HOME + MoveCursorDownNRows(2) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(2) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n\nB")
 	}, t)
 
 	Test(`it should store the string "A\n\n\n\nB",
-		if we print "A\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(5) + "B".`, func(t *testing.T) {
+		if we print "A\n" + CURSOR_TO_HOME + MoveCursorDownNRows(5) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(5) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\n\n\n\n\nB")
@@ -693,7 +737,7 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	}, t)
 
 	Test(`it should store the string "A\nB\n",
-		if we print "A\nA\n" + ANSI_CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
+		if we print "A\nA\n" + CURSOR_TO_HOME + MoveCursorDownNRows(1) + "B".`, func(t *testing.T) {
 		fakeTerminal := setup()
 		fakeTerminal.Print("A\nA\n" + ansi_escape.CURSOR_TO_HOME + ansi_escape.MoveCursorDownNRows(1) + "B")
 		assert.Equal(fakeTerminal.Text(), "A\nB\n")

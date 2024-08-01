@@ -28,6 +28,15 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			fat.coords.SetToOrigin()
 			continue
 		}
+		if strings.HasPrefix(text, ansi_escape.ERASE_SCREEN) {
+			text, _ = strings.CutPrefix(text, ansi_escape.ERASE_SCREEN)
+			for lineInd, line := range fat.lines {
+				for charInd, _ := range line {
+					fat.lines[lineInd][charInd] = " "
+				}
+			}
+			continue
+		}
 		if strings.HasPrefix(text, "\n") {
 			text, _ = strings.CutPrefix(text, "\n")
 			if fat.coords.Y == len(fat.lines)-1 {
