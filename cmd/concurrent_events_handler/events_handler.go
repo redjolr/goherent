@@ -7,6 +7,7 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/cmd/events/package_failed_event"
 	"github.com/redjolr/goherent/cmd/events/package_passed_event"
 	"github.com/redjolr/goherent/cmd/events/package_started_event"
@@ -81,5 +82,10 @@ func (eh EventsHandler) HandleCtestFailedEvent(evt ctest_failed_event.CtestFaile
 
 func (eh EventsHandler) HandleCtestPassedEvent(evt ctest_passed_event.CtestPassedEvent) {
 	ctest := ctests_tracker.NewPassedCtest(evt)
+	eh.ctestsTracker.InsertCtest(ctest)
+}
+
+func (eh EventsHandler) HandleCtestSkippedEvt(evt ctest_skipped_event.CtestSkippedEvent) {
+	ctest := ctests_tracker.NewSkippedCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 }

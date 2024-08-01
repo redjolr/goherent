@@ -49,6 +49,7 @@ func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
 		isRunning:   true,
 		hasPassed:   false,
 		hasFailed:   false,
+		isSkipped:   false,
 	}
 }
 
@@ -62,6 +63,7 @@ func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
 		isRunning:   false,
 		hasPassed:   true,
 		hasFailed:   false,
+		isSkipped:   false,
 	}
 }
 
@@ -75,6 +77,21 @@ func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   true,
+		isSkipped:   false,
+	}
+}
+
+func NewSkippedCtest(passedEvt ctest_skipped_event.CtestSkippedEvent) Ctest {
+	return Ctest{
+		id:          uuidgen.NewString(),
+		name:        passedEvt.CtestName(),
+		packageName: passedEvt.PackageName(),
+		events:      []events.CtestEvent{passedEvt},
+		output:      []string{},
+		isRunning:   false,
+		hasPassed:   false,
+		hasFailed:   false,
+		isSkipped:   true,
 	}
 }
 

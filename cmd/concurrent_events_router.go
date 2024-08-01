@@ -49,7 +49,10 @@ func (router ConcurrentEventsRouter) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
 	}
-
+	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
+		router.eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+	}
 }
 
 func (router ConcurrentEventsRouter) RouteTestingStartedEvent(timestamp time.Time) {

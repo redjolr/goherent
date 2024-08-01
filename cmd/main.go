@@ -39,8 +39,12 @@ func Main(extraCmdArgs []string) int {
 		return 1
 	}
 	startTime := time.Now()
-	router.RouteTestingStartedEvent(time.Now())
 
+	if testsRunConcurrently {
+		concurrentEventsRouter.RouteTestingStartedEvent(time.Now())
+	} else {
+		router.RouteTestingStartedEvent(time.Now())
+	}
 	scanner := bufio.NewScanner(stdout)
 	scanner.Split(bufio.ScanLines)
 	for scanner.Scan() {
@@ -60,6 +64,10 @@ func Main(extraCmdArgs []string) int {
 	}
 	cmd.Wait()
 	elapsed := time.Since(startTime)
-	router.RouteTestingFinishedEvent(elapsed)
+	if testsRunConcurrently {
+		concurrentEventsRouter.RouteTestingFinishedEvent(elapsed)
+	} else {
+		router.RouteTestingFinishedEvent(elapsed)
+	}
 	return 0
 }
