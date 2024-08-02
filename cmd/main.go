@@ -10,8 +10,27 @@ import (
 	"strings"
 	"time"
 
+	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
+	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/sequential_events_handler"
+	"github.com/redjolr/goherent/cmd/testing_finished_handler"
+	"github.com/redjolr/goherent/terminal"
 )
+
+func setup() (Router, ConcurrentEventsRouter) {
+	ansiTerminal := terminal.NewAnsiTerminal()
+	sequentialEventsPresenter := sequential_events_handler.NewTerminalPresenter(&ansiTerminal)
+	concurrentEventsPresenter := concurrent_events_handler.NewTerminalPresenter(&ansiTerminal)
+	testingFinishedPresenter := testing_finished_handler.NewTerminalPresenter(&ansiTerminal)
+	ctestsTracker := ctests_tracker.NewCtestsTracker()
+	sequentialEventsHandler := sequential_events_handler.NewEventsHandler(&sequentialEventsPresenter, &ctestsTracker)
+	concurrentEventsHandler := concurrent_events_handler.NewEventsHandler(&concurrentEventsPresenter, &ctestsTracker)
+	testingFinishedHandler := testing_finished_handler.NewEventsHandler(&testingFinishedPresenter, &ctestsTracker)
+
+	return NewRouter(&sequentialEventsHandler, &testingFinishedHandler),
+		NewConcurrentEventsRouter(&concurrentEventsHandler, &testingFinishedHandler)
+}
 
 func Main(extraCmdArgs []string) int {
 	baseCommand := "go test -json"
@@ -22,8 +41,7 @@ func Main(extraCmdArgs []string) int {
 	if pArgumentIndex != -1 && len(commandArgs) >= pArgumentIndex+2 && commandArgs[pArgumentIndex+1] == "1" {
 		testsRunConcurrently = false
 	}
-	router := NewRouter()
-	concurrentEventsRouter := NewConcurrentEventsRouter()
+	router, concurrentEventsRouter := setup()
 
 	cmd := exec.Command(commandArgs[0], commandArgs[1:]...)
 	stdout, err := cmd.StdoutPipe()

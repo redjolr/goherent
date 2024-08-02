@@ -2,6 +2,7 @@ package concurrent_events_handler
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
@@ -26,7 +27,7 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 }
 
 func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingStartedEvent) {
-	eh.output.TestingStarted(evt.Timestamp())
+	eh.output.TestingStarted()
 }
 
 func (eh EventsHandler) HandlePackageStartedEvent(evt package_started_event.PackageStartedEvent) error {
@@ -45,10 +46,13 @@ func (eh EventsHandler) HandlePackagePassed(evt package_passed_event.PackagePass
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
 	if existingPackageUt == nil {
 		eh.output.Error()
+		fmt.Println("1")
 		return errors.New("No existing test found for test pass event.")
 	}
 	if !existingPackageUt.HasAtLeastOnePassedTest() && !existingPackageUt.HasAtLeastOneSkippedTest() {
 		eh.output.Error()
+		fmt.Println("2")
+
 		return errors.New("No passing test found for the package that received a PackagePassedEvent.")
 	}
 	existingPackageUt.MarkAsFinished()
@@ -61,10 +65,12 @@ func (eh EventsHandler) HandlePackageFailed(evt package_failed_event.PackageFail
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
 	if existingPackageUt == nil {
 		eh.output.Error()
+		fmt.Println("3")
 		return errors.New("No existing test found for test pass event.")
 	}
 	if !existingPackageUt.HasAtLeastOneFailedTest() {
 		eh.output.Error()
+		fmt.Println("4", evt.PackageName())
 		return errors.New("No failing test found for the package that received a PackageFailedEvent.")
 	}
 	existingPackageUt.MarkAsFinished()

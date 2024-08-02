@@ -4,26 +4,28 @@ import (
 	"strings"
 	"time"
 
-	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
-	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 )
 
 type Router struct {
-	eventsMapper  EventsMapper
-	eventsHandler sequential_events_handler.EventsHandler
+	eventsMapper EventsMapper
+
+	eventsHandler          *sequential_events_handler.EventsHandler
+	testingFinishedHandler *testing_finished_handler.EventsHandler
 }
 
-func NewRouter() Router {
-	ansiTerminal := terminal.NewAnsiTerminal()
-	terminalPresenter := sequential_events_handler.NewTerminalPresenter(&ansiTerminal)
-	ctestsTracker := ctests_tracker.NewCtestsTracker()
+func NewRouter(
+	eventsHandler *sequential_events_handler.EventsHandler,
+	testingFinishedHandler *testing_finished_handler.EventsHandler,
+) Router {
 	return Router{
-		eventsMapper:  NewEventsMapper(),
-		eventsHandler: sequential_events_handler.NewEventsHandler(&terminalPresenter, &ctestsTracker),
+		eventsHandler:          eventsHandler,
+		testingFinishedHandler: testingFinishedHandler,
+		eventsMapper:           NewEventsMapper(),
 	}
 }
 
@@ -56,5 +58,5 @@ func (router Router) RouteTestingStartedEvent(timestamp time.Time) {
 
 func (router Router) RouteTestingFinishedEvent(duration time.Duration) {
 	testingFinishedEvt := testing_finished_event.NewTestingFinishedEvent(duration)
-	router.eventsHandler.HandleTestingFinished(testingFinishedEvt)
+	router.testingFinishedHandler.HandleTestingFinished(testingFinishedEvt)
 }

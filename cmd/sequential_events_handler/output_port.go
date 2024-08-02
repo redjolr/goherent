@@ -1,13 +1,11 @@
 package sequential_events_handler
 
 import (
-	"time"
-
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 )
 
 type OutputPort interface {
-	TestingStarted(timestamp time.Time)
+	TestingStarted()
 	TestingFinishedSummary(summary TestingSummary)
 	PackageTestsStartedRunning(packageName string)
 	CtestPassed(ctest *ctests_tracker.Ctest, duration float64)

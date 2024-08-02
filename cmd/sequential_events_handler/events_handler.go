@@ -9,7 +9,6 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
-	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 )
 
@@ -122,25 +121,5 @@ func (eh EventsHandler) HandleCtestOutputEvent(evt ctest_output_event.CtestOutpu
 }
 
 func (eh EventsHandler) HandleTestingStarted(evt testing_started_event.TestingStartedEvent) {
-	eh.output.TestingStarted(evt.Timestamp())
-}
-
-func (eh EventsHandler) HandleTestingFinished(evt testing_finished_event.TestingFinishedEvent) {
-
-	eh.ctestsTracker.MarkAllPackagesAsFinished()
-
-	summary := TestingSummary{
-		packagesCount:        eh.ctestsTracker.PackagesCount(),
-		passedPackagesCount:  eh.ctestsTracker.PassedPackagesCount(),
-		failedPackagesCount:  eh.ctestsTracker.FailedPackagesCount(),
-		skippedPackagesCount: eh.ctestsTracker.SkippedPackagesCount(),
-
-		testsCount:        eh.ctestsTracker.CtestsCount(),
-		passedTestsCount:  eh.ctestsTracker.PassedCtestsCount(),
-		failedTestsCount:  eh.ctestsTracker.FailedCtestsCount(),
-		skippedTestsCount: eh.ctestsTracker.SkippedCtestsCount(),
-
-		durationS: evt.DurationS(),
-	}
-	eh.output.TestingFinishedSummary(summary)
+	eh.output.TestingStarted()
 }

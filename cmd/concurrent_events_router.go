@@ -5,24 +5,28 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
-	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
-	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 )
 
 type ConcurrentEventsRouter struct {
-	eventsMapper  EventsMapper
-	eventsHandler concurrent_events_handler.EventsHandler
+	eventsMapper EventsMapper
+
+	eventsHandler          *concurrent_events_handler.EventsHandler
+	testingFinishedHandler *testing_finished_handler.EventsHandler
 }
 
-func NewConcurrentEventsRouter() ConcurrentEventsRouter {
-	ansiTerminal := terminal.NewAnsiTerminal()
-	terminalPresenter := concurrent_events_handler.NewTerminalPresenter(&ansiTerminal)
-	ctestsTracker := ctests_tracker.NewCtestsTracker()
+func NewConcurrentEventsRouter(
+	eventsHandler *concurrent_events_handler.EventsHandler,
+	testingFinishedHandler *testing_finished_handler.EventsHandler,
+) ConcurrentEventsRouter {
+
 	return ConcurrentEventsRouter{
-		eventsMapper:  NewEventsMapper(),
-		eventsHandler: concurrent_events_handler.NewEventsHandler(&terminalPresenter, &ctestsTracker),
+		eventsHandler:          eventsHandler,
+		testingFinishedHandler: testingFinishedHandler,
+		eventsMapper:           NewEventsMapper(),
 	}
 }
 
@@ -61,5 +65,6 @@ func (router ConcurrentEventsRouter) RouteTestingStartedEvent(timestamp time.Tim
 }
 
 func (router ConcurrentEventsRouter) RouteTestingFinishedEvent(duration time.Duration) {
-
+	testingFinishedEvt := testing_finished_event.NewTestingFinishedEvent(duration)
+	router.testingFinishedHandler.HandleTestingFinished(testingFinishedEvt)
 }

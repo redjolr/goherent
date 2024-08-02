@@ -1,7 +1,6 @@
 package concurrent_events_handler_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -38,7 +37,7 @@ func TestHandleTestingStarted(t *testing.T) {
 
 		assert.Equal(
 			terminal.Text(),
-			fmt.Sprintf("\n🚀 Starting... %s", now.Format("2006-01-02 15:04:05.000")),
+			"\n🚀 Starting...",
 		)
 	}, t)
 }
