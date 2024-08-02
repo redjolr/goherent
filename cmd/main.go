@@ -16,11 +16,10 @@ import (
 func Main(extraCmdArgs []string) int {
 	baseCommand := "go test -json"
 	commandArgs := append(strings.Split(baseCommand, " "), extraCmdArgs...)
-
 	pArgumentIndex := slices.Index(commandArgs, "-p")
 	testsRunConcurrently := true
 
-	if pArgumentIndex != -1 && len(commandArgs) > pArgumentIndex+2 && commandArgs[pArgumentIndex] == "1" {
+	if pArgumentIndex != -1 && len(commandArgs) >= pArgumentIndex+2 && commandArgs[pArgumentIndex+1] == "1" {
 		testsRunConcurrently = false
 	}
 	router := NewRouter()

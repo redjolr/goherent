@@ -46,7 +46,7 @@ func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration f
 
 func (tp *TerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	tp.terminal.MoveLeft(1)
-	tp.terminal.Print(ansi_escape.YELLOW_CIRCLE + "\n")
+	tp.terminal.Print("⏩\n")
 }
 
 func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {

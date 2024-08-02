@@ -10,6 +10,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
+	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
 	"github.com/redjolr/goherent/cmd/events/package_failed_event"
 	"github.com/redjolr/goherent/cmd/events/package_passed_event"
 	"github.com/redjolr/goherent/cmd/events/package_started_event"
@@ -45,9 +46,9 @@ func TestHandleTestingStarted(t *testing.T) {
 func TestHandlePackageStartedEvent(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
-     Given that no events have occurred
-     When a HandlePackageStartedEvent occurs for package "somePackage"
-     Then the user should be informed that the tests for that package are running`, func(t *testing.T) {
+	 Given that no events have occurred
+	 When a HandlePackageStartedEvent occurs for package "somePackage"
+	 Then the user should be informed that the tests for that package are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 
@@ -69,9 +70,9 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-     Given that a HandlePackageStartedEvent for package "somePackage" has occurred
-     When a HandlePackageStartedEvent occurs for package "somePackage"
-     Then the user should be informed only once that the tests for the "somePackage" package are running`, func(t *testing.T) {
+	 Given that a HandlePackageStartedEvent for package "somePackage" has occurred
+	 When a HandlePackageStartedEvent occurs for package "somePackage"
+	 Then the user should be informed only once that the tests for the "somePackage" package are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		packStartedEvt := package_started_event.NewFromJsonTestEvent(
@@ -94,9 +95,9 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-     Given that a HandlePackageStartedEvent for package "somePackage 1" has occured
-     When a HandlePackageStartedEvent for package "somePackage 2" occurs
-     Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
+	 Given that a HandlePackageStartedEvent for package "somePackage 1" has occured
+	 When a HandlePackageStartedEvent for package "somePackage 2" occurs
+	 Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
@@ -127,6 +128,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 
 	Test(`
      Given that a PackageStartedEvent for package "somePackage 1" has occured
+	 And a CtestPassedEvent for test with name "testName" in package "somePackage 1" has occurred
 	 And a PackagePassedEvent for package "somePackage 1" has occurred
      When a PackageStartedEvent for package "somePackage 2" occurs
      Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
@@ -142,14 +144,25 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage 1",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt1)
+
+		packagePassedEvt1 := package_passed_event.NewFromJsonTestEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 1",
 				Elapsed: &timeElapsed,
 			},
 		)
-		eventsHandler.HandlePackagePassed(packagePassedEvt)
+		eventsHandler.HandlePackagePassed(packagePassedEvt1)
 
 		// When
 		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
@@ -276,6 +289,51 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		assert.Equal(
 			fakeTerminal.Text(),
 			"\n✅ somePackage",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 And the user will be informed that the package tests have passed
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, fakeTerminal, _ := setup()
+		timeElapsed := 1.2
+		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// When
+		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandlePackagePassed(packagePassedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"\n⏩ somePackage",
 		)
 	}, t)
 

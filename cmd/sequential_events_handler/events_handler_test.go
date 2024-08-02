@@ -590,7 +590,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+ansi_escape.YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
 		)
 	}, t)
 
@@ -667,7 +667,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+ansi_escape.YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
 		)
 	}, t)
 
@@ -715,7 +715,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+ansi_escape.YELLOW_CIRCLE+"\n",
+			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
 		)
 	}, t)
 
@@ -1392,7 +1392,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+			"\n\n📦 somePackage\n\n   • testName    ⏩\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
@@ -1455,7 +1455,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName 1    "+ansi_escape.YELLOW_CIRCLE+"\n\n   • testName 2    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+			"\n\n📦 somePackage\n\n   • testName 1    ⏩\n\n   • testName 2    ⏩\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
@@ -1518,8 +1518,8 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage 1\n\n   • testName 1    "+ansi_escape.YELLOW_CIRCLE+"\n"+
-				"\n\n📦 somePackage 2\n\n   • testName 2    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+			"\n\n📦 somePackage 1\n\n   • testName 1    ⏩\n"+
+				"\n\n📦 somePackage 2\n\n   • testName 2    ⏩\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
@@ -1583,7 +1583,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage 1\n\n   • testName 1    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+			"\n\n📦 somePackage 1\n\n   • testName 1    ⏩\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ✅\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
@@ -1669,7 +1669,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			terminal.Text(),
 			"\n\n📦 somePackage 1\n\n   • testName 1    ❌\n"+
 				"\n\n📦 somePackage 2\n\n   • testName 2    ✅\n"+
-				"\n\n📦 somePackage 3\n\n   • testName 3    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+				"\n\n📦 somePackage 3\n\n   • testName 3    ⏩\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
@@ -1734,7 +1734,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage 1\n\n   • testName 1    ❌\n"+
-				"\n\n📦 somePackage 2\n\n   • testName 2    "+ansi_escape.YELLOW_CIRCLE+"\n"+
+				"\n\n📦 somePackage 2\n\n   • testName 2    ⏩\n"+
 				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+

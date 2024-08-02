@@ -89,12 +89,21 @@ func (packageUt *PackageUnderTest) HasAtLeastOnePassedTest() bool {
 	return false
 }
 
+func (packageUt *PackageUnderTest) HasAtLeastOneSkippedTest() bool {
+	for _, ctest := range packageUt.ctests {
+		if ctest.isSkipped {
+			return true
+		}
+	}
+	return false
+}
+
 func (packageUt *PackageUnderTest) HasPassed() bool {
 	return !packageUt.TestsAreRunning() && packageUt.PassedCtestsCount() == len(packageUt.ctests)
 }
 
 func (packageUt *PackageUnderTest) IsSkipped() bool {
-	return packageUt.SkippedCtestsCount() == len(packageUt.ctests)
+	return !packageUt.TestsAreRunning() && packageUt.SkippedCtestsCount() == len(packageUt.ctests)
 }
 
 func (packageUt *PackageUnderTest) CtestsCount() int {

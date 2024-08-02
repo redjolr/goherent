@@ -47,6 +47,9 @@ func (tp *TerminalPresenter) Packages(packages []*ctests_tracker.PackageUnderTes
 		if packageUt.HasPassed() {
 			tp.terminal.Print(fmt.Sprintf("\n✅ %s", packageUt.Name()))
 		}
+		if packageUt.IsSkipped() {
+			tp.terminal.Print(fmt.Sprintf("\n⏩ %s", packageUt.Name()))
+		}
 		if packageUt.HasAtLeastOneFailedTest() {
 			tp.terminal.Print(fmt.Sprintf("\n❌ %s", packageUt.Name()))
 		}

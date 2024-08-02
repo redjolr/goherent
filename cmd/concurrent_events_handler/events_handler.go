@@ -2,7 +2,6 @@ package concurrent_events_handler
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
@@ -48,8 +47,7 @@ func (eh EventsHandler) HandlePackagePassed(evt package_passed_event.PackagePass
 		eh.output.Error()
 		return errors.New("No existing test found for test pass event.")
 	}
-	if !existingPackageUt.HasAtLeastOnePassedTest() {
-		fmt.Println(existingPackageUt)
+	if !existingPackageUt.HasAtLeastOnePassedTest() && !existingPackageUt.HasAtLeastOneSkippedTest() {
 		eh.output.Error()
 		return errors.New("No passing test found for the package that received a PackagePassedEvent.")
 	}
