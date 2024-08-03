@@ -2,12 +2,12 @@ package concurrent_events_handler
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
+	"github.com/redjolr/goherent/cmd/events/no_package_tests_found_event"
 	"github.com/redjolr/goherent/cmd/events/package_failed_event"
 	"github.com/redjolr/goherent/cmd/events/package_passed_event"
 	"github.com/redjolr/goherent/cmd/events/package_started_event"
@@ -46,13 +46,10 @@ func (eh EventsHandler) HandlePackagePassed(evt package_passed_event.PackagePass
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
 	if existingPackageUt == nil {
 		eh.output.Error()
-		fmt.Println("1")
 		return errors.New("No existing test found for test pass event.")
 	}
 	if !existingPackageUt.HasAtLeastOnePassedTest() && !existingPackageUt.HasAtLeastOneSkippedTest() {
 		eh.output.Error()
-		fmt.Println("2")
-
 		return errors.New("No passing test found for the package that received a PackagePassedEvent.")
 	}
 	existingPackageUt.MarkAsFinished()
@@ -65,12 +62,10 @@ func (eh EventsHandler) HandlePackageFailed(evt package_failed_event.PackageFail
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName())
 	if existingPackageUt == nil {
 		eh.output.Error()
-		fmt.Println("3")
 		return errors.New("No existing test found for test pass event.")
 	}
 	if !existingPackageUt.HasAtLeastOneFailedTest() {
 		eh.output.Error()
-		fmt.Println("4", evt.PackageName())
 		return errors.New("No failing test found for the package that received a PackageFailedEvent.")
 	}
 	existingPackageUt.MarkAsFinished()
@@ -92,4 +87,20 @@ func (eh EventsHandler) HandleCtestPassedEvent(evt ctest_passed_event.CtestPasse
 func (eh EventsHandler) HandleCtestSkippedEvt(evt ctest_skipped_event.CtestSkippedEvent) {
 	ctest := ctests_tracker.NewSkippedCtest(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
+}
+
+func (eh EventsHandler) HandleNoPackageTestsFoundEvent(evt no_package_tests_found_event.NoPackageTestsFoundEvent) error {
+	packageUt := eh.ctestsTracker.PackageUnderTest(evt.PackageName())
+	if packageUt == nil {
+		eh.output.Error()
+		return errors.New("No existing test found for NoPackageTestsFoundEvent event.")
+	}
+	if packageUt.HasAtLeastOneTest() {
+		eh.output.Error()
+		return errors.New("No existing test found for NoPackageTestsFoundEvent event.")
+	}
+	eh.ctestsTracker.DeletePackage(packageUt)
+	eh.output.EraseScreen()
+	eh.output.Packages(eh.ctestsTracker.Packages())
+	return nil
 }

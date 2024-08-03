@@ -6,6 +6,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
 	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
+	"github.com/redjolr/goherent/cmd/events/no_package_tests_found_event"
 	"github.com/redjolr/goherent/cmd/events/package_failed_event"
 	"github.com/redjolr/goherent/cmd/events/package_passed_event"
 	"github.com/redjolr/goherent/cmd/events/package_started_event"
@@ -91,6 +92,17 @@ func (evtMapper EventsMapper) JsonTestEvt2PackageFailedEvt(jsonEvt events.JsonEv
 
 func (evtMapper EventsMapper) JsonTestEvt2PackageStartedEvt(jsonEvt events.JsonEvent) package_started_event.PackageStartedEvent {
 	return package_started_event.NewFromJsonTestEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Package: jsonEvt.Package,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2NoPackTestsFoundEvent(
+	jsonEvt events.JsonEvent,
+) no_package_tests_found_event.NoPackageTestsFoundEvent {
+	return no_package_tests_found_event.NewFromJsonTestEvent(
 		events.JsonTestEvent{
 			Time:    jsonEvt.Time,
 			Package: jsonEvt.Package,

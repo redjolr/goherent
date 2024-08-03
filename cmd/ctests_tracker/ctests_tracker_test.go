@@ -510,3 +510,190 @@ func TestRunningTestsCount(t *testing.T) {
 		assert.Equal(runningCtestsCnt, 2)
 	}, t)
 }
+
+func TestDeletePackage(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	Given that there is a CtestTracker with no packages,
+	When we try to delete a random package
+	Then nothing will happen and the CtestsTracker will still have no packages.`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+
+		// When
+		randomPackage := ctests_tracker.NewPackageUnderTest("somePackage")
+		tracker.DeletePackage(&randomPackage)
+
+		// Then
+		assert.Equal(tracker.PackagesCount(), 0)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 1 package named "somePackage",
+	When we try to delete that package
+	Then the package will be deleted and the tracker will have 0 packages.`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage")
+
+		// When
+		somePackage := tracker.FindPackageWithName("somePackage")
+		tracker.DeletePackage(somePackage)
+
+		// Then
+		assert.Equal(tracker.PackagesCount(), 0)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 1 package,
+	When we try to delete another package 
+	Then nothing will happen and the CtestsTracker will have 1 package.`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage")
+
+		// When
+		someOtherPackage := ctests_tracker.NewPackageUnderTest("someOtherPackage")
+		tracker.DeletePackage(&someOtherPackage)
+
+		// Then
+		assert.Equal(tracker.PackagesCount(), 1)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 1 package with name "somePackage",
+	When we try to delete another package which also has that name (but it is a different instance)
+	Then nothing will happen and the CtestsTracker will have 1 packages.`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage")
+
+		// When
+		someOtherPackage := ctests_tracker.NewPackageUnderTest("somePackage")
+		tracker.DeletePackage(&someOtherPackage)
+
+		// Then
+		assert.Equal(tracker.PackagesCount(), 1)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 2 package with names "somePackage 1" and "somePackage 2",
+	When we try to delete the "somePackage 1" package
+	Then the "somePackage 1" package will be deleted`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage 1")
+		tracker.InsertPackageUt("somePackage 2")
+
+		// When
+		somePackage1 := tracker.FindPackageWithName("somePackage 1")
+		tracker.DeletePackage(somePackage1)
+
+		// Then
+		assert.Equal(
+			tracker.Packages()[0].Name(),
+			"somePackage 2",
+		)
+		assert.Equal(tracker.PackagesCount(), 1)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 2 package with names "somePackage 1" and "somePackage 2",
+	When we try to delete the "somePackage 2" package
+	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage 1")
+		tracker.InsertPackageUt("somePackage 2")
+
+		// When
+		somePackage2 := tracker.FindPackageWithName("somePackage 2")
+		tracker.DeletePackage(somePackage2)
+
+		// Then
+		assert.Equal(
+			tracker.Packages()[0].Name(),
+			"somePackage 1",
+		)
+		assert.Equal(tracker.PackagesCount(), 1)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
+	When we try to delete the "somePackage 1" package
+	Then the "somePackage 1" package will be deleted`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage 1")
+		tracker.InsertPackageUt("somePackage 2")
+		tracker.InsertPackageUt("somePackage 3")
+
+		// When
+		somePackage1 := tracker.FindPackageWithName("somePackage 1")
+		tracker.DeletePackage(somePackage1)
+
+		// Then
+		assert.Equal(
+			tracker.Packages()[0].Name(),
+			"somePackage 2",
+		)
+		assert.Equal(
+			tracker.Packages()[1].Name(),
+			"somePackage 3",
+		)
+		assert.Equal(tracker.PackagesCount(), 2)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
+	When we try to delete the "somePackage 2" package
+	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage 1")
+		tracker.InsertPackageUt("somePackage 2")
+		tracker.InsertPackageUt("somePackage 3")
+
+		// When
+		somePackage2 := tracker.FindPackageWithName("somePackage 2")
+		tracker.DeletePackage(somePackage2)
+
+		// Then
+		assert.Equal(
+			tracker.Packages()[0].Name(),
+			"somePackage 1",
+		)
+		assert.Equal(
+			tracker.Packages()[1].Name(),
+			"somePackage 3",
+		)
+		assert.Equal(tracker.PackagesCount(), 2)
+	}, t)
+
+	Test(`
+	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
+	When we try to delete the "somePackage 3" package
+	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage 1")
+		tracker.InsertPackageUt("somePackage 2")
+		tracker.InsertPackageUt("somePackage 3")
+
+		// When
+		somePackage3 := tracker.FindPackageWithName("somePackage 3")
+		tracker.DeletePackage(somePackage3)
+
+		// Then
+		assert.Equal(
+			tracker.Packages()[0].Name(),
+			"somePackage 1",
+		)
+		assert.Equal(
+			tracker.Packages()[1].Name(),
+			"somePackage 2",
+		)
+		assert.Equal(tracker.PackagesCount(), 2)
+	}, t)
+}

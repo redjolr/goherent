@@ -71,6 +71,10 @@ func (packageUt *PackageUnderTest) SkippedCtestsCount() int {
 	return count
 }
 
+func (packageUt *PackageUnderTest) HasAtLeastOneTest() bool {
+	return len(packageUt.ctests) != 0
+}
+
 func (packageUt *PackageUnderTest) HasAtLeastOneFailedTest() bool {
 	for _, ctest := range packageUt.ctests {
 		if ctest.hasFailed {

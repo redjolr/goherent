@@ -44,6 +44,21 @@ func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
 	return packUt
 }
 
+func (tracker *CtestsTracker) DeletePackage(packageUt *PackageUnderTest) {
+	packInd := slices.Index(tracker.packagesUnderTest, packageUt)
+	if packInd != -1 {
+		if packInd == len(tracker.packagesUnderTest)-1 {
+			tracker.packagesUnderTest = tracker.packagesUnderTest[0:packInd]
+		} else {
+			tracker.packagesUnderTest = slices.Concat(
+				tracker.packagesUnderTest[0:packInd],
+				tracker.packagesUnderTest[packInd+1:],
+			)
+		}
+
+	}
+}
+
 func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName()) {
 		packUt := NewPackageUnderTest(evt.PackageName())
@@ -154,7 +169,7 @@ func (tracker *CtestsTracker) PackageUnderTest(name string) *PackageUnderTest {
 		})
 		return tracker.packagesUnderTest[indexOfPackUtWithName]
 	}
-	panic("Ctest does not exist. Check if it exists, before trying to get it.")
+	return nil
 }
 
 func (tracker *CtestsTracker) FindCtestWithNameInPackage(ctestName string, packageName string) *Ctest {
