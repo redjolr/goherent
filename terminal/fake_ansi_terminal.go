@@ -109,7 +109,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			moveUpCountAsStr, _ = strings.CutSuffix(moveUpCountAsStr, "A")
 			moveUpCount, err := strconv.Atoi(moveUpCountAsStr)
 			if err != nil {
-				panic("Cannot determine the number steps to move left.")
+				panic("Cannot determine the number steps to move up.")
 			}
 			fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
 			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
