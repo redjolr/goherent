@@ -9,8 +9,8 @@ import (
 )
 
 type FakeAnsiTerminal struct {
-	height int
 	width  int
+	height int
 	lines  [][]string
 	coords Coordinates
 }
@@ -18,8 +18,23 @@ type FakeAnsiTerminal struct {
 func NewFakeAnsiTerminal(width, height int) FakeAnsiTerminal {
 	origin := Origin()
 	return FakeAnsiTerminal{
+		width:  width,
+		height: height,
 		lines:  [][]string{{}},
 		coords: origin,
+	}
+}
+
+func (fat *FakeAnsiTerminal) cursorToVisibleUpperLeftCorner() {
+	fat.coords.X = 0
+	fat.cursorToVisibleUpperLine()
+}
+
+func (fat *FakeAnsiTerminal) cursorToVisibleUpperLine() {
+	if fat.coords.Y <= fat.height-1 {
+		fat.coords.Y = 0
+	} else {
+		fat.coords.Y = fat.coords.Y - fat.height + 1
 	}
 }
 
@@ -27,13 +42,16 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 	for len(strings.Split(text, "")) > 0 {
 		if strings.HasPrefix(text, ansi_escape.CURSOR_TO_HOME) {
 			text, _ = strings.CutPrefix(text, ansi_escape.CURSOR_TO_HOME)
-			fat.coords.SetToOrigin()
+			fat.cursorToVisibleUpperLeftCorner()
 			continue
 		}
 		if strings.HasPrefix(text, ansi_escape.ERASE_SCREEN) {
 			text, _ = strings.CutPrefix(text, ansi_escape.ERASE_SCREEN)
-			fat.lines = [][]string{{}}
-			fat.coords.SetToOrigin()
+			fat.cursorToVisibleUpperLine()
+			fat.lines = fat.lines[0:fat.coords.Y]
+			if fat.coords.X > 0 {
+				fat.lines = append(fat.lines, strings.Split(strings.Repeat(" ", fat.coords.X), ""))
+			}
 			continue
 		}
 		if strings.HasPrefix(text, "\n") {
