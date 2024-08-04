@@ -9,11 +9,13 @@ import (
 )
 
 type FakeAnsiTerminal struct {
+	height int
+	width  int
 	lines  [][]string
 	coords Coordinates
 }
 
-func NewFakeAnsiTerminal() FakeAnsiTerminal {
+func NewFakeAnsiTerminal(width, height int) FakeAnsiTerminal {
 	origin := Origin()
 	return FakeAnsiTerminal{
 		lines:  [][]string{{}},

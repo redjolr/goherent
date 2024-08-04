@@ -1,6 +1,7 @@
 package testing_finished_handler_test
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -18,7 +19,7 @@ import (
 )
 
 func setup() (*testing_finished_handler.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 	fakeAnsiTerminalPresenter := testing_finished_handler.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventsHandler := testing_finished_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)

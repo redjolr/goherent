@@ -1,6 +1,7 @@
 package concurrent_events_handler_test
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -21,7 +22,7 @@ import (
 )
 
 func setup() (*concurrent_events_handler.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 	fakeAnsiTerminalPresenter := concurrent_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventsHandler := concurrent_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)

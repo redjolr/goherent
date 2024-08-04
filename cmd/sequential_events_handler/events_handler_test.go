@@ -2,6 +2,7 @@ package sequential_events_handler_test
 
 import (
 	"fmt"
+	"math"
 	"strings"
 	"testing"
 	"time"
@@ -21,7 +22,7 @@ import (
 )
 
 func setup() (*sequential_events_handler.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal()
+	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 	fakeAnsiTerminalPresenter := sequential_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventsHandler := sequential_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
