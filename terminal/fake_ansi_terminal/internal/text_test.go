@@ -18,7 +18,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText("")
 		popped := text.PopLeft()
-		assert.Equal(popped, "")
+		assert.Equal(popped, internal.NewSequence("", true))
 		assert.Equal(text.Value(), "")
 
 	}, t)
@@ -30,7 +30,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText("A")
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -41,7 +41,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText("🚀")
 		popped := text.PopLeft()
-		assert.Equal(popped, "🚀")
+		assert.Equal(popped, internal.NewSequence("🚀", true))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -52,7 +52,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "B".`, func(t *testing.T) {
 		text := internal.NewText("AB")
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), "B")
 	}, t)
 
@@ -63,7 +63,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should "🚀".`, func(t *testing.T) {
 		text := internal.NewText("A🚀")
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), "🚀")
 	}, t)
 
@@ -74,7 +74,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should "A".`, func(t *testing.T) {
 		text := internal.NewText("🚀A")
 		popped := text.PopLeft()
-		assert.Equal(popped, "🚀")
+		assert.Equal(popped, internal.NewSequence("🚀", true))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -85,7 +85,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should "✅".`, func(t *testing.T) {
 		text := internal.NewText("🚀✅")
 		popped := text.PopLeft()
-		assert.Equal(popped, "🚀")
+		assert.Equal(popped, internal.NewSequence("🚀", true))
 		assert.Equal(text.Value(), "✅")
 	}, t)
 
@@ -96,7 +96,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText("\nA")
 		popped := text.PopLeft()
-		assert.Equal(popped, "\n")
+		assert.Equal(popped, internal.NewSequence("\n", true))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -107,7 +107,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "".`, func(t *testing.T) {
 		text := internal.NewText("A\n")
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), "\n")
 	}, t)
 
@@ -118,7 +118,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.CURSOR_TO_HOME)
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.CURSOR_TO_HOME)
+		assert.Equal(popped, internal.NewSequence(ansi_escape.CURSOR_TO_HOME, false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -129,7 +129,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.CURSOR_TO_HOME + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.CURSOR_TO_HOME)
+		assert.Equal(popped, internal.NewSequence(ansi_escape.CURSOR_TO_HOME, false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -140,7 +140,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.ERASE_SCREEN)
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.ERASE_SCREEN)
+		assert.Equal(popped, internal.NewSequence(ansi_escape.ERASE_SCREEN, false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -151,7 +151,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.ERASE_SCREEN + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.ERASE_SCREEN)
+		assert.Equal(popped, internal.NewSequence(ansi_escape.ERASE_SCREEN, false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -162,7 +162,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.ERASE_SCREEN.`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.ERASE_SCREEN)
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.ERASE_SCREEN)
 	}, t)
 
@@ -173,7 +173,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorLeftNCols(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorLeftNCols(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorLeftNCols(1), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -184,7 +184,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorLeftNCols(1) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorLeftNCols(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorLeftNCols(1), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -195,7 +195,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorLeftNCols(1).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorLeftNCols(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorLeftNCols(1))
 	}, t)
 
@@ -206,7 +206,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorLeftNCols(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorLeftNCols(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorLeftNCols(10), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -217,7 +217,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorLeftNCols(10) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorLeftNCols(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorLeftNCols(10), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -228,7 +228,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorLeftNCols(10).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorLeftNCols(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorLeftNCols(10))
 	}, t)
 
@@ -239,7 +239,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorRightNCols(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorRightNCols(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorRightNCols(1), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -250,7 +250,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorRightNCols(1) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorRightNCols(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorRightNCols(1), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -261,7 +261,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorRightNCols(1).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorRightNCols(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorRightNCols(1))
 	}, t)
 
@@ -272,7 +272,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorRightNCols(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorRightNCols(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorRightNCols(10), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -283,7 +283,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorRightNCols(10) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorRightNCols(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorRightNCols(10), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -294,7 +294,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorRightNCols(10).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorRightNCols(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorRightNCols(10))
 	}, t)
 
@@ -305,7 +305,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorUpNRows(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorUpNRows(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorUpNRows(1), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -316,7 +316,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorUpNRows(1) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorUpNRows(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorUpNRows(1), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -327,7 +327,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorUpNRows(1).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorUpNRows(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorUpNRows(1))
 	}, t)
 
@@ -338,7 +338,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorUpNRows(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorUpNRows(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorUpNRows(10), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -349,7 +349,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorUpNRows(10) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorUpNRows(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorUpNRows(10), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -360,11 +360,10 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorUpNRows(10).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorUpNRows(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorUpNRows(10))
 	}, t)
 
-	//
 	Test(`
 	Given that there is a text ansi_escape.MoveCursorDownNRows(1)
 	When we PopLeft the next sequence
@@ -372,7 +371,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorDownNRows(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorDownNRows(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorDownNRows(1), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -383,7 +382,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorDownNRows(1) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorDownNRows(1))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorDownNRows(1), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -394,7 +393,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorDownNRows(1).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorDownNRows(1))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorDownNRows(1))
 	}, t)
 
@@ -405,7 +404,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be an empty string.`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorDownNRows(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorDownNRows(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorDownNRows(10), false))
 		assert.Equal(text.Value(), "")
 	}, t)
 
@@ -416,7 +415,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be "A".`, func(t *testing.T) {
 		text := internal.NewText(ansi_escape.MoveCursorDownNRows(10) + "A")
 		popped := text.PopLeft()
-		assert.Equal(popped, ansi_escape.MoveCursorDownNRows(10))
+		assert.Equal(popped, internal.NewSequence(ansi_escape.MoveCursorDownNRows(10), false))
 		assert.Equal(text.Value(), "A")
 	}, t)
 
@@ -427,7 +426,7 @@ func TestTextPop(t *testing.T) {
 	And the remaining text should be ansi_escape.MoveCursorDownNRows(10).`, func(t *testing.T) {
 		text := internal.NewText("A" + ansi_escape.MoveCursorDownNRows(10))
 		popped := text.PopLeft()
-		assert.Equal(popped, "A")
+		assert.Equal(popped, internal.NewSequence("A", true))
 		assert.Equal(text.Value(), ansi_escape.MoveCursorDownNRows(10))
 	}, t)
 }

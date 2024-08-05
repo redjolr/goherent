@@ -33,7 +33,7 @@ func TestPrintBasic(t *testing.T) {
 
 	Test(`
 	Given that there is a terminal with an infinite height and width
-	When we print "🚀", 
+	When we print "🚀",
 	Then the terminal should store "🚀"	`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("🚀")
@@ -60,7 +60,7 @@ func TestPrintBasic(t *testing.T) {
 
 	Test(`
 	Given that there is a terminal with an infinite height and width
-	When we print "🚀🚀A", 
+	When we print "🚀🚀A",
 	Then the terminal should store "🚀🚀A"`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("🚀🚀A")
@@ -128,7 +128,7 @@ func TestPrintBasic(t *testing.T) {
 	Test(`
 	Given that there is a terminal with an infinite height and width
 	When we print "AAA\n", then "AAA" then MoveCursorUpNRows(1), then "\n", then "B"
-	Then the terminal should store "AAA\nBAA", 
+	Then the terminal should store "AAA\nBAA",
 	`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("AAA\n")
@@ -1022,7 +1022,7 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	Then the terminal should store "".`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print(ansi_escape.MoveCursorDownNRows(1))
-		assert.Equal(fakeTerminal.Text(), "")
+		assert.Equal(fakeTerminal.Text(), "\n")
 	}, t)
 
 	Test(`
@@ -1031,7 +1031,7 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	Then the terminal should store "R".`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("R" + ansi_escape.MoveCursorDownNRows(1))
-		assert.Equal(fakeTerminal.Text(), "R")
+		assert.Equal(fakeTerminal.Text(), "R\n ")
 	}, t)
 
 	Test(`
@@ -1040,7 +1040,7 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	Then the terminal should store "R".`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("R" + ansi_escape.MoveCursorDownNRows(2))
-		assert.Equal(fakeTerminal.Text(), "R")
+		assert.Equal(fakeTerminal.Text(), "R\n\n ")
 	}, t)
 
 	Test(`

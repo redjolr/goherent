@@ -1,11 +1,10 @@
 package fake_ansi_terminal
 
 import (
-	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/redjolr/goherent/terminal/ansi_escape"
+	"github.com/redjolr/goherent/terminal/fake_ansi_terminal/internal"
 )
 
 type FakeAnsiTerminal struct {
@@ -40,15 +39,15 @@ func (fat *FakeAnsiTerminal) visibleUpperLine() int {
 	return visibleUpperLine
 }
 
-func (fat *FakeAnsiTerminal) Print(text string) {
-	for len(strings.Split(text, "")) > 0 {
-		if strings.HasPrefix(text, ansi_escape.CURSOR_TO_HOME) {
-			text, _ = strings.CutPrefix(text, ansi_escape.CURSOR_TO_HOME)
+func (fat *FakeAnsiTerminal) Print(t string) {
+	text := internal.NewText(t)
+	for !text.IsEmpty() {
+		curSequence := text.PopLeft()
+		if curSequence.Equals(ansi_escape.CURSOR_TO_HOME) {
 			fat.cursorToVisibleUpperLeftCorner()
 			continue
 		}
-		if strings.HasPrefix(text, ansi_escape.ERASE_SCREEN) {
-			text, _ = strings.CutPrefix(text, ansi_escape.ERASE_SCREEN)
+		if curSequence.Equals(ansi_escape.ERASE_SCREEN) {
 			for i := fat.visibleUpperLine(); i < len(fat.lines); i++ {
 				fat.lines[i] = []string{}
 			}
@@ -57,8 +56,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			}
 			continue
 		}
-		if strings.HasPrefix(text, "\n") {
-			text, _ = strings.CutPrefix(text, "\n")
+		if curSequence.Equals("\n") {
 			if fat.coords.Y == len(fat.lines)-1 {
 				fat.lines = append(fat.lines, []string{""})
 			}
@@ -68,79 +66,31 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 
 		// Move left
-		moveCursorLeftRegex, _ := regexp.Compile("\033\\[[0-9]{1,}D")
-		moveCursorLeftSeqLoc := moveCursorLeftRegex.FindStringIndex(text)
-		if moveCursorLeftSeqLoc != nil && moveCursorLeftSeqLoc[0] == 0 {
-			moveCursorLeftSeq := text[0:moveCursorLeftSeqLoc[1]]
-			text = text[moveCursorLeftSeqLoc[1]:]
-
-			moveLeftCountAsStr, _ := strings.CutPrefix(moveCursorLeftSeq, "\033[")
-			moveLeftCountAsStr, _ = strings.CutSuffix(moveLeftCountAsStr, "D")
-			moveLeftCount, err := strconv.Atoi(moveLeftCountAsStr)
-			if err != nil {
-				panic("Cannot determine the number steps to move left.")
-			}
-			fat.coords.OffsetX(-min(moveLeftCount, fat.coords.X))
-			continue
+		if curSequence.Matches("\033\\[[0-9]{1,}D") {
+			fat.coords.OffsetX(-min(curSequence.MoveLeftCount(), fat.coords.X))
 		}
 
 		// Move right
-		moveCursorRightRegex, _ := regexp.Compile("\033\\[[0-9]{1,}C")
-		moveCursorRightSeqLoc := moveCursorRightRegex.FindStringIndex(text)
-		if moveCursorRightSeqLoc != nil && moveCursorRightSeqLoc[0] == 0 {
-			moveCursorRightSeq := text[0:moveCursorRightSeqLoc[1]]
-			text = text[moveCursorRightSeqLoc[1]:]
-
-			moveRightCountAsStr, _ := strings.CutPrefix(moveCursorRightSeq, "\033[")
-			moveRightCountAsStr, _ = strings.CutSuffix(moveRightCountAsStr, "C")
-			moveRightCount, err := strconv.Atoi(moveRightCountAsStr)
-			if err != nil {
-				panic("Cannot determine the number steps to move right.")
-			}
-			fat.coords.OffsetX(moveRightCount)
-			continue
+		if curSequence.Matches("\033\\[[0-9]{1,}C") {
+			fat.coords.OffsetX(curSequence.MoveRightCount())
 		}
 
 		// Move up
-		moveCursorUpRegex, _ := regexp.Compile("\033\\[[0-9]{1,}A")
-		moveCursorUpSeqLoc := moveCursorUpRegex.FindStringIndex(text)
-		if moveCursorUpSeqLoc != nil && moveCursorUpSeqLoc[0] == 0 {
-			moveCursorUpSeq := text[0:moveCursorUpSeqLoc[1]]
-			text = text[moveCursorUpSeqLoc[1]:]
-
-			moveUpCountAsStr, _ := strings.CutPrefix(moveCursorUpSeq, "\033[")
-			moveUpCountAsStr, _ = strings.CutSuffix(moveUpCountAsStr, "A")
-			moveUpCount, err := strconv.Atoi(moveUpCountAsStr)
-			if err != nil {
-				panic("Cannot determine the number steps to move up.")
-			}
-			if fat.coords.Y-moveUpCount < fat.visibleUpperLine() {
+		if curSequence.Matches("\033\\[[0-9]{1,}A") {
+			if fat.coords.Y-curSequence.MoveUpCount() < fat.visibleUpperLine() {
 				fat.coords.Y = fat.visibleUpperLine()
 			} else {
-				fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
+				fat.coords.OffsetY(-min(curSequence.MoveUpCount(), fat.coords.Y))
 			}
 			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
 				newLineStr := strings.Join(fat.lines[fat.coords.Y], "") + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
 				fat.lines[fat.coords.Y] = strings.Split(newLineStr, "")
 			}
-			continue
 		}
 
 		// Move down
-		moveCursorDownRegex, _ := regexp.Compile("\033\\[[0-9]{1,}B")
-		moveCursorDownSeqLoc := moveCursorDownRegex.FindStringIndex(text)
-		if moveCursorDownSeqLoc != nil && moveCursorDownSeqLoc[0] == 0 {
-			moveCursorDownSeq := text[0:moveCursorDownSeqLoc[1]]
-			text = text[moveCursorDownSeqLoc[1]:]
-
-			moveUpCountAsStr, _ := strings.CutPrefix(moveCursorDownSeq, "\033[")
-			moveUpCountAsStr, _ = strings.CutSuffix(moveUpCountAsStr, "B")
-			moveDownCount, err := strconv.Atoi(moveUpCountAsStr)
-			if err != nil {
-				panic("Cannot determine the number steps to move down.")
-			}
-			fat.coords.OffsetY(moveDownCount)
-			continue
+		if curSequence.Matches("\033\\[[0-9]{1,}B") {
+			fat.coords.OffsetY(curSequence.MoveDownCount())
 		}
 
 		// Append empty strings to the right
@@ -153,22 +103,20 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			}
 		}
 
-		firstChar := strings.Split(text, "")[0]
-		remainingChars := strings.Split(text, "")[1:]
-		if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
-			emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
-			for i := 0; i < emptySpacesToAdd; i++ {
-				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], " ")
+		if curSequence.IsPrintable() {
+			if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
+				emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
+				for i := 0; i < emptySpacesToAdd; i++ {
+					fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], " ")
+				}
+				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], curSequence.Value())
+				fat.coords.OffsetX(1)
+			} else {
+				lineChars := fat.lines[fat.coords.Y]
+				lineChars[fat.coords.X] = curSequence.Value()
+				fat.lines[fat.coords.Y] = lineChars
+				fat.coords.OffsetX(1)
 			}
-			fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], firstChar)
-			text = strings.Join(remainingChars, "")
-			fat.coords.OffsetX(1)
-		} else {
-			lineChars := fat.lines[fat.coords.Y]
-			text = strings.Join(remainingChars, "")
-			lineChars[fat.coords.X] = firstChar
-			fat.lines[fat.coords.Y] = lineChars
-			fat.coords.OffsetX(1)
 		}
 	}
 }
