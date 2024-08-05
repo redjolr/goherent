@@ -178,7 +178,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("A\nB")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), " ")
+		assert.Equal(fakeTerminal.Text(), "\n ")
 	}, t)
 
 	Test(`
@@ -220,7 +220,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("Hello\nBob")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), "   ")
+		assert.Equal(fakeTerminal.Text(), "\n   ")
 	}, t)
 
 	Test(`
@@ -231,7 +231,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal.Print("Hello\nBob")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("A")
-		assert.Equal(fakeTerminal.Text(), "   A")
+		assert.Equal(fakeTerminal.Text(), "\n   A")
 	}, t)
 
 	Test(`
@@ -242,7 +242,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal.Print("Hello\nBob")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("Line 1\nLine 2")
-		assert.Equal(fakeTerminal.Text(), "   Line 1\nLine 2")
+		assert.Equal(fakeTerminal.Text(), "\n   Line 1\nLine 2")
 	}, t)
 
 	Test(`
@@ -253,18 +253,18 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal.Print("Line1\nLine2")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("OTHER LINE")
-		assert.Equal(fakeTerminal.Text(), "     OTHER LINE")
+		assert.Equal(fakeTerminal.Text(), "\n     OTHER LINE")
 	}, t)
 
 	Test(`
-		Given that there is a terminal with an height=3 and width=infinity
+		Given that there is a terminal with an height=5 and width=infinity
 		When we print "Line1\nLine2\nLine3", and then ERASE_SCREEN, and then "OVERWRITE LINE"
 		Then the terminal should store "     OVERWRITE LINE".`, func(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, 5)
 		fakeTerminal.Print("Line1\nLine2\nLine3")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("OVERWRITE LINE")
-		assert.Equal(fakeTerminal.Text(), "     OVERWRITE LINE")
+		assert.Equal(fakeTerminal.Text(), "\n\n     OVERWRITE LINE")
 	}, t)
 
 	Test(`
@@ -274,7 +274,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, 3)
 		fakeTerminal.Print("Line1\nLine2\nLine3\nLine4")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-		assert.Equal(fakeTerminal.Text(), "Line1\n     ")
+		assert.Equal(fakeTerminal.Text(), "Line1\n\n\n     ")
 	}, t)
 
 	Test(`
@@ -285,7 +285,7 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal.Print("Line1\nLine2\nLine3\nLine4")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("OVERWRITE LINE")
-		assert.Equal(fakeTerminal.Text(), "Line1\n     OVERWRITE LINE")
+		assert.Equal(fakeTerminal.Text(), "Line1\n\n\n     OVERWRITE LINE")
 	}, t)
 
 	Test(`
@@ -296,20 +296,32 @@ func TestPrintEraseScreen(t *testing.T) {
 		fakeTerminal.Print("Line1\nLine2\nLine3\nLine4\nLine5")
 		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
 		fakeTerminal.Print("OVERWRITE LINE")
-		assert.Equal(fakeTerminal.Text(), "Line1\nLine2\n     OVERWRITE LINE")
+		assert.Equal(fakeTerminal.Text(), "Line1\nLine2\n\n\n     OVERWRITE LINE")
 	}, t)
 
-	// Test(`
-	// Given that there is a terminal with an height=3 and width=infinity
-	// When we print "Line1\nLine2\nLine3\nLine4\nLine5", then MoveCursorUpNRows(1), then ERASE_SCREEN, and then "OVERWRITE LINE"
-	// Then the terminal should store "Line1\nLine2\n     OVERWRITE LINE".`, func(t *testing.T) {
-	// 	fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, 3)
-	// 	fakeTerminal.Print("Line1\nLine2\nLine3\nLine4\nLine5")
-	// 	fakeTerminal.Print(ansi_escape.MoveCursorUpNRows(1))
-	// 	fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
-	// 	fakeTerminal.Print("OVERWRITE LINE")
-	// 	assert.Equal(fakeTerminal.Text(), "Line1\nLine2\n     OVERWRITE LINE")
-	// }, t)
+	Test(`
+	Given that there is a terminal with an height=3 and width=infinity
+	When we print "Line1\nLine2\nLine3\nLine4\nLine5", then MoveCursorUpNRows(1), then ERASE_SCREEN, and then "OVERWRITE LINE"
+	Then the terminal should store "Line1\nLine2\n     OVERWRITE LINE".`, func(t *testing.T) {
+		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, 3)
+		fakeTerminal.Print("Line1\nLine2\nLine3\nLine4\nLine5")
+		fakeTerminal.Print(ansi_escape.MoveCursorUpNRows(1))
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("OVERWRITE LINE")
+		assert.Equal(fakeTerminal.Text(), "Line1\nLine2\n\n     OVERWRITE LINE\n")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an height=3 and width=infinity
+	When we print "Line1\nLine2\nLine3\nLine4\nLine5", then MoveCursorUpNRows(2), then ERASE_SCREEN, and then "OVERWRITE LINE"
+	Then the terminal should store "Line1\nLine2\n     OVERWRITE LINE".`, func(t *testing.T) {
+		fakeTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, 3)
+		fakeTerminal.Print("Line1\nLine2\nLine3\nLine4\nLine5")
+		fakeTerminal.Print(ansi_escape.MoveCursorUpNRows(2))
+		fakeTerminal.Print(ansi_escape.ERASE_SCREEN)
+		fakeTerminal.Print("OVERWRITE LINE")
+		assert.Equal(fakeTerminal.Text(), "Line1\nLine2\n     OVERWRITE LINE\n\n")
+	}, t)
 }
 
 func TestPrintCursorToHome(t *testing.T) {
@@ -954,7 +966,6 @@ func TestPrintMoveCursorUp(t *testing.T) {
 		assert.Equal(fakeTerminal.Text(), "Line1HELLO\nLine2\nLine3")
 	}, t)
 
-	// Here
 	// Test(`
 	// Given that there is a terminal with an height=3 and width=infinity
 	// When we print "Line1\nLine2\nLine3\nLine4", and then CURSOR_TO_HOME, and then "OVERWRITE LINE"

@@ -47,10 +47,17 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 		if strings.HasPrefix(text, ansi_escape.ERASE_SCREEN) {
 			text, _ = strings.CutPrefix(text, ansi_escape.ERASE_SCREEN)
-			fat.cursorToVisibleUpperLine()
-			fat.lines = fat.lines[0:fat.coords.Y]
+			var visibleUpperRow int
+			if len(fat.lines) <= fat.height {
+				visibleUpperRow = 0
+			} else {
+				visibleUpperRow = len(fat.lines) - fat.height
+			}
+			for i := visibleUpperRow; i < len(fat.lines); i++ {
+				fat.lines[i] = []string{}
+			}
 			if fat.coords.X > 0 {
-				fat.lines = append(fat.lines, strings.Split(strings.Repeat(" ", fat.coords.X), ""))
+				fat.lines[fat.coords.Y] = strings.Split(strings.Repeat(" ", fat.coords.X), "")
 			}
 			continue
 		}
