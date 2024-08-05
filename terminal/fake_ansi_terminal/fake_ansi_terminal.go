@@ -24,21 +24,6 @@ func NewFakeAnsiTerminal(width, height int) FakeAnsiTerminal {
 	}
 }
 
-func (fat *FakeAnsiTerminal) cursorToVisibleUpperLeftCorner() {
-	fat.coords.X = 0
-	fat.coords.Y = fat.visibleUpperLine()
-}
-
-func (fat *FakeAnsiTerminal) visibleUpperLine() int {
-	var visibleUpperLine int
-	if len(fat.lines) <= fat.height {
-		visibleUpperLine = 0
-	} else {
-		visibleUpperLine = len(fat.lines) - fat.height
-	}
-	return visibleUpperLine
-}
-
 func (fat *FakeAnsiTerminal) Print(t string) {
 	text := internal.NewText(t)
 	for !text.IsEmpty() {
@@ -105,16 +90,13 @@ func (fat *FakeAnsiTerminal) Print(t string) {
 
 		if curSequence.IsPrintable() {
 			if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
-				emptySpacesToAdd := fat.coords.X - len(fat.lines[fat.coords.Y])
-				for i := 0; i < emptySpacesToAdd; i++ {
-					fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], " ")
-				}
+				emptySpacesToAddCount := fat.coords.X - len(fat.lines[fat.coords.Y])
+				emptySpacesToAdd := strings.Split(strings.Repeat(" ", emptySpacesToAddCount), "")
+				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], emptySpacesToAdd...)
 				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], curSequence.Value())
 				fat.coords.OffsetX(1)
 			} else {
-				lineChars := fat.lines[fat.coords.Y]
-				lineChars[fat.coords.X] = curSequence.Value()
-				fat.lines[fat.coords.Y] = lineChars
+				fat.lines[fat.coords.Y][fat.coords.X] = curSequence.Value()
 				fat.coords.OffsetX(1)
 			}
 		}
@@ -152,4 +134,19 @@ func (fat *FakeAnsiTerminal) MoveRight(n int) {
 
 func (fat *FakeAnsiTerminal) MoveLeft(n int) {
 	fat.Print(ansi_escape.MoveCursorLeftNCols(n))
+}
+
+func (fat *FakeAnsiTerminal) cursorToVisibleUpperLeftCorner() {
+	fat.coords.X = 0
+	fat.coords.Y = fat.visibleUpperLine()
+}
+
+func (fat *FakeAnsiTerminal) visibleUpperLine() int {
+	var visibleUpperLine int
+	if len(fat.lines) <= fat.height {
+		visibleUpperLine = 0
+	} else {
+		visibleUpperLine = len(fat.lines) - fat.height
+	}
+	return visibleUpperLine
 }
