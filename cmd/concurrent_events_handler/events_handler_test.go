@@ -725,7 +725,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"",
+			"\n             ",
 		)
 	}, t)
 
@@ -733,7 +733,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	Given that a PackageStartedEvent for package "somePackage 1" has occured
 	And a PackageStartedEvent for package "somePackage 2" has occured
 	When a NoPackageTestsFoundEvent for packag "somePackage 1" occurs
-	Then the user should not see anything on the terminal.
+	Then the user should only see that the the tests for "somePackage 2" are running.
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
@@ -766,7 +766,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n⏳ somePackage 2",
+			"\n⏳ somePackage 2\n               ",
 		)
 	}, t)
 
