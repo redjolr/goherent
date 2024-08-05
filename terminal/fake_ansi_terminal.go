@@ -31,11 +31,13 @@ func (fat *FakeAnsiTerminal) cursorToVisibleUpperLeftCorner() {
 }
 
 func (fat *FakeAnsiTerminal) cursorToVisibleUpperLine() {
-	if fat.coords.Y <= fat.height-1 {
-		fat.coords.Y = 0
+	var visibleUpperRow int
+	if len(fat.lines) <= fat.height {
+		visibleUpperRow = 0
 	} else {
-		fat.coords.Y = fat.coords.Y - fat.height + 1
+		visibleUpperRow = len(fat.lines) - fat.height
 	}
+	fat.coords.Y = visibleUpperRow
 }
 
 func (fat *FakeAnsiTerminal) Print(text string) {
