@@ -27,17 +27,17 @@ func NewFakeAnsiTerminal(width, height int) FakeAnsiTerminal {
 
 func (fat *FakeAnsiTerminal) cursorToVisibleUpperLeftCorner() {
 	fat.coords.X = 0
-	fat.cursorToVisibleUpperLine()
+	fat.coords.Y = fat.visibleUpperLine()
 }
 
-func (fat *FakeAnsiTerminal) cursorToVisibleUpperLine() {
-	var visibleUpperRow int
+func (fat *FakeAnsiTerminal) visibleUpperLine() int {
+	var visibleUpperLine int
 	if len(fat.lines) <= fat.height {
-		visibleUpperRow = 0
+		visibleUpperLine = 0
 	} else {
-		visibleUpperRow = len(fat.lines) - fat.height
+		visibleUpperLine = len(fat.lines) - fat.height
 	}
-	fat.coords.Y = visibleUpperRow
+	return visibleUpperLine
 }
 
 func (fat *FakeAnsiTerminal) Print(text string) {
@@ -49,13 +49,7 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 		}
 		if strings.HasPrefix(text, ansi_escape.ERASE_SCREEN) {
 			text, _ = strings.CutPrefix(text, ansi_escape.ERASE_SCREEN)
-			var visibleUpperRow int
-			if len(fat.lines) <= fat.height {
-				visibleUpperRow = 0
-			} else {
-				visibleUpperRow = len(fat.lines) - fat.height
-			}
-			for i := visibleUpperRow; i < len(fat.lines); i++ {
+			for i := fat.visibleUpperLine(); i < len(fat.lines); i++ {
 				fat.lines[i] = []string{}
 			}
 			if fat.coords.X > 0 {
@@ -120,7 +114,11 @@ func (fat *FakeAnsiTerminal) Print(text string) {
 			if err != nil {
 				panic("Cannot determine the number steps to move up.")
 			}
-			fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
+			if fat.coords.Y-moveUpCount < fat.visibleUpperLine() {
+				fat.coords.Y = fat.visibleUpperLine()
+			} else {
+				fat.coords.OffsetY(-min(moveUpCount, fat.coords.Y))
+			}
 			if fat.coords.X > len(fat.lines[fat.coords.Y]) {
 				newLineStr := strings.Join(fat.lines[fat.coords.Y], "") + strings.Repeat(" ", fat.coords.X-len(fat.lines[fat.coords.Y]))
 				fat.lines[fat.coords.Y] = strings.Split(newLineStr, "")
