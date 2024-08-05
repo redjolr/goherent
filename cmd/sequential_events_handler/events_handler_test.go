@@ -17,12 +17,12 @@ import (
 	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
 	. "github.com/redjolr/goherent/pkg"
-	"github.com/redjolr/goherent/terminal"
+	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() (*sequential_events_handler.EventsHandler, *terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
-	fakeAnsiTerminal := terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+func setup() (*sequential_events_handler.EventsHandler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 	fakeAnsiTerminalPresenter := sequential_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventsHandler := sequential_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)

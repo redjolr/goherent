@@ -1,15 +1,8 @@
-package terminal
+package fake_ansi_terminal
 
 type Coordinates struct {
 	X int
 	Y int
-}
-
-func New(x int, y int) Coordinates {
-	return Coordinates{
-		X: x,
-		Y: y,
-	}
 }
 
 func Origin() Coordinates {

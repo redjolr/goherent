@@ -1,4 +1,4 @@
-package terminal
+package fake_ansi_terminal
 
 import (
 	"regexp"
