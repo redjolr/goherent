@@ -80,7 +80,6 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 		return packUt.name == name
 	})
-	fmt.Println("\n\n\n indexOfPackUttWithName", indexOfPackUttWithName)
 	return indexOfPackUttWithName != -1
 }
 

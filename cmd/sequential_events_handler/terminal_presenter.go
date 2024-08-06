@@ -8,9 +8,6 @@ import (
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
 
-const testsListId string = "testsList"
-const startingTestsTextblockId string = "startingTestsTextBlock"
-
 type TerminalPresenter struct {
 	terminal terminal.Terminal
 }
@@ -21,38 +18,38 @@ func NewTerminalPresenter(term terminal.Terminal) TerminalPresenter {
 	}
 }
 
-func (tp *TerminalPresenter) TestingStarted() {
+func (tp TerminalPresenter) TestingStarted() {
 	tp.terminal.Print("\n🚀 Starting...")
 }
 
-func (tp *TerminalPresenter) PackageTestsStartedRunning(packageName string) {
+func (tp TerminalPresenter) PackageTestsStartedRunning(packageName string) {
 	tp.terminal.Print(fmt.Sprintf("\n\n📦 %s\n", packageName))
 }
 
-func (tp *TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
+func (tp TerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
 	tp.terminal.Print(fmt.Sprintf("\n   • %s    ⏳", ctest.Name()))
 }
 
-func (tp *TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
+func (tp TerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	tp.terminal.MoveLeft(1)
 	tp.terminal.Print("✅\n")
 }
 
-func (tp *TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
+func (tp TerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	tp.terminal.MoveLeft(1)
 	tp.terminal.Print("❌\n")
 }
 
-func (tp *TerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
+func (tp TerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	tp.terminal.MoveLeft(1)
 	tp.terminal.Print("⏩\n")
 }
 
-func (tp *TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
+func (tp TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 	tp.terminal.Print(ctest.Output())
 }
 
-func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
+func (tp TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 
 	packagesSummary := ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " "
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
@@ -102,6 +99,6 @@ func (tp *TerminalPresenter) TestingFinishedSummary(summary TestingSummary) {
 	)
 }
 
-func (tp *TerminalPresenter) Error() {
+func (tp TerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }

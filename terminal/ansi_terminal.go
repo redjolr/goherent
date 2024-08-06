@@ -7,10 +7,15 @@ import (
 )
 
 type AnsiTerminal struct {
+	height int
+	width  int
 }
 
-func NewAnsiTerminal() AnsiTerminal {
-	return AnsiTerminal{}
+func NewAnsiTerminal(width, height int) AnsiTerminal {
+	return AnsiTerminal{
+		height: height,
+		width:  width,
+	}
 }
 
 func (at *AnsiTerminal) Print(text string) {
@@ -27,4 +32,8 @@ func (at *AnsiTerminal) MoveUp(n int) {
 
 func (at *AnsiTerminal) MoveLeft(n int) {
 	fmt.Print(ansi_escape.MoveCursorLeftNCols(n))
+}
+
+func (at *AnsiTerminal) Height() int {
+	return at.height
 }

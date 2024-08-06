@@ -5,4 +5,5 @@ type Terminal interface {
 	MoveDown(n int)
 	MoveLeft(n int)
 	MoveUp(n int)
+	Height() int
 }

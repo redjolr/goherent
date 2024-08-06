@@ -150,3 +150,7 @@ func (fat *FakeAnsiTerminal) visibleUpperLine() int {
 	}
 	return visibleUpperLine
 }
+
+func (fat *FakeAnsiTerminal) Height() int {
+	return fat.height
+}
