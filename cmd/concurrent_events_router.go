@@ -6,8 +6,6 @@ import (
 
 	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
-	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 )
 
@@ -65,11 +63,11 @@ func (router ConcurrentEventsRouter) RouteJsonEvent(jsonEvt events.JsonEvent) {
 }
 
 func (router ConcurrentEventsRouter) RouteTestingStartedEvent(timestamp time.Time) {
-	testingStartedEvt := testing_started_event.NewTestingStartedEvent(timestamp)
+	testingStartedEvt := events.NewTestingStartedEvent(timestamp)
 	router.eventsHandler.HandleTestingStarted(testingStartedEvt)
 }
 
 func (router ConcurrentEventsRouter) RouteTestingFinishedEvent(duration time.Duration) {
-	testingFinishedEvt := testing_finished_event.NewTestingFinishedEvent(duration)
+	testingFinishedEvt := events.NewTestingFinishedEvent(duration)
 	router.testingFinishedHandler.HandleTestingFinished(testingFinishedEvt)
 }

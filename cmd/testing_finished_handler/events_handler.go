@@ -2,7 +2,7 @@ package testing_finished_handler
 
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
-	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
+	"github.com/redjolr/goherent/cmd/events"
 )
 
 type EventsHandler struct {
@@ -17,7 +17,7 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 	}
 }
 
-func (eh EventsHandler) HandleTestingFinished(evt testing_finished_event.TestingFinishedEvent) {
+func (eh EventsHandler) HandleTestingFinished(evt events.TestingFinishedEvent) {
 
 	eh.ctestsTracker.MarkAllPackagesAsFinished()
 

@@ -1,9 +1,10 @@
 package ctests_tracker
 
 import (
+	"fmt"
 	"slices"
 
-	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+	"github.com/redjolr/goherent/cmd/events"
 )
 
 type CtestsTracker struct {
@@ -59,11 +60,12 @@ func (tracker *CtestsTracker) DeletePackage(packageUt *PackageUnderTest) {
 	}
 }
 
-func (tracker *CtestsTracker) NewCtestRanEvent(evt ctest_ran_event.CtestRanEvent) {
-	if !tracker.ContainsPackageUtWithName(evt.PackageName()) {
-		packUt := NewPackageUnderTest(evt.PackageName())
+func (tracker *CtestsTracker) NewCtestRanEvent(evt events.CtestRanEvent) {
+	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
+		packUt := NewPackageUnderTest(evt.PackageName)
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
+	fmt.Println()
 }
 
 func (tracker *CtestsTracker) IsCtestFirstOfItsPackage(ctest Ctest) bool {
@@ -78,6 +80,7 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	indexOfPackUttWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 		return packUt.name == name
 	})
+	fmt.Println("\n\n\n indexOfPackUttWithName", indexOfPackUttWithName)
 	return indexOfPackUttWithName != -1
 }
 

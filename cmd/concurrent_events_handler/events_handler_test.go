@@ -8,14 +8,7 @@ import (
 	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
-	"github.com/redjolr/goherent/cmd/events/no_package_tests_found_event"
-	"github.com/redjolr/goherent/cmd/events/package_failed_event"
-	"github.com/redjolr/goherent/cmd/events/package_passed_event"
-	"github.com/redjolr/goherent/cmd/events/package_started_event"
-	"github.com/redjolr/goherent/cmd/events/testing_started_event"
+
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +27,7 @@ func TestHandleTestingStarted(t *testing.T) {
 	Test("User should be informed, that the testing has started", func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		now := time.Now()
-		testingStartedEvt := testing_started_event.NewTestingStartedEvent(now)
+		testingStartedEvt := events.NewTestingStartedEvent(now)
 		eventsHandler.HandleTestingStarted(testingStartedEvt)
 
 		assert.Equal(
@@ -54,7 +47,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// When
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -76,7 +69,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	 Then the user should be informed only once that the tests for the "somePackage" package are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -101,7 +94,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 	 Then the user should be informed that the tests for "somePackage 2" are running`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -111,7 +104,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
 		// When
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -136,7 +129,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -145,7 +138,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -156,7 +149,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		)
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt1)
 
-		packagePassedEvt1 := package_passed_event.NewFromJsonTestEvent(
+		packagePassedEvt1 := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 1",
@@ -166,7 +159,7 @@ func TestHandlePackageStartedEvent(t *testing.T) {
 		eventsHandler.HandlePackagePassed(packagePassedEvt1)
 
 		// When
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -195,7 +188,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		timeElapsed := 1.2
 
 		// When
-		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+		packagePassedEvt := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -220,7 +213,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -230,7 +223,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
 		// When
-		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+		packagePassedEvt := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -256,7 +249,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -265,7 +258,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -277,7 +270,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
 
 		// When
-		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+		packagePassedEvt := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -302,7 +295,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -311,7 +304,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -322,7 +315,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// When
-		packagePassedEvt := package_passed_event.NewFromJsonTestEvent(
+		packagePassedEvt := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -347,7 +340,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -356,7 +349,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		ctestPassedEvt2 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt2 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -367,7 +360,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt2)
 
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -378,7 +371,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
 
 		// When
-		packPassedEvt2 := package_passed_event.NewFromJsonTestEvent(
+		packPassedEvt2 := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 2",
@@ -402,7 +395,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -411,7 +404,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -422,7 +415,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		)
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt1)
 
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -432,7 +425,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
 
 		// When
-		packPassedEvt1 := package_passed_event.NewFromJsonTestEvent(
+		packPassedEvt1 := events.NewPackagePassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 1",
@@ -461,7 +454,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		timeElapsed := 1.2
 
 		// When
-		packageFailedEvt := package_failed_event.NewFromJsonTestEvent(
+		packageFailedEvt := events.NewPackageFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -486,7 +479,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -496,7 +489,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
 		// When
-		packageFailedEvt := package_failed_event.NewFromJsonTestEvent(
+		packageFailedEvt := events.NewPackageFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -522,7 +515,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()
 		elapsedTime := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -530,7 +523,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -541,7 +534,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		)
 		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
 		// When
-		packageFailedEvt := package_failed_event.NewFromJsonTestEvent(
+		packageFailedEvt := events.NewPackageFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -566,7 +559,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -575,7 +568,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -584,7 +577,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
 
-		ctestFailedEvt2 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -596,7 +589,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt2)
 
 		// When
-		packageFailedEvt2 := package_failed_event.NewFromJsonTestEvent(
+		packageFailedEvt2 := events.NewPackageFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 2",
@@ -621,7 +614,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -630,7 +623,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -640,7 +633,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
 
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -652,7 +645,7 @@ func TestHandlePackageFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt1)
 
 		// When
-		packageFailedEvt1 := package_failed_event.NewFromJsonTestEvent(
+		packageFailedEvt1 := events.NewPackageFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 1",
@@ -681,7 +674,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// When
-		noPackTestsFoundEvt := no_package_tests_found_event.NewFromJsonTestEvent(
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -704,7 +697,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -714,7 +707,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
 		// When
-		noPackTestsFoundEvt := no_package_tests_found_event.NewFromJsonTestEvent(
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -737,7 +730,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
-		packStartedEvt1 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt1 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -746,7 +739,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
-		packStartedEvt2 := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt2 := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -756,7 +749,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
 
 		// When
-		noPackTestsFoundEvt1 := no_package_tests_found_event.NewFromJsonTestEvent(
+		noPackTestsFoundEvt1 := events.NewNoPackageTestsFoundEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage 1",
@@ -779,7 +772,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -788,7 +781,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -800,7 +793,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
 
 		// When
-		noPackTestsFoundEvt := no_package_tests_found_event.NewFromJsonTestEvent(
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",
@@ -825,7 +818,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		timeElapsed := 1.2
-		packStartedEvt := package_started_event.NewFromJsonTestEvent(
+		packStartedEvt := events.NewPackageStartedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "start",
@@ -834,7 +827,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
-		ctestFaileddEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFaileddEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -846,7 +839,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvent(ctestFaileddEvt)
 
 		// When
-		noPackTestsFoundEvt := no_package_tests_found_event.NewFromJsonTestEvent(
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: "somePackage",

@@ -7,10 +7,6 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
-	"github.com/redjolr/goherent/cmd/events/testing_finished_event"
 	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
@@ -39,7 +35,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -63,7 +59,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
 
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -75,7 +71,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		)
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt))
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -99,7 +95,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
-		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -110,7 +106,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctestPassedEvt2 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt2 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -124,7 +120,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -149,7 +145,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
-		ctestPassedEvt1 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -159,7 +155,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				Output:  "Some output",
 			},
 		)
-		ctestPassedEvt2 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt2 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -173,7 +169,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -197,7 +193,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
 
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -210,7 +206,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -235,7 +231,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
 
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -245,7 +241,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				Output:  "Some output",
 			},
 		)
-		ctestFailedEvt2 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -258,7 +254,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt1))
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt2))
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -284,7 +280,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
 
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -295,7 +291,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctestFailedEvt2 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -309,7 +305,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -333,7 +329,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
-		ctest1PassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctest1PassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -344,7 +340,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctest2FailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctest2FailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -358,7 +354,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctest2FailedEvt))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -383,7 +379,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		elapsedTime := 1.2
 
-		ctest1PassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctest1PassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -394,7 +390,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctest2FailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctest2FailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -408,7 +404,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctest2FailedEvt))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -431,7 +427,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -442,7 +438,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -465,7 +461,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
-		ctestSkippedEvt1 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -473,7 +469,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				Package: "somePackage",
 			},
 		)
-		ctestSkippedEvt2 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -485,7 +481,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -509,7 +505,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
-		ctestSkippedEvt1 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -518,7 +514,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctestSkippedEvt2 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -530,7 +526,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -554,7 +550,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 		testPassedElapsed := 1.2
-		ctestSkippedEvt1 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -563,7 +559,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctestPassedEvt2 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt2 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -576,7 +572,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -601,7 +597,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		// Given
 		eventsHandler, terminal, ctestsTracker := setup()
 		testElapsed := 1.2
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -610,7 +606,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				Elapsed: &testElapsed,
 			},
 		)
-		ctestPassedEvt2 := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt2 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "run",
@@ -619,7 +615,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				Elapsed: &testElapsed,
 			},
 		)
-		ctestSkippedEvt3 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt3 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -632,7 +628,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt3))
 
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
@@ -657,7 +653,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		eventsHandler, terminal, ctestsTracker := setup()
 		testFailedElapsed := 1.2
 
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -667,7 +663,7 @@ func TestHandleTestingFinished(t *testing.T) {
 			},
 		)
 
-		ctestSkippedEvt2 := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -678,7 +674,7 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt1))
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 		// When
-		testingFinishedEvent := testing_finished_event.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
 		eventsHandler.HandleTestingFinished(testingFinishedEvent)
 
 		// Then

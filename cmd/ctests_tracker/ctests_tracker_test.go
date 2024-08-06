@@ -6,9 +6,7 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
+
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,7 +22,7 @@ func TestNewCtestRanEvent(t *testing.T) {
 		tracker := ctests_tracker.NewCtestsTracker()
 
 		packageName := "somePackageName"
-		ctestRanEvent := ctest_ran_event.NewFromJsonTestEvent(
+		ctestRanEvent := events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Package: packageName,
@@ -317,7 +315,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewPassedCtest(ctest_passed_event.NewFromJsonTestEvent(
+		ctest := ctests_tracker.NewPassedCtest(events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -343,7 +341,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewFailedCtest(ctest_failed_event.NewFromJsonTestEvent(
+		ctest := ctests_tracker.NewFailedCtest(events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -369,7 +367,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		ctest := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -395,7 +393,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		ctest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -405,7 +403,7 @@ func TestRunningTestsCount(t *testing.T) {
 			},
 		))
 
-		ctest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		ctest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -432,7 +430,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		ctest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -442,7 +440,7 @@ func TestRunningTestsCount(t *testing.T) {
 			},
 		))
 
-		ctest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		ctest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -470,7 +468,7 @@ func TestRunningTestsCount(t *testing.T) {
 		// Given
 		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		runningCtest1 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		runningCtest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -480,7 +478,7 @@ func TestRunningTestsCount(t *testing.T) {
 			},
 		))
 
-		passingCtest := ctests_tracker.NewPassedCtest(ctest_passed_event.NewFromJsonTestEvent(
+		passingCtest := ctests_tracker.NewPassedCtest(events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -490,7 +488,7 @@ func TestRunningTestsCount(t *testing.T) {
 			},
 		))
 
-		runningCtest2 := ctests_tracker.NewRunningCtest(ctest_ran_event.NewFromJsonTestEvent(
+		runningCtest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",

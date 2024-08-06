@@ -1,17 +1,17 @@
-package testing_finished_event
+package events
 
 import "time"
 
 type TestingFinishedEvent struct {
-	duration time.Duration
+	Duration time.Duration
 }
 
 func NewTestingFinishedEvent(duration time.Duration) TestingFinishedEvent {
 	return TestingFinishedEvent{
-		duration: duration,
+		Duration: duration,
 	}
 }
 
 func (evt TestingFinishedEvent) DurationS() float32 {
-	return float32(evt.duration.Seconds())
+	return float32(evt.Duration.Seconds())
 }

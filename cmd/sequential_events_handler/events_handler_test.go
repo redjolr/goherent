@@ -9,12 +9,6 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_output_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
-	"github.com/redjolr/goherent/cmd/events/testing_started_event"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
@@ -42,7 +36,7 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// When
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -67,7 +61,7 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// When
-		ctestRanEvt1 := ctest_ran_event.NewFromJsonTestEvent(
+		ctestRanEvt1 := events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "run",
@@ -75,7 +69,7 @@ func TestCtestRanEvent(t *testing.T) {
 				Test:    "testName1",
 			},
 		)
-		ctestRanEvt2 := ctest_ran_event.NewFromJsonTestEvent(
+		ctestRanEvt2 := events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "run",
@@ -102,7 +96,7 @@ func TestCtestRanEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// Given
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(
+		ctestRanEvt := events.NewCtestRanEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "run",
@@ -135,7 +129,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		testPassedElapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -145,7 +139,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// When
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -175,7 +169,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		elapsedTime := 2.3
 
 		// When
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -203,7 +197,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		elapsedTime := 2.3
 
 		// Given
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -211,7 +205,7 @@ func TestCtestPassedEvent(t *testing.T) {
 			Output:  "Some output",
 		})
 
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -244,7 +238,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		testPassedElapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -254,7 +248,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// When
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -288,7 +282,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -297,7 +291,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// When
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -326,7 +320,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		elapsedTime := 2.3
 
 		// When
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -355,7 +349,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		elapsedTime := 2.3
 
 		// Given
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -363,7 +357,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestFailedEvt1 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -375,7 +369,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
 
 		// When
-		ctestFailedEvt2 := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -403,7 +397,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
-		ctestOutputEvt1 := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt1 := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -413,7 +407,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			},
 		)
 
-		ctestOutputEvt2 := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt2 := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -426,7 +420,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
 
 		// When
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -454,7 +448,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -462,7 +456,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -474,7 +468,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 
 		// When
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -503,7 +497,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -511,7 +505,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestOutputEvt1 := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt1 := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -521,7 +515,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			},
 		)
 
-		ctestOutputEvt2 := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt2 := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -534,7 +528,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
 
 		// When
-		ctestFailedEvt := ctest_failed_event.NewFromJsonTestEvent(
+		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
@@ -566,7 +560,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -575,7 +569,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// When
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -604,7 +598,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		elapsedTime := 2.3
 
 		// When
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -632,7 +626,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -640,7 +634,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestSkipped1Evt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkipped1Evt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -652,7 +646,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkipped1Evt)
 
 		// When
-		ctestSkipped2Evt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkipped2Evt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -680,7 +674,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -688,7 +682,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -700,7 +694,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 
 		// When
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -729,7 +723,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
 
-		ctestRanEvt := ctest_ran_event.NewFromJsonTestEvent(events.JsonTestEvent{
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
 			Test:    "testName",
@@ -737,7 +731,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-		ctestPassedEvt := ctest_passed_event.NewFromJsonTestEvent(
+		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
@@ -749,7 +743,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// When
-		ctestSkippedEvt := ctest_skipped_event.NewFromJsonTestEvent(
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
@@ -783,7 +777,7 @@ func TestCtestOutputEvent(t *testing.T) {
 		eventsHandler, _, ctestsTracker := setup()
 
 		// When
-		ctestOutputEvt := ctest_output_event.NewFromJsonTestEvent(
+		ctestOutputEvt := events.NewCtestOutputEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
@@ -806,7 +800,7 @@ func TestHandleTestingStarted(t *testing.T) {
 	Test("User should be informed, that the testing has started", func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		now := time.Now()
-		testingStartedEvt := testing_started_event.NewTestingStartedEvent(now)
+		testingStartedEvt := events.NewTestingStartedEvent(now)
 		eventsHandler.HandleTestingStarted(testingStartedEvt)
 
 		assert.Equal(

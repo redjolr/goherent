@@ -4,10 +4,7 @@ import (
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/events/ctest_failed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_passed_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_ran_event"
-	"github.com/redjolr/goherent/cmd/events/ctest_skipped_event"
+
 	"github.com/redjolr/goherent/internal/uuidgen"
 )
 
@@ -17,7 +14,6 @@ type Ctest struct {
 	id          string
 	name        string
 	packageName string
-	events      []events.CtestEvent
 	output      []string
 	isRunning   bool
 	hasPassed   bool
@@ -30,7 +26,6 @@ func NewCtest(testName string, packageName string) Ctest {
 		id:          uuidgen.NewString(),
 		name:        testName,
 		packageName: packageName,
-		events:      []events.CtestEvent{},
 		output:      []string{},
 		isRunning:   false,
 		hasPassed:   false,
@@ -39,12 +34,11 @@ func NewCtest(testName string, packageName string) Ctest {
 	}
 }
 
-func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
+func NewRunningCtest(ranEvt events.CtestRanEvent) Ctest {
 	return Ctest{
 		id:          uuidgen.NewString(),
-		name:        ranEvt.CtestName(),
-		packageName: ranEvt.PackageName(),
-		events:      []events.CtestEvent{ranEvt},
+		name:        ranEvt.TestName,
+		packageName: ranEvt.PackageName,
 		output:      []string{},
 		isRunning:   true,
 		hasPassed:   false,
@@ -53,12 +47,11 @@ func NewRunningCtest(ranEvt ctest_ran_event.CtestRanEvent) Ctest {
 	}
 }
 
-func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
+func NewPassedCtest(passedEvt events.CtestPassedEvent) Ctest {
 	return Ctest{
 		id:          uuidgen.NewString(),
-		name:        passedEvt.CtestName(),
-		packageName: passedEvt.PackageName(),
-		events:      []events.CtestEvent{passedEvt},
+		name:        passedEvt.TestName,
+		packageName: passedEvt.PackageName,
 		output:      []string{},
 		isRunning:   false,
 		hasPassed:   true,
@@ -67,12 +60,11 @@ func NewPassedCtest(passedEvt ctest_passed_event.CtestPassedEvent) Ctest {
 	}
 }
 
-func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
+func NewFailedCtest(failedEvt events.CtestFailedEvent) Ctest {
 	return Ctest{
 		id:          uuidgen.NewString(),
-		name:        passedEvt.CtestName(),
-		packageName: passedEvt.PackageName(),
-		events:      []events.CtestEvent{passedEvt},
+		name:        failedEvt.TestName,
+		packageName: failedEvt.PackageName,
 		output:      []string{},
 		isRunning:   false,
 		hasPassed:   false,
@@ -81,12 +73,11 @@ func NewFailedCtest(passedEvt ctest_failed_event.CtestFailedEvent) Ctest {
 	}
 }
 
-func NewSkippedCtest(passedEvt ctest_skipped_event.CtestSkippedEvent) Ctest {
+func NewSkippedCtest(skippedEvt events.CtestSkippedEvent) Ctest {
 	return Ctest{
 		id:          uuidgen.NewString(),
-		name:        passedEvt.CtestName(),
-		packageName: passedEvt.PackageName(),
-		events:      []events.CtestEvent{passedEvt},
+		name:        skippedEvt.TestName,
+		packageName: skippedEvt.PackageName,
 		output:      []string{},
 		isRunning:   false,
 		hasPassed:   false,
@@ -139,28 +130,25 @@ func (ctest *Ctest) Output() string {
 	return strings.Join(ctest.output, "\n")
 }
 
-func (ctest *Ctest) MarkAsPassed(passedEvt ctest_passed_event.CtestPassedEvent) {
+func (ctest *Ctest) MarkAsPassed(passedEvt events.CtestPassedEvent) {
 	ctest.isRunning = false
 	ctest.hasPassed = true
 	ctest.hasFailed = false
 	ctest.isSkipped = false
-	ctest.events = append(ctest.events, passedEvt)
 }
 
-func (ctest *Ctest) MarkAsFailed(passedEvt ctest_failed_event.CtestFailedEvent) {
+func (ctest *Ctest) MarkAsFailed(failedEvt events.CtestFailedEvent) {
 	ctest.isRunning = false
 	ctest.hasPassed = false
 	ctest.hasFailed = true
 	ctest.isSkipped = false
-	ctest.events = append(ctest.events, passedEvt)
 }
 
-func (ctest *Ctest) MarkAsSkipped(passedEvt ctest_skipped_event.CtestSkippedEvent) {
+func (ctest *Ctest) MarkAsSkipped(skippedEvt events.CtestSkippedEvent) {
 	ctest.isRunning = false
 	ctest.hasPassed = false
 	ctest.hasFailed = false
 	ctest.isSkipped = true
-	ctest.events = append(ctest.events, passedEvt)
 }
 
 func (ctest *Ctest) Equals(otherCtest Ctest) bool {
