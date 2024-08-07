@@ -109,8 +109,39 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 }
 
 func (tp BoundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
-	// tp.terminal.MoveLeft(1)
-	// tp.terminal.Print("⏩\n")
+	hourGlassAndSpaceLength := len(strings.Split("⏳ ", ""))
+	testNameLineCount := utils.StrLinesCount(ctest.Name())
+	threeDotsLineCount := len("...")
+
+	if utils.StrLinesCount(ctest.Name()) > tp.terminal.Height() {
+		printedName := strings.Join(utils.SplitStringByNewLine(ctest.Name())[0:tp.terminal.Height()], "\n")
+		unprintedName := strings.Join(utils.SplitStringByNewLine(ctest.Name())[tp.terminal.Height():], "\n")
+		printedNameLines := utils.SplitStringByNewLine(printedName)
+		lastLine := printedNameLines[len(printedNameLines)-1]
+		lastLineLength := len(strings.Split(lastLine, ""))
+		tp.terminal.MoveLeft(threeDotsLineCount + lastLineLength + hourGlassAndSpaceLength)
+		if testNameLineCount > 1 {
+			tp.terminal.MoveUp(tp.terminal.Height())
+		}
+		tp.terminal.Print("⏩ ")
+
+		tp.terminal.Print(printedName + "   ")
+		tp.terminal.Print("\n")
+		tp.terminal.Print(unprintedName)
+	} else {
+		nameLines := utils.SplitStringByNewLine(ctest.Name())
+		lastLine := nameLines[len(nameLines)-1]
+		lastLineLength := len(strings.Split(lastLine, ""))
+		tp.terminal.MoveLeft(lastLineLength + hourGlassAndSpaceLength)
+		if testNameLineCount > 1 {
+			tp.terminal.MoveUp(testNameLineCount - 1)
+		}
+		tp.terminal.Print("⏩")
+		if testNameLineCount > 1 {
+			tp.terminal.MoveDown(testNameLineCount - 1)
+		}
+		tp.terminal.MoveRight(lastLineLength)
+	}
 }
 
 func (tp BoundedTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {

@@ -1542,253 +1542,669 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	}, t)
 }
 
-// func TestCtestSkippedEvent(t *testing.T) {
-// 	assert := assert.New(t)
+func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
+	assert := assert.New(t)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		When a CtestSkippedEvent of the same test/package occurs
-// 		Then the user should be informed that the test for the "somePackage" package have started
-// 		And then that the Ctest with name "testName" is skipped
-// 	`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// When
-// 		ctestSkippedEvt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
-// 		)
-// 	}, t)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ testName",
+		)
+	}, t)
 
-// 	Test(`
-// 		Given that no events have happened
-// 		When a CtestSkippedEvent occurs with test name "testName" from "packageName"
-// 		Then the HandleCtestSkippedEvt should produce an error
-// 		And an error should be displayed in the terminal.
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline\ntest name" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
 
-// 		// When
-// 		ctestSkippedEvt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Package: "somePackage",
-// 				Test:    "testName",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// Then
-// 		assert.Error(err)
-// 		assert.True(
-// 			strings.Contains(terminal.Text(), "❗ Error."),
-// 		)
-// 	}, t)
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The multiline\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		And later a CtestSkippedEvent occurrs with test name "testName" of package "somePackage"
-// 		When a CtestSkippedEvent occurs with the same test name "testName" of package "somePackage"
-// 		Then the user should not be informed about the second skip
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ The multiline   \ntest name",
+		)
+	}, t)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline\ntest name longer" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
 
-// 		ctestSkipped1Evt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestSkippedEvt(ctestSkipped1Evt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// When
-// 		ctestSkipped2Evt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestSkippedEvt(ctestSkipped2Evt)
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
-// 		)
-// 	}, t)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ multiline   \ntest name longer",
+		)
+	}, t)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-// 		When a CtestSkippedEvent of the same test/package occurs
-// 		Then a user should be informed that the Ctest has been skipped
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 1.2
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline\ntest name" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		ctestOutputEvt := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "This is some output.",
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The multiline\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-// 		// When
-// 		ctestSkippedEvt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ The multiline\ntest name",
+		)
+	}, t)
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
-// 		)
-// 	}, t)
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline\ntest name longer" from "packageName"
+	And we have a bounded terminal with height 2
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
 
-// 	Test(`
-// 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 	And a CtestPassedEvent for Ctest with name "testName" of package "somePackage" has also occurred
-// 	When a CtestSkippedEvent of the same test/package occurs
-// 	Then the HandleCtestSkippedEvt should produce an error
-// 	And an error should be displayed in the terminal.
-// 	`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 1.2
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
-// 		ctestPassedEvt := events.NewCtestPassedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "pass",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ multiline\ntest name longer",
+		)
+	}, t)
 
-// 		// When
-// 		ctestSkippedEvt := events.NewCtestSkippedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "skip",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 			},
-// 		)
+	Test(`
+	Given that a CtestRanEvent with name "testName 1" of package "somePackage" has occurred
+	And a CtestSkippedEvent with name "testName 1" has occurred
+	And a CtestRanEvent with name "testName 2" of package "somePackage" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of with name "testName 2" of package "somePackage" occurs
+	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
 
-// 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 1",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
 
-// 		// Then
-// 		assert.Error(err)
-// 		assert.True(
-// 			strings.Contains(terminal.Text(), "❗ Error."),
-// 		)
-// 	}, t)
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName 1",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
 
-// }
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 2",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
-// func TestCtestOutputEvent(t *testing.T) {
-// 	assert := assert.New(t)
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName 2",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
-// 	Test(`
-// 		Given that there are no events
-// 		When a CtestOutputEvent occurs for the test "testName" of package "somePackage" with output "Some output"
-// 		Then a new package under test should be created with the the test testName
-// 		And a new Ctest with that name should exist
-// 		And that Ctest should have the output "Some output" stored
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, _, ctestsTracker := setupHandlerWithBoundedTerminal(1)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ testName 1\n⏩ testName 2",
+		)
+	}, t)
 
-// 		// When
-// 		ctestOutputEvt := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "Some output",
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+	Test(`
+	Given that a CtestRanEvent with test name "The 1st multiline\ntest name" from "packageName" has occurred
+	And a CtestSkippedEvent with test name "The multiline 1\ntest name" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The second multiline 2\ntest name" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
 
-// 		//Then
-// 		ctest := ctestsTracker.FindCtestWithNameInPackage("testName", "somePackage")
-// 		assert.NotNil(ctest)
-// 		assert.Equal(ctest.Output(), "Some output")
-// 	}, t)
-// }
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The 1st multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The 1st multiline\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The second multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The second multiline\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ The 1st multiline   \ntest name\n⏩ The second multiline   \ntest name",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline 1\ntest name longer" from "packageName"
+	And a CtestSkippedEvent with test name "multiline 1\ntest name longer" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 1\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline 1\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 2\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline 2\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ multiline 1   \ntest name longer\n⏩ multiline 2   \ntest name longer",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline 1\ntest name" from "packageName"
+	And a CtestSkippedEvent with test name "The multiline 1\ntest name" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 2
+	When a CtestSkippedEvent with test name "The multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline 1\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The multiline 1\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline 2\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The multiline 2\ntest name",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ The multiline 1\ntest name\n⏩ The multiline 2\ntest name",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline 1\ntest name longer" from "packageName"
+	And a CtestSkippedEvent with test name "multiline 1\ntest name longer" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 2
+	When a CtestSkippedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 1\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline 1\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 2\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "multiline 2\ntest name longer",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ multiline 1\ntest name longer\n⏩ multiline 2\ntest name longer",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with name "testName Line1\nLine2\nLine3" of package "somePackage" has occurred
+	And we have a bounded terminal with height 3
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName Line1\nLine2\nLine3",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName Line1\nLine2\nLine3",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ testName Line1\nLine2\nLine3",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "testName Line1\nLine2\nLine3\nLine4" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName Line1\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName Line1\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n⏩ testName Line1\nLine2\nLine3   \nLine4",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with test name "The 1st multiline\nLine2\nLine3\nLine4" from "packageName" has occurred
+	And a CtestSkippedEvent with test name "The 1st multiline\nLine2\nLine3\nLine4" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The second multiline\nLine2\nLine3\nLine4" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestSkippedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
+	Then the user should be informed that the test was skipped
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The 1st multiline\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The 1st multiline\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The second multiline\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestSkippedEvt2 := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "The second multiline\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n"+
+				"⏩ The 1st multiline\nLine2\nLine3   \nLine4\n"+
+				"⏩ The second multiline\nLine2\nLine3   \nLine4",
+		)
+	}, t)
+
+	Test(`
+	Given that no events have happened
+	When a CtestSkippedEvent occurs with test name "testName" from "packageName"
+	Then the HandleCtestSkippedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
+
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// Then
+		assert.Error(err)
+		assert.True(
+			strings.Contains(terminal.Text(), "❗ Error."),
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestSkippedEvent of a different package "somePackage 2" occurs
+	Then the HandleCtestSkippedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestSkippedEvt := events.NewCtestSkippedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "skip",
+				Test:    "testName",
+				Package: "somePackage 2",
+				Output:  "Some output",
+			},
+		)
+		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+
+		// Then
+		assert.Error(err)
+		assert.True(
+			strings.Contains(terminal.Text(), "❗ Error."),
+		)
+	}, t)
+}
 
 func TestHandleTestingStartedWithBoundedTerminal(t *testing.T) {
 	assert := assert.New(t)
