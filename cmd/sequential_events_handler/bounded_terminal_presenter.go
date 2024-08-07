@@ -49,7 +49,9 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 		lastLine := printedNameLines[len(printedNameLines)-1]
 		lastLineLength := len(strings.Split(lastLine, ""))
 		tp.terminal.MoveLeft(threeDotsLineCount + lastLineLength + hourGlassAndSpaceLength)
-		tp.terminal.MoveUp(tp.terminal.Height() - 1)
+		if testNameLineCount > 1 {
+			tp.terminal.MoveUp(tp.terminal.Height())
+		}
 		tp.terminal.Print("✅ ")
 
 		tp.terminal.Print(printedName + "   ")
@@ -60,9 +62,14 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 		lastLine := nameLines[len(nameLines)-1]
 		lastLineLength := len(strings.Split(lastLine, ""))
 		tp.terminal.MoveLeft(lastLineLength + hourGlassAndSpaceLength)
-		tp.terminal.MoveUp(testNameLineCount - 1)
+		if testNameLineCount > 1 {
+			tp.terminal.MoveUp(testNameLineCount - 1)
+		}
 		tp.terminal.Print("✅")
-		tp.terminal.MoveDown(testNameLineCount - 1)
+		if testNameLineCount > 1 {
+			tp.terminal.MoveDown(testNameLineCount - 1)
+		}
+		tp.terminal.MoveRight(lastLineLength)
 	}
 }
 

@@ -34,6 +34,10 @@ func (at *AnsiTerminal) MoveLeft(n int) {
 	fmt.Print(ansi_escape.MoveCursorLeftNCols(n))
 }
 
+func (at *AnsiTerminal) MoveRight(n int) {
+	fmt.Print(ansi_escape.MoveCursorRightNCols(n))
+}
+
 func (at *AnsiTerminal) Height() int {
 	return at.height
 }
