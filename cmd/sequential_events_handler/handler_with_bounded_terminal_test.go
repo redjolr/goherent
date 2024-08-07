@@ -844,284 +844,703 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	}, t)
 }
 
-// func TestCtestFailedEvent(t *testing.T) {
-// 	assert := assert.New(t)
+func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
+	assert := assert.New(t)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		When a CtestFailedEvent of the same test/package occurs
-// 		Then the user should be informed that the test for the "somePackage" package have started
-// 		And then that the Ctest with name "testName" has started running
-// 		And that the Ctest with name "testName" has failed
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		testPassedElapsedTime := 2.3
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// When
-// 		ctestFailedEvt := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &testPassedElapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ❌\n",
-// 		)
-// 	}, t)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ testName",
+		)
+	}, t)
 
-// 	Test(`
-// 		Given that no events have happened
-// 		When a CtestFailedEvent occurs with test name "testName" from "packageName"
-// 		Then the HandleCtestFailedEvt should produce an error
-// 		And an error should be displayed in the terminal.
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline\ntest name" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
 
-// 		// When
-// 		ctestFailedEvt := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Package: "somePackage",
-// 				Test:    "testName",
-// 				Elapsed: &elapsedTime,
-// 				Output:  "Some output",
-// 			},
-// 		)
-// 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// Then
-// 		assert.Error(err)
-// 		assert.True(
-// 			strings.Contains(terminal.Text(), "❗ Error."),
-// 		)
-// 	}, t)
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The multiline\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		And later a CtestFailedEvent occurrs with test name "testName" of package "somePackage"
-// 		When a CtestFailedEvent occurs with the same test name "testName" of package "somePackage"
-// 		Then the user should not be informed about the second failure, when the second event occurs
-// 		`, func(t *testing.T) {
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ The multiline   \ntest name",
+		)
+	}, t)
 
-// 		// Given
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline\ntest name longer" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
 
-// 		ctestFailedEvt1 := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		// When
-// 		ctestFailedEvt2 := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ❌\n",
-// 		)
-// 	}, t)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ multiline   \ntest name longer",
+		)
+	}, t)
 
-// 	Test(`
-// 		Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
-// 		When a CtestFailedEvent of the same test/package occurs
-// 		Then a user should be informed that the Ctest has failed
-// 		And the output from the CtestOutputEvents should be presented
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline\ntest name" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		elapsedTime := 2.3
 
-// 		ctestOutputEvt1 := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "This is output 1.",
-// 			},
-// 		)
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		ctestOutputEvt2 := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "This is output 2.",
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The multiline\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
-// 		// When
-// 		ctestFailedEvt := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-// 		assert.Error(err)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ The multiline\ntest name",
+		)
+	}, t)
 
-// 		// Then
-// 		assert.True(
-// 			strings.Contains(terminal.Text(), "❗ Error."))
-// 	}, t)
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline\ntest name longer" from "packageName"
+	And we have a bounded terminal with height 2
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		elapsedTime := 2.3
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-// 		When a CtestFailedEvent of the same test/package occurs
-// 		Then a user should be informed that the Ctest has failed
-// 		And the output from the CtestOutputEvents should be presented
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 1.2
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
-// 		ctestOutputEvt := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "This is some output.",
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ multiline\ntest name longer",
+		)
+	}, t)
 
-// 		// When
-// 		ctestFailedEvt := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+	Test(`
+	Given that a CtestRanEvent with name "testName 1" of package "somePackage" has occurred
+	And a CtestFailedEvent with name "testName 1" has occurred
+	And a CtestRanEvent with name "testName 2" of package "somePackage" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of with name "testName 2" of package "somePackage" occurs
+	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ❌\nThis is some output.",
-// 		)
-// 	}, t)
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 1",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
 
-// 	Test(`
-// 		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-// 		And two CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-// 		When a CtestFailedEvent of the same test/package occurs
-// 		Then a user should be informed that the Ctest has failed
-// 		And the output from the CtestOutputEvents should be presented
-// 		`, func(t *testing.T) {
-// 		// Given
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		elapsedTime := 2.3
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName 1",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
 
-// 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
-// 			Time:    time.Now(),
-// 			Action:  "run",
-// 			Test:    "testName",
-// 			Package: "somePackage",
-// 		})
-// 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName 2",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
-// 		ctestOutputEvt1 := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "Some output 1.",
-// 			},
-// 		)
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName 2",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
-// 		ctestOutputEvt2 := events.NewCtestOutputEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "output",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Output:  "Some output 2.",
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
-// 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ testName 1\n❌ testName 2",
+		)
+	}, t)
 
-// 		// When
-// 		ctestFailedEvt := events.NewCtestFailedEvent(
-// 			events.JsonTestEvent{
-// 				Time:    time.Now(),
-// 				Action:  "fail",
-// 				Test:    "testName",
-// 				Package: "somePackage",
-// 				Elapsed: &elapsedTime,
-// 			},
-// 		)
-// 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+	Test(`
+	Given that a CtestRanEvent with test name "The 1st multiline\ntest name" from "packageName" has occurred
+	And a CtestFailedEvent with test name "The multiline 1\ntest name" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The second multiline 2\ntest name" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
 
-// 		// Then
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			"\n\n📦 somePackage\n\n   • testName    ❌\nSome output 1.\nSome output 2.",
-// 		)
-// 	}, t)
-// }
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The 1st multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The 1st multiline\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The second multiline\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The second multiline\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ The 1st multiline   \ntest name\n❌ The second multiline   \ntest name",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline 1\ntest name longer" from "packageName"
+	And a CtestFailedEvent with test name "multiline 1\ntest name longer" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 1\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline 1\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 2\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline 2\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ multiline 1   \ntest name longer\n❌ multiline 2   \ntest name longer",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "The multiline 1\ntest name" from "packageName"
+	And a CtestFailedEvent with test name "The multiline 1\ntest name" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 2
+	When a CtestFailedEvent with test name "The multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		elapsedTime := 2.3
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline 1\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The multiline 1\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The multiline 2\ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The multiline 2\ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ The multiline 1\ntest name\n❌ The multiline 2\ntest name",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "multiline 1\ntest name longer" from "packageName"
+	And a CtestFailedEvent with test name "multiline 1\ntest name longer" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "multiline 2\ntest name longer" from "packageName" has occurred
+	And we have a bounded terminal with height 2
+	When a CtestFailedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		elapsedTime := 2.3
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 1\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline 1\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "multiline 2\ntest name longer",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "multiline 2\ntest name longer",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ multiline 1\ntest name longer\n❌ multiline 2\ntest name longer",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with name "testName Line1\nLine2\nLine3" of package "somePackage" has occurred
+	And we have a bounded terminal with height 3
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		elapsedTime := 2.3
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName Line1\nLine2\nLine3",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName Line1\nLine2\nLine3",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ testName Line1\nLine2\nLine3",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent occurs with test name "testName Line1\nLine2\nLine3\nLine4" from "packageName"
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		elapsedTime := 2.3
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName Line1\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName Line1\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n❌ testName Line1\nLine2\nLine3   \nLine4",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with test name "The 1st multiline\nLine2\nLine3\nLine4" from "packageName" has occurred
+	And a CtestFailedEvent with test name "The 1st multiline\nLine2\nLine3\nLine4" from packag "packageName" has occurred
+	And a CtestRanEvent occurs with test name "The second multiline\nLine2\nLine3\nLine4" from "packageName" has occurred
+	And we have a bounded terminal with height 1
+	When a CtestFailedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
+	Then the user should be informed that the test has failed
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		elapsedTime := 2.3
+
+		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The 1st multiline\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
+
+		ctestFailedEvt1 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The 1st multiline\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
+
+		ctestRanEvt2 := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "The second multiline\nLine2\nLine3\nLine4",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
+
+		// When
+		ctestFailedEvt2 := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "The second multiline\nLine2\nLine3\nLine4",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n"+
+				"❌ The 1st multiline\nLine2\nLine3   \nLine4\n"+
+				"❌ The second multiline\nLine2\nLine3   \nLine4",
+		)
+	}, t)
+
+	Test(`
+	Given that no events have happened
+	When a CtestFailedEvent occurs with test name "testName" from "packageName"
+	Then the HandleCtestFailedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
+
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Package: "somePackage",
+				Test:    "testName",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		assert.Error(err)
+		assert.True(
+			strings.Contains(terminal.Text(), "❗ Error."),
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestFailedEvent of a different package "somePackage 2" occurs
+	Then the HandleCtestFailedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		elapsedTime := 2.3
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "testName",
+			Package: "somePackage",
+			Output:  "Some output",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "testName",
+				Package: "somePackage 2",
+				Elapsed: &elapsedTime,
+				Output:  "Some output",
+			},
+		)
+		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		assert.Error(err)
+		assert.True(
+			strings.Contains(terminal.Text(), "❗ Error."),
+		)
+	}, t)
+}
 
 // func TestCtestSkippedEvent(t *testing.T) {
 // 	assert := assert.New(t)
@@ -1371,17 +1790,17 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 // 	}, t)
 // }
 
-// func TestHandleTestingStarted(t *testing.T) {
-// 	assert := assert.New(t)
-// 	Test("User should be informed, that the testing has started", func(t *testing.T) {
-// 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
-// 		now := time.Now()
-// 		testingStartedEvt := events.NewTestingStartedEvent(now)
-// 		eventsHandler.HandleTestingStarted(testingStartedEvt)
+func TestHandleTestingStartedWithBoundedTerminal(t *testing.T) {
+	assert := assert.New(t)
+	Test("User should be informed, that the testing has started", func(t *testing.T) {
+		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		now := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(now)
+		eventsHandler.HandleTestingStarted(testingStartedEvt)
 
-// 		assert.Equal(
-// 			terminal.Text(),
-// 			fmt.Sprintf("\n🚀 Starting..."),
-// 		)
-// 	}, t)
-// }
+		assert.Equal(
+			terminal.Text(),
+			"\n🚀 Starting...",
+		)
+	}, t)
+}
