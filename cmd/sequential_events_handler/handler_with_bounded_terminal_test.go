@@ -163,7 +163,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -175,7 +174,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -213,7 +211,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -251,7 +248,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -289,7 +285,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -327,7 +322,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -355,7 +349,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 1",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
 
@@ -375,7 +368,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 2",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
@@ -425,7 +417,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The 1st multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
@@ -446,7 +437,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The second multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
@@ -485,7 +475,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
@@ -506,7 +495,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
@@ -545,7 +533,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline 1\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
@@ -566,7 +553,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline 2\ntest name",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
@@ -605,7 +591,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
@@ -626,7 +611,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
@@ -652,7 +636,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName Line1\nLine2\nLine3",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -664,7 +647,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName Line1\nLine2\nLine3",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -702,7 +684,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName Line1\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -741,7 +722,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The 1st multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt1)
@@ -762,7 +742,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The second multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
@@ -793,7 +772,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -819,7 +797,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -831,7 +808,6 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage 2",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -861,7 +837,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -873,7 +848,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -911,7 +885,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -949,7 +922,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -987,7 +959,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1025,7 +996,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1053,7 +1023,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 1",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
 
@@ -1073,7 +1042,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 2",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
@@ -1123,7 +1091,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The 1st multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
@@ -1144,7 +1111,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The second multiline\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
@@ -1183,7 +1149,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
@@ -1204,7 +1169,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
@@ -1243,7 +1207,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline 1\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
@@ -1264,7 +1227,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The multiline 2\ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
@@ -1303,7 +1265,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
@@ -1324,7 +1285,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
@@ -1350,7 +1310,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName Line1\nLine2\nLine3",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -1362,7 +1321,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName Line1\nLine2\nLine3",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1400,7 +1358,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName Line1\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1439,7 +1396,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The 1st multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt1)
@@ -1460,7 +1416,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "The second multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
@@ -1491,7 +1446,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1517,7 +1471,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -1529,7 +1482,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage 2",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
@@ -1558,7 +1510,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -1569,7 +1520,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "testName",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -1605,7 +1555,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -1641,7 +1590,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -1677,7 +1625,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The multiline\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -1713,7 +1660,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -1740,7 +1686,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 1",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
 
@@ -1759,7 +1704,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName 2",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
@@ -1806,7 +1750,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The 1st multiline\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
@@ -1826,7 +1769,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The second multiline\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
@@ -1863,7 +1805,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
@@ -1883,7 +1824,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
@@ -1920,7 +1860,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The multiline 1\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
@@ -1940,7 +1879,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The multiline 2\ntest name",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
@@ -1977,7 +1915,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline 1\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
@@ -1997,7 +1934,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "multiline 2\ntest name longer",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
@@ -2022,7 +1958,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName Line1\nLine2\nLine3",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -2033,7 +1968,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "testName Line1\nLine2\nLine3",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -2069,7 +2003,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "testName Line1\nLine2\nLine3\nLine4",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -2106,7 +2039,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The 1st multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt1)
@@ -2126,7 +2058,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "The second multiline\nLine2\nLine3\nLine4",
 				Package: "somePackage",
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
@@ -2157,7 +2088,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
@@ -2182,7 +2112,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -2193,7 +2122,6 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "skip",
 				Test:    "testName",
 				Package: "somePackage 2",
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)

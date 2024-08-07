@@ -134,7 +134,6 @@ func TestCtestPassedEvent(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -146,7 +145,6 @@ func TestCtestPassedEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -176,7 +174,6 @@ func TestCtestPassedEvent(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -202,7 +199,6 @@ func TestCtestPassedEvent(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 
 		ctestPassedEvt := events.NewCtestPassedEvent(
@@ -212,7 +208,6 @@ func TestCtestPassedEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -243,7 +238,6 @@ func TestCtestPassedEvent(t *testing.T) {
 			Action:  "run",
 			Test:    "testName",
 			Package: "somePackage",
-			Output:  "Some output",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
@@ -255,7 +249,6 @@ func TestCtestPassedEvent(t *testing.T) {
 				Test:    "testName",
 				Package: "somePackage 2",
 				Elapsed: &testPassedElapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
@@ -327,7 +320,6 @@ func TestCtestFailedEvent(t *testing.T) {
 				Package: "somePackage",
 				Test:    "testName",
 				Elapsed: &elapsedTime,
-				Output:  "Some output",
 			},
 		)
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
