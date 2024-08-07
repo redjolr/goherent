@@ -56,12 +56,16 @@ func (fat *FakeAnsiTerminal) Print(t string) {
 		}
 
 		// Move right
-		if curSequence.Matches("\033\\[[0-9]{1,}C") {
+		if curSequence.Equals(ansi_escape.MoveCursorRightNCols(0)) {
+			fat.coords.OffsetX(1)
+		} else if curSequence.Matches("\033\\[[0-9]{1,}C") {
 			fat.coords.OffsetX(curSequence.MoveRightCount())
 		}
 
 		// Move up
-		if curSequence.Matches("\033\\[[0-9]{1,}A") {
+		if curSequence.Equals(ansi_escape.MoveCursorUpNRows(0)) {
+			fat.coords.OffsetY(-min(1, fat.coords.Y))
+		} else if curSequence.Matches("\033\\[[0-9]{1,}A") {
 			if fat.coords.Y-curSequence.MoveUpCount() < fat.visibleUpperLine() {
 				fat.coords.Y = fat.visibleUpperLine()
 			} else {
@@ -74,7 +78,9 @@ func (fat *FakeAnsiTerminal) Print(t string) {
 		}
 
 		// Move down
-		if curSequence.Matches("\033\\[[0-9]{1,}B") {
+		if curSequence.Equals(ansi_escape.MoveCursorDownNRows(0)) {
+			fat.coords.OffsetY(1)
+		} else if curSequence.Matches("\033\\[[0-9]{1,}B") {
 			fat.coords.OffsetY(curSequence.MoveDownCount())
 		}
 

@@ -522,6 +522,15 @@ func TestPrintMoveCursorLeft(t *testing.T) {
 
 	Test(`
 	Given that there is a terminal with an infinite height and width
+	When we print "H"+MoveCursorLeftNCols(0)+"A"
+	Then the terminal should store "HA".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("H" + ansi_escape.MoveCursorLeftNCols(0) + "A")
+		assert.Equal(fakeTerminal.Text(), "HA")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
 	When we print "H"+MoveCursorLeftNCols(2)+"A"
 	Then the terminal should store "H".`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
@@ -642,6 +651,15 @@ func TestPrintMoveCursorRight(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("Hello" + ansi_escape.MoveCursorRightNCols(3) + "World")
 		assert.Equal(fakeTerminal.Text(), "Hello   World")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "A\nB"+MoveCursorRightNCols(0) + "C"
+	Then the terminal should store "AC\nB".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("A" + ansi_escape.MoveCursorRightNCols(0) + "C")
+		assert.Equal(fakeTerminal.Text(), "A C")
 	}, t)
 }
 
@@ -948,6 +966,24 @@ func TestPrintMoveCursorUp(t *testing.T) {
 	}, t)
 
 	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "A\nB"+MoveCursorUpNRows(0) + "C"
+	Then the terminal should store "AC\nB".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("A\nB" + ansi_escape.MoveCursorUpNRows(0) + "C")
+		assert.Equal(fakeTerminal.Text(), "AC\nB")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "A"+MoveCursorUpNRows(0) + "C"
+	Then the terminal should store "AC".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("A" + ansi_escape.MoveCursorUpNRows(0) + "C")
+		assert.Equal(fakeTerminal.Text(), "AC")
+	}, t)
+
+	Test(`
 	Given that there is a terminal with an height=3 and width=infinity
 	When we print "Line1\nLine2", and then MoveCursorUpNRows(1), and then "HELLO"
 	Then the terminal should store "OVERWRITE LINE\nLine2".`, func(t *testing.T) {
@@ -1018,7 +1054,7 @@ func TestPrintMoveCursorDown(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
 	Given that there is a terminal with an infinite height and width
-	When we print MoveCursorDownNRows(1) 
+	When we print MoveCursorDownNRows(1)
 	Then the terminal should store "".`, func(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print(ansi_escape.MoveCursorDownNRows(1))
@@ -1263,5 +1299,23 @@ func TestPrintMoveCursorDown(t *testing.T) {
 				"C",
 		)
 		assert.Equal(fakeTerminal.Text(), "BBBBB\nAA      C")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "A\nB"+MoveCursorUpNRows(1) + MoveCursorDownNRows(0) "C"
+	Then the terminal should store "AC\nB".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("A\nB" + ansi_escape.MoveCursorUpNRows(1) + ansi_escape.MoveCursorDownNRows(0) + "C")
+		assert.Equal(fakeTerminal.Text(), "A\nBC")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "A"+MoveCursorDownNRows(0) + "C"
+	Then the terminal should store "A\n C".`, func(t *testing.T) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("A" + ansi_escape.MoveCursorDownNRows(0) + "C")
+		assert.Equal(fakeTerminal.Text(), "A\n C")
 	}, t)
 }
