@@ -1,7 +1,6 @@
 package ctests_tracker
 
 import (
-	"fmt"
 	"slices"
 
 	"github.com/redjolr/goherent/cmd/events"
@@ -65,7 +64,6 @@ func (tracker *CtestsTracker) NewCtestRanEvent(evt events.CtestRanEvent) {
 		packUt := NewPackageUnderTest(evt.PackageName)
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
-	fmt.Println()
 }
 
 func (tracker *CtestsTracker) IsCtestFirstOfItsPackage(ctest Ctest) bool {
