@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/internal"
 )
 
 type EventsMapper struct {
@@ -33,6 +34,19 @@ func (evtMapper EventsMapper) JsonTestEvt2CtestRanEvt(jsonEvt events.JsonEvent) 
 			Test:    *jsonEvt.Test,
 			Elapsed: jsonEvt.Elapsed,
 			Output:  jsonEvt.Output,
+		},
+	)
+}
+
+func (evtMapper EventsMapper) JsonTestEvt2CtestOutputEvt(jsonEvt events.JsonEvent) events.CtestOutputEvent {
+	return events.NewCtestOutputEvent(
+		events.JsonTestEvent{
+			Time:    jsonEvt.Time,
+			Action:  jsonEvt.Action,
+			Package: jsonEvt.Package,
+			Test:    *jsonEvt.Test,
+			Elapsed: jsonEvt.Elapsed,
+			Output:  internal.DecodeGoherentTestName(jsonEvt.Output),
 		},
 	)
 }

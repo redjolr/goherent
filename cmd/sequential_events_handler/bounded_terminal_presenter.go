@@ -145,7 +145,7 @@ func (tp BoundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 }
 
 func (tp BoundedTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
-	// tp.terminal.Print(ctest.Output())
+	tp.terminal.Print("\n" + ctest.Output())
 }
 
 func (tp BoundedTerminalPresenter) Error() {

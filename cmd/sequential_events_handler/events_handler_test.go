@@ -10,9 +10,10 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
+	"github.com/stretchr/testify/assert"
+
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
-	"github.com/stretchr/testify/assert"
 )
 
 func setup() (*sequential_events_handler.EventsHandler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
