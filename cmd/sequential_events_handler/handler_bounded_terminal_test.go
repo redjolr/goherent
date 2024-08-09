@@ -1502,8 +1502,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented
-	`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1549,13 +1548,12 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-		And we have a bounded terminal with height 5
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the CtestOutputEvents should be presented
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	And we have a bounded terminal with height 5
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
 		elapsedTime := 1.2
@@ -1604,8 +1602,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented
-	`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1634,7 +1631,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "output",
 				Test:    "testName",
 				Package: "somePackage",
-				Output:  "Some output 2.",
+				Output:  "_Some output 2.",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1655,7 +1652,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n❌ testName\nSome output 1.\nSome output 2.",
+			"\n\n📦 somePackage\n\n❌ testName\nSome output 1._Some output 2.",
 		)
 	}, t)
 
@@ -1665,8 +1662,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented
-	`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -1695,7 +1691,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 				Action:  "output",
 				Test:    "NameLine1\nNameLine2\nNameLine3",
 				Package: "somePackage",
-				Output:  "Some output 2.",
+				Output:  "_Some output 2.",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1716,7 +1712,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n❌ NameLine1\nNameLine2   \nNameLine3\nSome output 1.\nSome output 2.",
+			"\n\n📦 somePackage\n\n❌ NameLine1\nNameLine2   \nNameLine3\nSome output 1._Some output 2.",
 		)
 	}, t)
 }

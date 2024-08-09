@@ -45,7 +45,7 @@ func (tp TerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 }
 
 func (tp TerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
-	tp.terminal.Print(ctest.Output())
+	tp.terminal.Print("\n" + ctest.Output())
 }
 
 func (tp TerminalPresenter) Error() {

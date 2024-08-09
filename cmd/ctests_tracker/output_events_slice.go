@@ -84,11 +84,9 @@ func (ovs *outputEventsSlice) RemoveOrderRange(first, last int) {
 
 func (ovs *outputEventsSlice) Output() string {
 	output := ""
-	for i, evt := range ovs.outputEvts {
+	for _, evt := range ovs.outputEvts {
 		output += evt.Output
-		if i < len(ovs.outputEvts)-1 {
-			output += "\n"
-		}
+
 	}
 	return output
 }

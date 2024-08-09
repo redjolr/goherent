@@ -32,8 +32,7 @@ func TestCtestRanEvent(t *testing.T) {
 	Given that no events have happened
 	When a CtestRanEvent occurs with test name "testName" from "packageName"
 	Then the user should be informed that the testing of a new package started and
-	that the first test of that package started running
-	`, func(t *testing.T) {
+	that the first test of that package started running.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 
@@ -54,11 +53,10 @@ func TestCtestRanEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that no events have happened
-		When 2 CtestRanEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
-		Then the second CtestRanEvent should produce an error
-		And an error should be displayed in the terminal.
-		`, func(t *testing.T) {
+	Given that no events have happened
+	When 2 CtestRanEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
+	Then the second CtestRanEvent should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 
@@ -91,10 +89,9 @@ func TestCtestRanEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
-		When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should be informed only once that the given test from the given package is running.
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
+	When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should be informed only once that the given test from the given package is running.`, func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 
 		// Given
@@ -123,10 +120,9 @@ func TestCtestPassedEvent(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		When a CtestPassedEvent of the same test/package occurs
-		Then the user should be informed that the test has passed.
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestPassedEvent of the same test/package occurs
+	Then the user should be informed that the test has passed.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		testPassedElapsedTime := 2.3
@@ -159,11 +155,10 @@ func TestCtestPassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that no events have happened
-		When a CtestPassedEvent occurs with test name "testName" from "packageName"
-		Then the HandleCtestPassedEvt should produce an error
-		And an error should be displayed in the terminal.
-		`, func(t *testing.T) {
+	Given that no events have happened
+	When a CtestPassedEvent occurs with test name "testName" from "packageName"
+	Then the HandleCtestPassedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -188,10 +183,9 @@ func TestCtestPassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent and CtestPassedEvent have occurred with test name "testName" of package "somePackage"
-		When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should not be informed only once that the test has passed
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent and CtestPassedEvent have occurred with test name "testName" of package "somePackage"
+	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed only once that the test has passed.`, func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
@@ -226,11 +220,10 @@ func TestCtestPassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		When a CtestPassedEvent of a different package "somePackage 2" occurs
-		Then the HandleCtestPassedEvt should produce an error
-		And an error should be displayed in the terminal.
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestPassedEvent of a different package "somePackage 2" occurs
+	Then the HandleCtestPassedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		testPassedElapsedTime := 2.3
@@ -267,12 +260,11 @@ func TestCtestFailedEvent(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then the user should be informed that the test for the "somePackage" package have started
-		And then that the Ctest with name "testName" has started running
-		And that the Ctest with name "testName" has failed
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then the user should be informed that the test for the "somePackage" package have started
+	And then that the Ctest with name "testName" has started running
+	And that the Ctest with name "testName" has failed`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -305,11 +297,10 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that no events have happened
-		When a CtestFailedEvent occurs with test name "testName" from "packageName"
-		Then the HandleCtestFailedEvt should produce an error
-		And an error should be displayed in the terminal.
-		`, func(t *testing.T) {
+	Given that no events have happened
+	When a CtestFailedEvent occurs with test name "testName" from "packageName"
+	Then the HandleCtestFailedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -334,11 +325,10 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And later a CtestFailedEvent occurrs with test name "testName" of package "somePackage"
-		When a CtestFailedEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should not be informed about the second failure, when the second event occurs
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And later a CtestFailedEvent occurrs with test name "testName" of package "somePackage"
+	When a CtestFailedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed about the second failure, when the second event occurs.`, func(t *testing.T) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
 
@@ -382,11 +372,10 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the CtestOutputEvents should be presented
-		`, func(t *testing.T) {
+	Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -432,12 +421,11 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the CtestOutputEvents should be presented
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
@@ -476,17 +464,16 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    ❌\nThis is some output.",
+			"\n\n📦 somePackage\n\n   • testName    ❌\n\nThis is some output.",
 		)
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And two CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the CtestOutputEvents should be presented
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And two CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -515,7 +502,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Action:  "output",
 				Test:    "testName",
 				Package: "somePackage",
-				Output:  "Some output 2.",
+				Output:  "_Some output 2.",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -532,21 +519,21 @@ func TestCtestFailedEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+		t.Error("YUUP")
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • testName    ❌\nSome output 1.\nSome output 2.",
+			"\n\n📦 somePackage\n\n   • testName    ❌\n\nSome output 1._Some output 2.",
 		)
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And a CtestOutputEvent events for same test with output "testName" has also occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the CtestOutputEvent should not be presented
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And a CtestOutputEvent events for same test with output "testName" has also occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the CtestOutputEvent should not be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -590,13 +577,12 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
-		And a CtestOutputEvent event for same test with output "Some tes" has also occurred
-		And another CtestOutputEvent event for same test with output "t name" has also occurred
-		When a CtestFailedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has failed
-		And the output from the two CtestOutputEvents should not be presented
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	And a CtestOutputEvent event for same test with output "Some tes" has also occurred
+	And another CtestOutputEvent event for same test with output "t name" has also occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And the output from the two CtestOutputEvents should not be presented.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -716,7 +702,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -727,7 +713,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And "output that should be printed\nshould be printed too" should be printed as output`, func(t *testing.T) {
+	And "output that should be printed_Should be printed too" should be printed as output`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -778,7 +764,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Action:  "output",
 				Test:    "Some test name",
 				Package: "somePackage",
-				Output:  "should be printed too",
+				Output:  "_Should be printed too",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt4)
@@ -798,7 +784,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed\nshould be printed too",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
@@ -891,7 +877,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -963,7 +949,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -974,7 +960,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And "output that should be printed\nshould be printed too" should be printed as output`, func(t *testing.T) {
+	And "output that should be printed_Should be printed too" should be printed as output`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1004,7 +990,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Action:  "output",
 				Test:    "Some test name",
 				Package: "somePackage",
-				Output:  "should be printed too",
+				Output:  "_Should be printed too",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -1046,7 +1032,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed\nshould be printed too",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
@@ -1140,7 +1126,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -1232,7 +1218,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -1243,7 +1229,7 @@ func TestCtestFailedEvent(t *testing.T) {
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And "output that should be printed\nshould be printed too" should be printed as output.`, func(t *testing.T) {
+	And "output that should be printed_Should be printed too" should be printed as output.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1315,7 +1301,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Action:  "output",
 				Test:    "Some test name",
 				Package: "somePackage",
-				Output:  "should be printed too",
+				Output:  "_Should be printed too",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt6)
@@ -1335,18 +1321,18 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\noutput that should be printed\nshould be printed too",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
 	Test(`
 	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "output that should be printed", "t name", 
+		- "Some tes", "_output that should be printed_", "t name", 
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And "output that should be printed" should be printed as output.`, func(t *testing.T) {
+	And Some tes_output that should be printed_t name" should be printed as output.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1376,7 +1362,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Action:  "output",
 				Test:    "Some test name",
 				Package: "somePackage",
-				Output:  "output that should be printed",
+				Output:  "_output that should be printed_",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -1407,7 +1393,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\nSome tes\noutput that should be printed\nt name",
+			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\nSome tes_output that should be printed_t name",
 		)
 	}, t)
 
@@ -1478,7 +1464,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"\n\n📦 somePackage\n\n   • Some \ntest name    ❌\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • Some \ntest name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 }
@@ -1487,11 +1473,10 @@ func TestCtestSkippedEvent(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		When a CtestSkippedEvent of the same test/package occurs
-		Then the user should be informed that the test for the "somePackage" package have started
-		And then that the Ctest with name "testName" is skipped
-	`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	When a CtestSkippedEvent of the same test/package occurs
+	Then the user should be informed that the test for the "somePackage" package have started
+	And then that the Ctest with name "testName" is skipped.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1524,11 +1509,10 @@ func TestCtestSkippedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that no events have happened
-		When a CtestSkippedEvent occurs with test name "testName" from "packageName"
-		Then the HandleCtestSkippedEvt should produce an error
-		And an error should be displayed in the terminal.
-		`, func(t *testing.T) {
+	Given that no events have happened
+	When a CtestSkippedEvent occurs with test name "testName" from "packageName"
+	Then the HandleCtestSkippedEvt should produce an error
+	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1553,11 +1537,10 @@ func TestCtestSkippedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And later a CtestSkippedEvent occurrs with test name "testName" of package "somePackage"
-		When a CtestSkippedEvent occurs with the same test name "testName" of package "somePackage"
-		Then the user should not be informed about the second skip
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And later a CtestSkippedEvent occurrs with test name "testName" of package "somePackage"
+	When a CtestSkippedEvent occurs with the same test name "testName" of package "somePackage"
+	Then the user should not be informed about the second skip.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -1601,11 +1584,10 @@ func TestCtestSkippedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-		Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-		And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
-		When a CtestSkippedEvent of the same test/package occurs
-		Then a user should be informed that the Ctest has been skipped
-		`, func(t *testing.T) {
+	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	When a CtestSkippedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has been skipped.`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 1.2
@@ -1703,12 +1685,11 @@ func TestCtestOutputEvent(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-		Given that there are no events
-		When a CtestOutputEvent occurs for the test "testName" of package "somePackage" with output "Some output"
-		Then a new package under test should be created with the the test testName
-		And a new Ctest with that name should exist
-		And that Ctest should have the output "Some output" stored
-		`, func(t *testing.T) {
+	Given that there are no events
+	When a CtestOutputEvent occurs for the test "testName" of package "somePackage" with output "Some output"
+	Then a new package under test should be created with the the test testName
+	And a new Ctest with that name should exist
+	And that Ctest should have the output "Some output" stored`, func(t *testing.T) {
 		// Given
 		eventsHandler, _, ctestsTracker := setup()
 
@@ -1723,7 +1704,6 @@ func TestCtestOutputEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
-
 		//Then
 		ctest := ctestsTracker.FindCtestWithNameInPackage("testName", "somePackage")
 		assert.NotNil(ctest)

@@ -121,7 +121,7 @@ func (ctest *Ctest) RecordOutputEvt(evt events.CtestOutputEvent) {
 }
 
 func (ctest *Ctest) ContainsOutput() bool {
-	return len(ctest.outputEvts) > 0
+	return ctest.Output() != ""
 }
 
 func (ctest *Ctest) Output() string {
