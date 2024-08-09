@@ -1,8 +1,6 @@
 package ctests_tracker
 
 import (
-	"fmt"
-
 	"github.com/redjolr/goherent/cmd/events"
 
 	"github.com/redjolr/goherent/internal/uuidgen"
@@ -127,44 +125,13 @@ func (ctest *Ctest) ContainsOutput() bool {
 }
 
 func (ctest *Ctest) Output() string {
-
-	// outputEvts := make([]events.CtestOutputEvent, len(ctest.outputEvts))
-	// copy(outputEvts, ctest.outputEvts)
 	outputEventsSlice := New_outputEventsSlice(ctest.outputEvts)
 	for outputEventsSlice.Contains(ctest.name) {
-		fmt.Println("\n\n\n CONTAINS", len(outputEventsSlice.orderedOutputEvts))
-		first, last := outputEventsSlice.NarrowDownRangeStartingFromBeginning(ctest.name, 0, len(ctest.outputEvts)-1)
-		fmt.Println("\n\n\n FIRST LAST 1:", first, last)
-
-		if first == 0 && last == len(ctest.outputEvts)-1 {
-			first, last = outputEventsSlice.NarrowDownRangeStartingFromEnd(ctest.name, 0, len(ctest.outputEvts)-1)
+		first, last := outputEventsSlice.NarrowDownRange(ctest.name, 0, len(outputEventsSlice.outputEvts)-1)
+		if last != len(outputEventsSlice.outputEvts) {
+			outputEventsSlice.RemoveOrderRange(first, last)
 		}
-		fmt.Println("\n\n\n FIRST LAST 2:", first, last)
-		outputEventsSlice.RemoveOriginalOrderRange(first, last+1)
 	}
-
-	// output := ""
-	// for i := 0; i < len(ctest.outputEvts); i++ {
-	// 	consecutiveEvts := []events.CtestOutputEvent{ctest.outputEvts[i]}
-	// 	for j := i + 1; j < len(ctest.outputEvts); j++ {
-	// 		consecutiveEvts = append(consecutiveEvts, ctest.outputEvts[j])
-	// 		consecutiveEvtsOutput := ""
-	// 		for _, evt := range consecutiveEvts {
-	// 			consecutiveEvtsOutput += evt.Output
-	// 		}
-	// 		if strings.Contains(consecutiveEvtsOutput, ctest.name) {
-	// 			i = j + 1
-	// 			break
-	// 		}
-	// 	}
-	// 	if i < len(ctest.outputEvts) {
-	// 		output += ctest.outputEvts[i].Output + "\n"
-	// 	}
-
-	// }
-	// after, _ := strings.CutSuffix(output, "\n")
-	// return after
-
 	return outputEventsSlice.Output()
 }
 
