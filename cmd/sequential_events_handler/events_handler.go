@@ -106,12 +106,12 @@ func (eh EventsHandler) HandleCtestSkippedEvt(evt events.CtestSkippedEvent) erro
 func (eh EventsHandler) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
 	existingCtest := eh.ctestsTracker.FindCtestWithNameInPackage(evt.TestName, evt.PackageName)
 	if existingCtest != nil {
-		existingCtest.LogOutput(evt.Output)
+		existingCtest.RecordOutputEvt(evt)
 		return
 	}
 
 	ctest := ctests_tracker.NewCtest(evt.TestName, evt.PackageName)
-	ctest.LogOutput(evt.Output)
+	ctest.RecordOutputEvt(evt)
 	eh.ctestsTracker.InsertCtest(ctest)
 }
 

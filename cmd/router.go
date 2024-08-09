@@ -38,10 +38,10 @@ func (router Router) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		router.eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 	}
 
-	// if jsonEvt.Test != nil && jsonEvt.Action == "output" && strings.Contains(*jsonEvt.Test, "/") {
-	// 	ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestOutputEvt(jsonEvt)
-	// 	router.eventsHandler.HandleCtestOutputEvent(ctestRanEvt)
-	// }
+	if jsonEvt.Test != nil && jsonEvt.Action == "output" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestOutputEvt(jsonEvt)
+		router.eventsHandler.HandleCtestOutputEvent(ctestRanEvt)
+	}
 
 	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)

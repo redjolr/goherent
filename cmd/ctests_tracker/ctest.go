@@ -1,7 +1,7 @@
 package ctests_tracker
 
 import (
-	"strings"
+	"fmt"
 
 	"github.com/redjolr/goherent/cmd/events"
 
@@ -14,7 +14,7 @@ type Ctest struct {
 	id          string
 	name        string
 	packageName string
-	output      []string
+	outputEvts  []events.CtestOutputEvent
 	isRunning   bool
 	hasPassed   bool
 	hasFailed   bool
@@ -26,7 +26,7 @@ func NewCtest(testName string, packageName string) Ctest {
 		id:          uuidgen.NewString(),
 		name:        testName,
 		packageName: packageName,
-		output:      []string{},
+		outputEvts:  []events.CtestOutputEvent{},
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   false,
@@ -39,7 +39,7 @@ func NewRunningCtest(ranEvt events.CtestRanEvent) Ctest {
 		id:          uuidgen.NewString(),
 		name:        ranEvt.TestName,
 		packageName: ranEvt.PackageName,
-		output:      []string{},
+		outputEvts:  []events.CtestOutputEvent{},
 		isRunning:   true,
 		hasPassed:   false,
 		hasFailed:   false,
@@ -52,7 +52,7 @@ func NewPassedCtest(passedEvt events.CtestPassedEvent) Ctest {
 		id:          uuidgen.NewString(),
 		name:        passedEvt.TestName,
 		packageName: passedEvt.PackageName,
-		output:      []string{},
+		outputEvts:  []events.CtestOutputEvent{},
 		isRunning:   false,
 		hasPassed:   true,
 		hasFailed:   false,
@@ -65,7 +65,7 @@ func NewFailedCtest(failedEvt events.CtestFailedEvent) Ctest {
 		id:          uuidgen.NewString(),
 		name:        failedEvt.TestName,
 		packageName: failedEvt.PackageName,
-		output:      []string{},
+		outputEvts:  []events.CtestOutputEvent{},
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   true,
@@ -78,7 +78,7 @@ func NewSkippedCtest(skippedEvt events.CtestSkippedEvent) Ctest {
 		id:          uuidgen.NewString(),
 		name:        skippedEvt.TestName,
 		packageName: skippedEvt.PackageName,
-		output:      []string{},
+		outputEvts:  []events.CtestOutputEvent{},
 		isRunning:   false,
 		hasPassed:   false,
 		hasFailed:   false,
@@ -118,16 +118,54 @@ func (ctest *Ctest) HasFailed() bool {
 	return ctest.hasFailed
 }
 
-func (ctest *Ctest) LogOutput(log string) {
-	ctest.output = append(ctest.output, log)
+func (ctest *Ctest) RecordOutputEvt(evt events.CtestOutputEvent) {
+	ctest.outputEvts = append(ctest.outputEvts, evt)
 }
 
 func (ctest *Ctest) ContainsOutput() bool {
-	return len(ctest.output) > 0
+	return len(ctest.outputEvts) > 0
 }
 
 func (ctest *Ctest) Output() string {
-	return strings.Join(ctest.output, "\n")
+
+	// outputEvts := make([]events.CtestOutputEvent, len(ctest.outputEvts))
+	// copy(outputEvts, ctest.outputEvts)
+	outputEventsSlice := New_outputEventsSlice(ctest.outputEvts)
+	for outputEventsSlice.Contains(ctest.name) {
+		fmt.Println("\n\n\n CONTAINS", len(outputEventsSlice.orderedOutputEvts))
+		first, last := outputEventsSlice.NarrowDownRangeStartingFromBeginning(ctest.name, 0, len(ctest.outputEvts)-1)
+		fmt.Println("\n\n\n FIRST LAST 1:", first, last)
+
+		if first == 0 && last == len(ctest.outputEvts)-1 {
+			first, last = outputEventsSlice.NarrowDownRangeStartingFromEnd(ctest.name, 0, len(ctest.outputEvts)-1)
+		}
+		fmt.Println("\n\n\n FIRST LAST 2:", first, last)
+		outputEventsSlice.RemoveOriginalOrderRange(first, last+1)
+	}
+
+	// output := ""
+	// for i := 0; i < len(ctest.outputEvts); i++ {
+	// 	consecutiveEvts := []events.CtestOutputEvent{ctest.outputEvts[i]}
+	// 	for j := i + 1; j < len(ctest.outputEvts); j++ {
+	// 		consecutiveEvts = append(consecutiveEvts, ctest.outputEvts[j])
+	// 		consecutiveEvtsOutput := ""
+	// 		for _, evt := range consecutiveEvts {
+	// 			consecutiveEvtsOutput += evt.Output
+	// 		}
+	// 		if strings.Contains(consecutiveEvtsOutput, ctest.name) {
+	// 			i = j + 1
+	// 			break
+	// 		}
+	// 	}
+	// 	if i < len(ctest.outputEvts) {
+	// 		output += ctest.outputEvts[i].Output + "\n"
+	// 	}
+
+	// }
+	// after, _ := strings.CutSuffix(output, "\n")
+	// return after
+
+	return outputEventsSlice.Output()
 }
 
 func (ctest *Ctest) MarkAsPassed(passedEvt events.CtestPassedEvent) {
