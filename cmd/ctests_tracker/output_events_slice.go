@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/internal"
 )
 
 type outputEventsSlice struct {
@@ -23,7 +24,7 @@ func (ovs *outputEventsSlice) Contains(str string) bool {
 	consecutiveEvtsOutput := ""
 	for i := 0; i < len(ovs.outputEvts); i++ {
 		consecutiveEvtsOutput += ovs.outputEvts[i].Output
-		if strings.Contains(consecutiveEvtsOutput, str) {
+		if strings.Contains(internal.DecodeGoherentTestName(consecutiveEvtsOutput), str) {
 			return true
 		}
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
+	"github.com/redjolr/goherent/internal"
 	"github.com/stretchr/testify/assert"
 
 	. "github.com/redjolr/goherent/pkg"
@@ -1407,6 +1408,77 @@ func TestCtestFailedEvent(t *testing.T) {
 		assert.Equal(
 			terminal.Text(),
 			"\n\n📦 somePackage\n\n   • Some test name    ❌\nSome tes\noutput that should be printed\nt name",
+		)
+	}, t)
+
+	Test(`
+	Given that a CtestRanEvent with name "Some \ntest name" of package "somePackage" has occurred
+	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
+		- "Some"+ENCODED_WHITESPACE+"tes", "t"+ENCODED_WHITESPACE+"name", "output that should be printed"
+	And another CtestOutputEvent event for same test with output "t name" has also occurred
+	When a CtestFailedEvent of the same test/package occurs
+	Then a user should be informed that the Ctest has failed
+	And "output that should be printed" should be printed as output`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup()
+		elapsedTime := 2.3
+
+		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Test:    "Some \ntest name",
+			Package: "somePackage",
+		})
+		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
+
+		ctestOutputEvt1 := events.NewCtestOutputEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "Some \ntest name",
+				Package: "somePackage",
+				Output:  "Some" + internal.ENCODED_WHITESPACE + internal.ENCODED_NEWLINE + "tes",
+			},
+		)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
+		ctestOutputEvt2 := events.NewCtestOutputEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "Some \ntest name",
+				Package: "somePackage",
+				Output:  "t" + internal.ENCODED_WHITESPACE + "name",
+			},
+		)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
+
+		ctestOutputEvt3 := events.NewCtestOutputEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "output",
+				Test:    "Some \ntest name",
+				Package: "somePackage",
+				Output:  "output that should be printed",
+			},
+		)
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt3)
+
+		// When
+		ctestFailedEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "fail",
+				Test:    "Some \ntest name",
+				Package: "somePackage",
+				Elapsed: &elapsedTime,
+			},
+		)
+		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"\n\n📦 somePackage\n\n   • Some \ntest name    ❌\noutput that should be printed",
 		)
 	}, t)
 }
