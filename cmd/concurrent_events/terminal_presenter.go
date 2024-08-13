@@ -8,9 +8,6 @@ import (
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
 
-const testsListId string = "testsList"
-const startingTestsTextblockId string = "startingTestsTextBlock"
-
 type TerminalPresenter struct {
 	terminal terminal.Terminal
 }
