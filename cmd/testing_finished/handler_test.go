@@ -1,4 +1,4 @@
-package testing_finished_handler_test
+package testing_finished_test
 
 import (
 	"math"
@@ -7,18 +7,18 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/testing_finished_handler"
+	"github.com/redjolr/goherent/cmd/testing_finished"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() (*testing_finished_handler.EventsHandler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup() (*testing_finished.Handler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
-	fakeAnsiTerminalPresenter := testing_finished_handler.NewTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := testing_finished.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := testing_finished_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := testing_finished.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
 }
 

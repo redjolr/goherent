@@ -1,4 +1,4 @@
-package sequential_events_handler
+package sequential_events
 
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"

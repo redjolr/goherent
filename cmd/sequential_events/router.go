@@ -1,21 +1,18 @@
-package sequential_events_handler
+package sequential_events
 
 import (
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 )
 
 type Router struct {
-	eventsMapper events.EventsMapper
-
-	eventsHandler          *EventsHandler
-	testingFinishedHandler *testing_finished_handler.EventsHandler
+	eventsMapper  events.EventsMapper
+	eventsHandler *Handler
 }
 
-func NewSequentialEventsRouter(
-	eventsHandler *EventsHandler,
+func NewRouter(
+	eventsHandler *Handler,
 ) Router {
 	return Router{
 		eventsHandler: eventsHandler,

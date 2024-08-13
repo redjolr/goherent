@@ -6,12 +6,12 @@ import (
 	"math"
 	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
+	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/sequential_events_handler"
-	"github.com/redjolr/goherent/cmd/testing_finished_handler"
-	"github.com/redjolr/goherent/cmd/testing_started_handler"
+	"github.com/redjolr/goherent/cmd/sequential_events"
+	"github.com/redjolr/goherent/cmd/testing_finished"
+	"github.com/redjolr/goherent/cmd/testing_started"
 	"github.com/redjolr/goherent/internal/consolesize"
 	"github.com/redjolr/goherent/terminal"
 )
@@ -41,26 +41,26 @@ func Main(extraCmdArgs []string) int {
 func setup() Router {
 	terminalWidth, terminalHeight := consolesize.GetConsoleSize()
 
-	var sequentialEventsOutputPort sequential_events_handler.OutputPort
+	var sequentialEventsOutputPort sequential_events.OutputPort
 	var ansiTerminal terminal.AnsiTerminal
 	if terminalHeight != 0 {
 		ansiTerminal = terminal.NewAnsiTerminal(terminalWidth, terminalHeight)
-		sequentialEventsOutputPort = sequential_events_handler.NewBoundedTerminalPresenter(&ansiTerminal)
+		sequentialEventsOutputPort = sequential_events.NewBoundedTerminalPresenter(&ansiTerminal)
 	} else {
 		ansiTerminal = terminal.NewAnsiTerminal(math.MaxInt, math.MaxInt)
-		sequentialEventsOutputPort = sequential_events_handler.NewTerminalPresenter(&ansiTerminal)
+		sequentialEventsOutputPort = sequential_events.NewTerminalPresenter(&ansiTerminal)
 	}
 
-	concurrentEventsPresenter := concurrent_events_handler.NewTerminalPresenter(&ansiTerminal)
-	testingFinishedPresenter := testing_finished_handler.NewTerminalPresenter(&ansiTerminal)
-	testingStartedPresenter := testing_started_handler.NewTerminalPresenter(&ansiTerminal)
+	concurrentEventsPresenter := concurrent_events.NewTerminalPresenter(&ansiTerminal)
+	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
+	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
-	sequentialEventsHandler := sequential_events_handler.NewEventsHandler(sequentialEventsOutputPort, &ctestsTracker)
-	concurrentEventsHandler := concurrent_events_handler.NewEventsHandler(&concurrentEventsPresenter, &ctestsTracker)
-	testingFinishedHandler := testing_finished_handler.NewEventsHandler(&testingFinishedPresenter, &ctestsTracker)
-	testingStartedHandler := testing_started_handler.NewEventsHandler(&testingStartedPresenter)
-	sequentialEventsRouter := sequential_events_handler.NewSequentialEventsRouter(&sequentialEventsHandler)
-	concurrentEventsRouter := concurrent_events_handler.NewConcurrentEventsRouter(&concurrentEventsHandler)
+	sequentialEventsHandler := sequential_events.NewHandler(sequentialEventsOutputPort, &ctestsTracker)
+	concurrentEventsHandler := concurrent_events.NewHandler(&concurrentEventsPresenter, &ctestsTracker)
+	testingFinishedHandler := testing_finished.NewHandler(&testingFinishedPresenter, &ctestsTracker)
+	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
+	sequentialEventsRouter := sequential_events.NewRouter(&sequentialEventsHandler)
+	concurrentEventsRouter := concurrent_events.NewRouter(&concurrentEventsHandler)
 
 	return NewRouter(&sequentialEventsRouter, &concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
 }

@@ -3,26 +3,26 @@ package cmd
 import (
 	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
+	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/sequential_events_handler"
-	"github.com/redjolr/goherent/cmd/testing_finished_handler"
-	"github.com/redjolr/goherent/cmd/testing_started_handler"
+	"github.com/redjolr/goherent/cmd/sequential_events"
+	"github.com/redjolr/goherent/cmd/testing_finished"
+	"github.com/redjolr/goherent/cmd/testing_started"
 )
 
 type Router struct {
-	sequential *sequential_events_handler.Router
-	concurrent *concurrent_events_handler.Router
+	sequential *sequential_events.Router
+	concurrent *concurrent_events.Router
 
-	startedHandler  *testing_started_handler.EventsHandler
-	finishedHandler *testing_finished_handler.EventsHandler
+	startedHandler  *testing_started.Handler
+	finishedHandler *testing_finished.Handler
 }
 
 func NewRouter(
-	sequential *sequential_events_handler.Router,
-	concurrent *concurrent_events_handler.Router,
-	startedHandler *testing_started_handler.EventsHandler,
-	finishedHandler *testing_finished_handler.EventsHandler,
+	sequential *sequential_events.Router,
+	concurrent *concurrent_events.Router,
+	startedHandler *testing_started.Handler,
+	finishedHandler *testing_finished.Handler,
 ) Router {
 	return Router{
 		sequential:      sequential,

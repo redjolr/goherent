@@ -1,4 +1,4 @@
-package sequential_events_handler
+package sequential_events
 
 type TestingSummary struct {
 	packagesCount        int

@@ -1,4 +1,4 @@
-package concurrent_events_handler
+package concurrent_events
 
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"

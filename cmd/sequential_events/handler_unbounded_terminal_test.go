@@ -1,4 +1,4 @@
-package sequential_events_handler_test
+package sequential_events_test
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/sequential_events_handler"
+	"github.com/redjolr/goherent/cmd/sequential_events"
 	"github.com/redjolr/goherent/internal"
 	"github.com/stretchr/testify/assert"
 
@@ -17,11 +17,11 @@ import (
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 )
 
-func setup() (*sequential_events_handler.EventsHandler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup() (*sequential_events.Handler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
-	fakeAnsiTerminalPresenter := sequential_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := sequential_events.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := sequential_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := sequential_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
 }
 

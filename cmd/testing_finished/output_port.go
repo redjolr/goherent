@@ -1,4 +1,4 @@
-package testing_finished_handler
+package testing_finished
 
 type OutputPort interface {
 	TestingFinishedSummary(summary TestingSummary)

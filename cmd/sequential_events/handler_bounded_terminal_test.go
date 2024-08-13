@@ -1,4 +1,4 @@
-package sequential_events_handler_test
+package sequential_events_test
 
 import (
 	"math"
@@ -8,21 +8,21 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/sequential_events_handler"
+	"github.com/redjolr/goherent/cmd/sequential_events"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	"github.com/stretchr/testify/assert"
 )
 
 func setupHandlerWithBoundedTerminal(height int) (
-	*sequential_events_handler.EventsHandler,
+	*sequential_events.Handler,
 	*fake_ansi_terminal.FakeAnsiTerminal,
 	*ctests_tracker.CtestsTracker,
 ) {
 	boundedFakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, height)
-	fakeAnsiTerminalPresenter := sequential_events_handler.NewBoundedTerminalPresenter(&boundedFakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := sequential_events.NewBoundedTerminalPresenter(&boundedFakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := sequential_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := sequential_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &boundedFakeAnsiTerminal, &ctestTracker
 }
 

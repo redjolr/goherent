@@ -1,11 +1,11 @@
-package concurrent_events_handler_test
+package concurrent_events_test
 
 import (
 	"math"
 	"testing"
 	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
+	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 
@@ -14,11 +14,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() (*concurrent_events_handler.EventsHandler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup() (*concurrent_events.Handler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
-	fakeAnsiTerminalPresenter := concurrent_events_handler.NewTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := concurrent_events.NewTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := concurrent_events_handler.NewEventsHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := concurrent_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
 }
 

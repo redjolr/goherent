@@ -1,4 +1,4 @@
-package concurrent_events_handler
+package concurrent_events
 
 import (
 	"strings"
@@ -8,11 +8,11 @@ import (
 
 type Router struct {
 	eventsMapper  events.EventsMapper
-	eventsHandler *EventsHandler
+	eventsHandler *Handler
 }
 
-func NewConcurrentEventsRouter(
-	eventsHandler *EventsHandler,
+func NewRouter(
+	eventsHandler *Handler,
 ) Router {
 
 	return Router{

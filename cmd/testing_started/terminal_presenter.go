@@ -1,4 +1,4 @@
-package testing_started_handler
+package testing_started
 
 import (
 	"github.com/redjolr/goherent/terminal"

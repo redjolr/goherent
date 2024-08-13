@@ -1,4 +1,4 @@
-package concurrent_events_handler
+package testing_finished
 
 type TestingSummary struct {
 	packagesCount        int
