@@ -5,8 +5,6 @@ import (
 )
 
 type OutputPort interface {
-	TestingStarted()
-	TestingFinishedSummary(summary TestingSummary)
 	PackageStarted(packageUt ctests_tracker.PackageUnderTest)
 	EraseScreen()
 	Packages(packages []*ctests_tracker.PackageUnderTest)

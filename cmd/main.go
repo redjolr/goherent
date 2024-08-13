@@ -52,7 +52,7 @@ func setup() Router {
 		sequentialEventsOutputPort = sequential_events.NewTerminalPresenter(&ansiTerminal)
 	}
 
-	concurrentEventsPresenter := concurrent_events.NewTerminalPresenter(&ansiTerminal)
+	concurrentEventsPresenter := concurrent_events.NewUnboundedTerminalPresenter(&ansiTerminal)
 	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
 	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()

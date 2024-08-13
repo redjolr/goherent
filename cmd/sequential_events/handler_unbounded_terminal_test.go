@@ -519,7 +519,6 @@ func TestCtestFailedEvent(t *testing.T) {
 			},
 		)
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-		t.Error("YUUP")
 
 		// Then
 		assert.Equal(
