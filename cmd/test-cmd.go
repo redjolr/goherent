@@ -11,10 +11,8 @@ type TestCmd struct {
 	staticArgs []string
 	args       []string
 
-	cmd                  *exec.Cmd
-	scanner              *bufio.Scanner
-	scannerHasMoreToScan bool
-	scannedText          string
+	cmd     *exec.Cmd
+	scanner *bufio.Scanner
 
 	startTime  time.Time
 	endTime    time.Time
@@ -24,16 +22,14 @@ type TestCmd struct {
 
 func NewTestCmd(args []string) TestCmd {
 	return TestCmd{
-		staticArgs:           []string{"test", "-json"},
-		args:                 args,
-		cmd:                  nil,
-		scanner:              nil,
-		scannerHasMoreToScan: true,
-		scannedText:          "",
-		startTime:            time.Time{},
-		endTime:              time.Time{},
-		hasStarted:           false,
-		hasEnded:             false,
+		staticArgs: []string{"test", "-json"},
+		args:       args,
+		cmd:        nil,
+		scanner:    nil,
+		startTime:  time.Time{},
+		endTime:    time.Time{},
+		hasStarted: false,
+		hasEnded:   false,
 	}
 }
 
@@ -66,16 +62,12 @@ func (t *TestCmd) Wait() {
 	t.endTime = time.Now()
 }
 
-func (t *TestCmd) NextOutput() string {
-	return t.scannedText
+func (t *TestCmd) Output() string {
+	return t.scanner.Text()
 }
 
 func (t *TestCmd) IsRunning() bool {
-	t.scannerHasMoreToScan = t.scanner.Scan()
-	if t.scannerHasMoreToScan {
-		t.scannedText = t.scanner.Text()
-	}
-	return t.scannerHasMoreToScan
+	return t.scanner.Scan()
 }
 
 func (t *TestCmd) ExecutionTime() time.Duration {

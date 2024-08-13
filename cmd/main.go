@@ -22,10 +22,9 @@ func Main(extraCmdArgs []string) int {
 	testCmd := NewTestCmd(extraCmdArgs)
 	testCmd.Exec()
 	router.RouteTestingStartedEvent(time.Now())
-
 	for testCmd.IsRunning() {
 		var jsonEvt events.JsonEvent
-		output := testCmd.NextOutput()
+		output := testCmd.Output()
 		err := json.Unmarshal([]byte(output), &jsonEvt)
 
 		if err != nil {
