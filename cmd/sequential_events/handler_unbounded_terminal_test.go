@@ -19,7 +19,7 @@ import (
 
 func setup() (*sequential_events.Handler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
-	fakeAnsiTerminalPresenter := sequential_events.NewTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := sequential_events.NewUnboundedTerminalPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
 	eventsHandler := sequential_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker

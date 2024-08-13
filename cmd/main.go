@@ -49,7 +49,7 @@ func setup() Router {
 		sequentialEventsOutputPort = sequential_events.NewBoundedTerminalPresenter(&ansiTerminal)
 	} else {
 		ansiTerminal = terminal.NewAnsiTerminal(math.MaxInt, math.MaxInt)
-		sequentialEventsOutputPort = sequential_events.NewTerminalPresenter(&ansiTerminal)
+		sequentialEventsOutputPort = sequential_events.NewUnboundedTerminalPresenter(&ansiTerminal)
 	}
 
 	concurrentEventsPresenter := concurrent_events.NewUnboundedTerminalPresenter(&ansiTerminal)
