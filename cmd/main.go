@@ -20,7 +20,9 @@ func Main(extraCmdArgs []string) int {
 	router := setup()
 
 	testCmd := NewTestCmd(extraCmdArgs)
-	testCmd.Exec()
+	testCmd.
+		NonVerbose().
+		Exec()
 	router.RouteTestingStartedEvent(time.Now())
 	for testCmd.IsRunning() {
 		var jsonEvt events.JsonEvent

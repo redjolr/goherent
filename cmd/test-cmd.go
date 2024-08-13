@@ -38,7 +38,7 @@ func (t *TestCmd) RunsTestsConcurrently() bool {
 	return !(pArgumentIndex != -1 && len(t.args) >= pArgumentIndex+2 && t.args[pArgumentIndex+1] == "1")
 }
 
-func (t *TestCmd) Exec() {
+func (t *TestCmd) Exec() *TestCmd {
 	t.cmd = exec.Command("go", slices.Concat(t.staticArgs, t.args)...)
 	t.hasStarted = true
 	t.startTime = time.Now()
@@ -54,6 +54,7 @@ func (t *TestCmd) Exec() {
 	}
 	t.scanner = bufio.NewScanner(stdout)
 	t.scanner.Split(bufio.ScanLines)
+	return t
 }
 
 func (t *TestCmd) Wait() {
@@ -78,4 +79,19 @@ func (t *TestCmd) ExecutionTime() time.Duration {
 		return time.Since(t.startTime)
 	}
 	return t.endTime.Sub(t.startTime)
+}
+
+func (t *TestCmd) NonVerbose() *TestCmd {
+	verboseArgInd := slices.Index(t.args, "-v")
+	if verboseArgInd != -1 {
+		if verboseArgInd == len(t.args)-1 {
+			t.args = t.args[0:verboseArgInd]
+		} else {
+			t.args = slices.Concat(
+				t.args[0:verboseArgInd],
+				t.args[verboseArgInd+1:],
+			)
+		}
+	}
+	return t
 }
