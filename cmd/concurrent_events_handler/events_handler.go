@@ -19,10 +19,6 @@ func NewEventsHandler(output OutputPort, ctestTracker *ctests_tracker.CtestsTrac
 	}
 }
 
-func (eh EventsHandler) HandleTestingStarted(evt events.TestingStartedEvent) {
-	eh.output.TestingStarted()
-}
-
 func (eh EventsHandler) HandlePackageStartedEvent(evt events.PackageStartedEvent) error {
 	existingPackageUt := eh.ctestsTracker.FindPackageWithName(evt.PackageName)
 	if existingPackageUt != nil {

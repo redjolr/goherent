@@ -11,11 +11,34 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events_handler"
 	"github.com/redjolr/goherent/cmd/testing_finished_handler"
+	"github.com/redjolr/goherent/cmd/testing_started_handler"
 	"github.com/redjolr/goherent/internal/consolesize"
 	"github.com/redjolr/goherent/terminal"
 )
 
-func setup() (Router, ConcurrentEventsRouter) {
+func Main(extraCmdArgs []string) int {
+	router := setup()
+
+	testCmd := NewTestCmd(extraCmdArgs)
+	testCmd.Exec()
+	router.RouteTestingStartedEvent(time.Now())
+
+	for testCmd.IsRunning() {
+		var jsonEvt events.JsonEvent
+		output := testCmd.NextOutput()
+		err := json.Unmarshal([]byte(output), &jsonEvt)
+
+		if err != nil {
+			log.Fatalf("Unable to marshal JSON due to %s", err)
+		}
+		router.Route(jsonEvt, testCmd.RunsTestsConcurrently())
+	}
+	testCmd.Wait()
+	router.RouteTestingFinishedEvent(testCmd.ExecutionTime())
+	return 0
+}
+
+func setup() Router {
 	terminalWidth, terminalHeight := consolesize.GetConsoleSize()
 
 	var sequentialEventsOutputPort sequential_events_handler.OutputPort
@@ -30,38 +53,14 @@ func setup() (Router, ConcurrentEventsRouter) {
 
 	concurrentEventsPresenter := concurrent_events_handler.NewTerminalPresenter(&ansiTerminal)
 	testingFinishedPresenter := testing_finished_handler.NewTerminalPresenter(&ansiTerminal)
+	testingStartedPresenter := testing_started_handler.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	sequentialEventsHandler := sequential_events_handler.NewEventsHandler(sequentialEventsOutputPort, &ctestsTracker)
 	concurrentEventsHandler := concurrent_events_handler.NewEventsHandler(&concurrentEventsPresenter, &ctestsTracker)
 	testingFinishedHandler := testing_finished_handler.NewEventsHandler(&testingFinishedPresenter, &ctestsTracker)
+	testingStartedHandler := testing_started_handler.NewEventsHandler(&testingStartedPresenter)
+	sequentialEventsRouter := sequential_events_handler.NewSequentialEventsRouter(&sequentialEventsHandler)
+	concurrentEventsRouter := concurrent_events_handler.NewConcurrentEventsRouter(&concurrentEventsHandler)
 
-	return NewRouter(&sequentialEventsHandler, &testingFinishedHandler),
-		NewConcurrentEventsRouter(&concurrentEventsHandler, &testingFinishedHandler)
-}
-
-func Main(extraCmdArgs []string) int {
-	router, concurrentEventsRouter := setup()
-
-	testCmd := NewTestCmd(extraCmdArgs)
-	testCmd.Exec()
-	router.RouteTestingStartedEvent(time.Now())
-
-	for testCmd.IsRunning() {
-		var jsonEvt events.JsonEvent
-		output := testCmd.NextOutput()
-		err := json.Unmarshal([]byte(output), &jsonEvt)
-
-		if err != nil {
-			log.Fatalf("Unable to marshal JSON due to %s", err)
-		}
-
-		if testCmd.RunsTestsConcurrently() {
-			concurrentEventsRouter.RouteJsonEvent(jsonEvt)
-		} else {
-			router.RouteJsonEvent(jsonEvt)
-		}
-	}
-	testCmd.Wait()
-	router.RouteTestingFinishedEvent(testCmd.ExecutionTime())
-	return 0
+	return NewRouter(&sequentialEventsRouter, &concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
 }

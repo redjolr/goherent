@@ -22,21 +22,6 @@ func setup() (*concurrent_events_handler.EventsHandler, *fake_ansi_terminal.Fake
 	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
 }
 
-func TestHandleTestingStarted(t *testing.T) {
-	assert := assert.New(t)
-	Test("User should be informed, that the testing has started", func(t *testing.T) {
-		eventsHandler, terminal, _ := setup()
-		now := time.Now()
-		testingStartedEvt := events.NewTestingStartedEvent(now)
-		eventsHandler.HandleTestingStarted(testingStartedEvt)
-
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting...",
-		)
-	}, t)
-}
-
 func TestHandlePackageStartedEvent(t *testing.T) {
 	assert := assert.New(t)
 	Test(`

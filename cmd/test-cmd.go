@@ -14,6 +14,7 @@ type TestCmd struct {
 	cmd                  *exec.Cmd
 	scanner              *bufio.Scanner
 	scannerHasMoreToScan bool
+	scannedText          string
 
 	startTime  time.Time
 	endTime    time.Time
@@ -28,6 +29,7 @@ func NewTestCmd(args []string) TestCmd {
 		cmd:                  nil,
 		scanner:              nil,
 		scannerHasMoreToScan: true,
+		scannedText:          "",
 		startTime:            time.Time{},
 		endTime:              time.Time{},
 		hasStarted:           false,
@@ -65,14 +67,14 @@ func (t *TestCmd) Wait() {
 }
 
 func (t *TestCmd) NextOutput() string {
-	t.scannerHasMoreToScan = t.scanner.Scan()
-	if t.scannerHasMoreToScan {
-		return t.scanner.Text()
-	}
-	return ""
+	return t.scannedText
 }
 
 func (t *TestCmd) IsRunning() bool {
+	t.scannerHasMoreToScan = t.scanner.Scan()
+	if t.scannerHasMoreToScan {
+		t.scannedText = t.scanner.Text()
+	}
 	return t.scannerHasMoreToScan
 }
 

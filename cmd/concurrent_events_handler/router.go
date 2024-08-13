@@ -1,34 +1,27 @@
-package cmd
+package concurrent_events_handler
 
 import (
 	"strings"
-	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events_handler"
 	"github.com/redjolr/goherent/cmd/events"
-	"github.com/redjolr/goherent/cmd/testing_finished_handler"
 )
 
-type ConcurrentEventsRouter struct {
-	eventsMapper EventsMapper
-
-	eventsHandler          *concurrent_events_handler.EventsHandler
-	testingFinishedHandler *testing_finished_handler.EventsHandler
+type Router struct {
+	eventsMapper  events.EventsMapper
+	eventsHandler *EventsHandler
 }
 
 func NewConcurrentEventsRouter(
-	eventsHandler *concurrent_events_handler.EventsHandler,
-	testingFinishedHandler *testing_finished_handler.EventsHandler,
-) ConcurrentEventsRouter {
+	eventsHandler *EventsHandler,
+) Router {
 
-	return ConcurrentEventsRouter{
-		eventsHandler:          eventsHandler,
-		testingFinishedHandler: testingFinishedHandler,
-		eventsMapper:           NewEventsMapper(),
+	return Router{
+		eventsHandler: eventsHandler,
+		eventsMapper:  events.NewEventsMapper(),
 	}
 }
 
-func (router ConcurrentEventsRouter) RouteJsonEvent(jsonEvt events.JsonEvent) {
+func (router Router) Route(jsonEvt events.JsonEvent) {
 	if jsonEvt.Test == nil && jsonEvt.Action == "pass" {
 		packagePassedEvt := router.eventsMapper.JsonTestEvt2PackagePassedEvt(jsonEvt)
 		router.eventsHandler.HandlePackagePassed(packagePassedEvt)
@@ -60,14 +53,4 @@ func (router ConcurrentEventsRouter) RouteJsonEvent(jsonEvt events.JsonEvent) {
 		ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
 		router.eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 	}
-}
-
-func (router ConcurrentEventsRouter) RouteTestingStartedEvent(timestamp time.Time) {
-	testingStartedEvt := events.NewTestingStartedEvent(timestamp)
-	router.eventsHandler.HandleTestingStarted(testingStartedEvt)
-}
-
-func (router ConcurrentEventsRouter) RouteTestingFinishedEvent(duration time.Duration) {
-	testingFinishedEvt := events.NewTestingFinishedEvent(duration)
-	router.testingFinishedHandler.HandleTestingFinished(testingFinishedEvt)
 }
