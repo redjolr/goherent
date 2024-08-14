@@ -1,4 +1,4 @@
-package concurrent_events
+package unbounded_terminal_handler
 
 import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"

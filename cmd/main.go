@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"log"
-	"math"
 	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
@@ -39,29 +38,27 @@ func Main(extraCmdArgs []string) int {
 	return 0
 }
 
-func setup() Router {
-	terminalWidth, terminalHeight := consolesize.GetConsoleSize()
+func setup() *Router {
+	consoleWidth, consoleHeight := consolesize.GetConsoleSize()
 
 	var sequentialEventsOutputPort sequential_events.OutputPort
 	var ansiTerminal terminal.AnsiTerminal
-	if terminalHeight != 0 {
-		ansiTerminal = terminal.NewAnsiTerminal(terminalWidth, terminalHeight)
+	if consoleHeight != 0 {
+		ansiTerminal = terminal.NewBoundedAnsiTerminal(consoleWidth, consoleHeight)
 		sequentialEventsOutputPort = sequential_events.NewBoundedTerminalPresenter(&ansiTerminal)
 	} else {
-		ansiTerminal = terminal.NewAnsiTerminal(math.MaxInt, math.MaxInt)
+		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
 		sequentialEventsOutputPort = sequential_events.NewUnboundedTerminalPresenter(&ansiTerminal)
 	}
 
-	concurrentEventsPresenter := concurrent_events.NewUnboundedTerminalPresenter(&ansiTerminal)
 	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
 	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
 	sequentialEventsHandler := sequential_events.NewHandler(sequentialEventsOutputPort, &ctestsTracker)
-	concurrentEventsHandler := concurrent_events.NewHandler(&concurrentEventsPresenter, &ctestsTracker)
 	testingFinishedHandler := testing_finished.NewHandler(&testingFinishedPresenter, &ctestsTracker)
 	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
 	sequentialEventsRouter := sequential_events.NewRouter(&sequentialEventsHandler)
-	concurrentEventsRouter := concurrent_events.NewRouter(&concurrentEventsHandler)
-
-	return NewRouter(&sequentialEventsRouter, &concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
+	concurrentEventsRouter := concurrent_events.Setup(&ansiTerminal)
+	router := NewRouter(&sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
+	return &router
 }

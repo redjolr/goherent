@@ -1,11 +1,11 @@
-package concurrent_events_test
+package unbounded_terminal_handler_test
 
 import (
 	"math"
 	"testing"
 	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events"
+	"github.com/redjolr/goherent/cmd/concurrent_events/unbounded_terminal_handler"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 
@@ -14,12 +14,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup() (*concurrent_events.Handler, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup() (*unbounded_terminal_handler.Interactor, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
-	fakeAnsiTerminalPresenter := concurrent_events.NewUnboundedTerminalPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := unbounded_terminal_handler.NewPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := concurrent_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
-	return &eventsHandler, &fakeAnsiTerminal, &ctestTracker
+	interactor := unbounded_terminal_handler.NewInteractor(&fakeAnsiTerminalPresenter, &ctestTracker)
+	return &interactor, &fakeAnsiTerminal, &ctestTracker
 }
 
 func TestHandlePackageStartedEvent(t *testing.T) {

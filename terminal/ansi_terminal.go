@@ -11,11 +11,22 @@ type AnsiTerminal struct {
 	width  int
 }
 
-func NewAnsiTerminal(width, height int) AnsiTerminal {
+func NewBoundedAnsiTerminal(width, height int) AnsiTerminal {
 	return AnsiTerminal{
 		height: height,
 		width:  width,
 	}
+}
+
+func NewUnboundedAnsiTerminal() AnsiTerminal {
+	return AnsiTerminal{
+		height: -1,
+		width:  -1,
+	}
+}
+
+func (at *AnsiTerminal) IsBounded() bool {
+	return at.height != -1
 }
 
 func (at *AnsiTerminal) Print(text string) {

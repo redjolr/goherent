@@ -32,7 +32,7 @@ func NewRouter(
 	}
 }
 
-func (r Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
+func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	if concurrently {
 		r.concurrent.Route(jsonEvt)
 	} else {
@@ -40,12 +40,12 @@ func (r Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	}
 }
 
-func (router Router) RouteTestingStartedEvent(timestamp time.Time) {
+func (router *Router) RouteTestingStartedEvent(timestamp time.Time) {
 	testingStartedEvt := events.NewTestingStartedEvent(timestamp)
 	router.startedHandler.HandleTestingStarted(testingStartedEvt)
 }
 
-func (router Router) RouteTestingFinishedEvent(duration time.Duration) {
+func (router *Router) RouteTestingFinishedEvent(duration time.Duration) {
 	testingFinishedEvt := events.NewTestingFinishedEvent(duration)
 	router.finishedHandler.HandleTestingFinished(testingFinishedEvt)
 }
