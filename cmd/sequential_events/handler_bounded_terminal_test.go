@@ -14,15 +14,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setupHandlerWithBoundedTerminal(height int) (
-	*sequential_events.Handler,
+func setupInteractorWithBoundedTerminal(height int) (
+	*sequential_events.Interactor,
 	*fake_ansi_terminal.FakeAnsiTerminal,
 	*ctests_tracker.CtestsTracker,
 ) {
 	boundedFakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, height)
 	fakeAnsiTerminalPresenter := sequential_events.NewBoundedTerminalPresenter(&boundedFakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	eventsHandler := sequential_events.NewHandler(&fakeAnsiTerminalPresenter, &ctestTracker)
+	eventsHandler := sequential_events.NewInteractor(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &eventsHandler, &boundedFakeAnsiTerminal, &ctestTracker
 }
 
@@ -36,7 +36,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the testing of a new package started and
 	that the first test of that package started running.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		// When
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -62,7 +62,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	that the first test of that package started running
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		// When
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -87,7 +87,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	Then the second CtestRanEvent should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(20)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(20)
 
 		// When
 		ctestRanEvt1 := events.NewCtestRanEvent(
@@ -122,7 +122,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should be informed only once that the given test from the given package is running.`, func(t *testing.T) {
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		// Given
 		ctestRanEvt := events.NewCtestRanEvent(
@@ -155,7 +155,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -192,7 +192,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -229,7 +229,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -266,7 +266,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -303,7 +303,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -341,7 +341,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestPassedEvent of with name "testName 2" of package "somePackage" occurs
 	Then the user should be informed that the test has passed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -399,7 +399,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -457,7 +457,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -515,7 +515,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -573,7 +573,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -628,7 +628,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -665,7 +665,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -704,7 +704,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has passed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -762,7 +762,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestPassedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
 
 		// When
@@ -791,7 +791,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestPassedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -831,7 +831,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -868,7 +868,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -905,7 +905,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -942,7 +942,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -979,7 +979,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1017,7 +1017,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestFailedEvent of with name "testName 2" of package "somePackage" occurs
 	Then the user should be informed that the test has failed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1075,7 +1075,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1133,7 +1133,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1191,7 +1191,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1249,7 +1249,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1304,7 +1304,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1341,7 +1341,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1380,7 +1380,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test has failed
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1438,7 +1438,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestFailedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
 
 		// When
@@ -1467,7 +1467,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestFailedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1504,7 +1504,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
 
 		ctestOutputEvt1 := events.NewCtestOutputEvent(
@@ -1555,7 +1555,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 1.2
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1604,7 +1604,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(5)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1664,7 +1664,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
@@ -1726,7 +1726,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1761,7 +1761,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1796,7 +1796,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1831,7 +1831,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1866,7 +1866,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1902,7 +1902,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestSkippedEvent of with name "testName 2" of package "somePackage" occurs
 	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -1957,7 +1957,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2012,7 +2012,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2067,7 +2067,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2122,7 +2122,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(2)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2174,7 +2174,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2209,7 +2209,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2246,7 +2246,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the user should be informed that the test was skipped
 	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(3)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
 		ctestRanEvt1 := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2300,7 +2300,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestSkippedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
 
 		// When
@@ -2328,7 +2328,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Then the HandleCtestSkippedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(t *testing.T) {
 		// Given
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
@@ -2360,7 +2360,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 func TestHandleTestingStartedWithBoundedTerminal(t *testing.T) {
 	assert := assert.New(t)
 	Test("User should be informed, that the testing has started", func(t *testing.T) {
-		eventsHandler, terminal, _ := setupHandlerWithBoundedTerminal(1)
+		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		now := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(now)
 		eventsHandler.HandleTestingStarted(testingStartedEvt)

@@ -8,11 +8,11 @@ import (
 
 type Router struct {
 	eventsMapper  events.EventsMapper
-	eventsHandler *Handler
+	eventsHandler *Interactor
 }
 
 func NewRouter(
-	eventsHandler *Handler,
+	eventsHandler *Interactor,
 ) Router {
 	return Router{
 		eventsHandler: eventsHandler,

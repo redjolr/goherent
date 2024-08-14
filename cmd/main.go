@@ -40,25 +40,20 @@ func Main(extraCmdArgs []string) int {
 
 func setup() *Router {
 	consoleWidth, consoleHeight := consolesize.GetConsoleSize()
-
-	var sequentialEventsOutputPort sequential_events.OutputPort
+	consoleHeight = 0
 	var ansiTerminal terminal.AnsiTerminal
 	if consoleHeight != 0 {
 		ansiTerminal = terminal.NewBoundedAnsiTerminal(consoleWidth, consoleHeight)
-		sequentialEventsOutputPort = sequential_events.NewBoundedTerminalPresenter(&ansiTerminal)
 	} else {
 		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
-		sequentialEventsOutputPort = sequential_events.NewUnboundedTerminalPresenter(&ansiTerminal)
 	}
-
 	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
 	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
-	sequentialEventsHandler := sequential_events.NewHandler(sequentialEventsOutputPort, &ctestsTracker)
 	testingFinishedHandler := testing_finished.NewHandler(&testingFinishedPresenter, &ctestsTracker)
 	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
-	sequentialEventsRouter := sequential_events.NewRouter(&sequentialEventsHandler)
+	sequentialEventsRouter := sequential_events.Setup(&ansiTerminal)
 	concurrentEventsRouter := concurrent_events.Setup(&ansiTerminal)
-	router := NewRouter(&sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
+	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
 	return &router
 }
