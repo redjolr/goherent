@@ -4,16 +4,16 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 )
 
-type Handler struct {
+type Interactor struct {
 	output OutputPort
 }
 
-func NewEventsHandler(output OutputPort) Handler {
-	return Handler{
+func NewEventsHandler(output OutputPort) Interactor {
+	return Interactor{
 		output: output,
 	}
 }
 
-func (h Handler) HandleTestingStarted(evt events.TestingStartedEvent) {
-	h.output.TestingStarted()
+func (i Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
+	i.output.TestingStarted()
 }

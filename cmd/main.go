@@ -50,10 +50,10 @@ func setup() *Router {
 	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
 	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
-	testingFinishedHandler := testing_finished.NewHandler(&testingFinishedPresenter, &ctestsTracker)
+	testingFinishedInteractor := testing_finished.NewInteractor(&testingFinishedPresenter, &ctestsTracker)
 	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
 	sequentialEventsRouter := sequential_events.Setup(&ansiTerminal)
 	concurrentEventsRouter := concurrent_events.Setup(&ansiTerminal)
-	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedHandler)
+	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedInteractor)
 	return &router
 }

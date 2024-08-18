@@ -14,15 +14,15 @@ type Router struct {
 	sequential *sequential_events.Router
 	concurrent *concurrent_events.Router
 
-	startedHandler  *testing_started.Handler
-	finishedHandler *testing_finished.Handler
+	startedHandler  *testing_started.Interactor
+	finishedHandler *testing_finished.Interactor
 }
 
 func NewRouter(
 	sequential *sequential_events.Router,
 	concurrent *concurrent_events.Router,
-	startedHandler *testing_started.Handler,
-	finishedHandler *testing_finished.Handler,
+	startedHandler *testing_started.Interactor,
+	finishedHandler *testing_finished.Interactor,
 ) Router {
 	return Router{
 		sequential:      sequential,
