@@ -100,6 +100,10 @@ func (tracker *CtestsTracker) PackagesCount() int {
 	return len(tracker.packagesUnderTest)
 }
 
+func (tracker *CtestsTracker) HasPackages() bool {
+	return tracker.PackagesCount() > 0
+}
+
 func (tracker *CtestsTracker) CtestsCount() int {
 	count := 0
 	for _, packageUt := range tracker.packagesUnderTest {

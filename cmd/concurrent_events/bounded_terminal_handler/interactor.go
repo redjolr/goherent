@@ -18,6 +18,16 @@ func NewInteractor(output OutputPort, ctestTracker *ctests_tracker.CtestsTracker
 }
 
 func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) error {
-	i.output.DisplayCurrentState([]ctests_tracker.PackageUnderTest{})
+	existingPackageUt := i.ctestsTracker.FindPackageWithName(evt.PackageName)
+	if existingPackageUt != nil {
+		return nil
+	}
+
+	i.ctestsTracker.InsertPackageUt(evt.PackageName)
+	if i.ctestsTracker.HasPackages() {
+		i.output.EraseScreen()
+	}
+
+	i.output.DisplayPackages(i.ctestsTracker.Packages())
 	return nil
 }

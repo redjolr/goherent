@@ -5,5 +5,6 @@ import (
 )
 
 type OutputPort interface {
-	DisplayCurrentState(runningTests []ctests_tracker.PackageUnderTest)
+	EraseScreen()
+	DisplayPackages(runningTests []*ctests_tracker.PackageUnderTest)
 }
