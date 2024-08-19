@@ -64,8 +64,8 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), p.terminal.Height())]
 
 	if len(runningPackages) < p.terminal.Height() && len(passedPackages) > 0 {
-		showPassedPackagesCount := len(passedPackages)
-		latestPassedPackages := passedPackages[showPassedPackagesCount-1:]
+		showPassedPackagesCount := min(len(passedPackages), p.terminal.Height()-len(runningPackages))
+		latestPassedPackages := passedPackages[len(passedPackages)-showPassedPackagesCount:]
 		for i, packageut := range latestPassedPackages {
 			if i != 0 {
 				p.terminal.Print("\n")
