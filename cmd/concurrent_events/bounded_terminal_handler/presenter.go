@@ -10,6 +10,8 @@ type Presenter struct {
 	terminal terminal.Terminal
 }
 
+const SummaryLineCount int = 4
+
 func NewPresenter(term terminal.Terminal) Presenter {
 	return Presenter{
 		terminal: term,
@@ -17,12 +19,11 @@ func NewPresenter(term terminal.Terminal) Presenter {
 }
 
 func (p *Presenter) DisplayPackages(packagesUt []*ctests_tracker.PackageUnderTest) {
-
 	var packagesThatFitInTerminalCount int
-	if p.terminal.Height() < 5 {
+	if p.terminal.Height() <= 5 {
 		packagesThatFitInTerminalCount = p.terminal.Height()
 	} else {
-		packagesThatFitInTerminalCount = p.terminal.Height() - 4
+		packagesThatFitInTerminalCount = p.terminal.Height() - SummaryLineCount
 	}
 	packagesThatFitInTerminal := packagesUt[0:min(len(packagesUt), packagesThatFitInTerminalCount)]
 	for i, packageut := range packagesThatFitInTerminal {
@@ -32,20 +33,19 @@ func (p *Presenter) DisplayPackages(packagesUt []*ctests_tracker.PackageUnderTes
 		p.terminal.Print("⏳ " + packageut.Name())
 	}
 
-	if p.terminal.Height() >= 5 {
+	if p.terminal.Height() > 5 {
 		packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
 		testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 		timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
 		runningPackagesCount := len(packagesUt)
 		p.terminal.Printf(
-			"\n"+
+			"\n\n"+
 				packagesSummary+"%d running\n"+
 				testsSummary+"0 running\n"+
 				timeSummary,
 			runningPackagesCount,
 		)
 	}
-
 }
 
 func (p *Presenter) EraseScreen() {

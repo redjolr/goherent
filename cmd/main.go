@@ -40,7 +40,6 @@ func Main(extraCmdArgs []string) int {
 
 func setup() *Router {
 	consoleWidth, consoleHeight := consolesize.GetConsoleSize()
-	consoleHeight = 0
 	var ansiTerminal terminal.AnsiTerminal
 	if consoleHeight != 0 {
 		ansiTerminal = terminal.NewBoundedAnsiTerminal(consoleWidth, consoleHeight)
