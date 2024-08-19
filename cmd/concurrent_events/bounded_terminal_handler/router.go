@@ -1,6 +1,8 @@
 package bounded_terminal_handler
 
 import (
+	"strings"
+
 	"github.com/redjolr/goherent/cmd/events"
 )
 
@@ -18,10 +20,10 @@ func NewRouter(interactor *Interactor) Router {
 }
 
 func (router *Router) Route(jsonEvt events.JsonEvent) {
-	// if jsonEvt.Test == nil && jsonEvt.Action == "pass" {
-	// 	packagePassedEvt := router.eventsMapper.JsonTestEvt2PackagePassedEvt(jsonEvt)
-	// 	router.interactor.HandlePackagePassed(packagePassedEvt)
-	// }
+	if jsonEvt.Test == nil && jsonEvt.Action == "pass" {
+		packagePassedEvt := router.eventsMapper.JsonTestEvt2PackagePassedEvt(jsonEvt)
+		router.interactor.HandlePackagePassed(packagePassedEvt)
+	}
 	// if jsonEvt.Test == nil && jsonEvt.Action == "fail" {
 	// 	packageFailedEvt := router.eventsMapper.JsonTestEvt2PackageFailedEvt(jsonEvt)
 	// 	router.interactor.HandlePackageFailed(packageFailedEvt)
@@ -37,10 +39,10 @@ func (router *Router) Route(jsonEvt events.JsonEvent) {
 	// 	router.interactor.HandleNoPackageTestsFoundEvent(noPackageTestsFoundEvt)
 	// }
 
-	// if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
-	// 	ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
-	// 	router.interactor.HandleCtestPassedEvent(ctestPassedEvt)
-	// }
+	if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
+		router.interactor.HandleCtestPassedEvent(ctestPassedEvt)
+	}
 	// if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
 	// 	ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 	// 	router.interactor.HandleCtestFailedEvent(ctestFailedEvt)

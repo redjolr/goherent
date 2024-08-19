@@ -1,6 +1,8 @@
 package bounded_terminal_handler
 
 import (
+	"fmt"
+
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/terminal"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
@@ -34,15 +36,24 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 	passedPackages []*ctests_tracker.PackageUnderTest,
 ) {
 	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
-	packagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
+	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
 
-	for i, packageUt := range passedPackages {
-		if i != 0 {
+	if len(runningPackages) < packagesThatFitInTerminalCount && len(passedPackages) > 0 {
+		showPassedPackagesCount := min(len(passedPackages), packagesThatFitInTerminalCount-len(runningPackages))
+		latestPassedPackages := passedPackages[len(passedPackages)-showPassedPackagesCount:]
+		for i, packageUt := range latestPassedPackages {
+			if i != 0 {
+				p.terminal.Print("\n")
+			}
+			p.terminal.Print("✅ " + packageUt.Name())
+
+		}
+		if len(runningPackages) > 0 {
 			p.terminal.Print("\n")
 		}
-		p.terminal.Print("✅ " + packageUt.Name())
 	}
-	for i, packageUt := range packagesThatFitInTerminal {
+
+	for i, packageUt := range runningPackagesThatFitInTerminal {
 		if i != 0 {
 			p.terminal.Print("\n")
 		}
@@ -54,12 +65,18 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 		testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 		timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
 		runningPackagesCount := len(runningPackages)
-		p.terminal.Printf(
-			"\n\n"+
-				packagesSummary+"%d running\n"+
-				testsSummary+"0 running\n"+
+		passedPackagesCount := len(passedPackages)
+
+		packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
+		if passedPackagesCount > 0 {
+			packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
+		}
+
+		p.terminal.Print(
+			"\n\n" +
+				packagesSummary + "\n" +
+				testsSummary + "0 running\n" +
 				timeSummary,
-			runningPackagesCount,
 		)
 	}
 }
