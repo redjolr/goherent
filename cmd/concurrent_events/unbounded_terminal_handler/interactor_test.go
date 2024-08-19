@@ -193,7 +193,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 And the user will be informed that the package tests have passed
+	 And the user will be informed that an error has occurred.
 	`, func(t *testing.T) {
 		// Given
 		eventsHandler, fakeTerminal, _ := setup()

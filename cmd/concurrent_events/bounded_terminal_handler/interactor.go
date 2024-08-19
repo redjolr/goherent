@@ -1,6 +1,8 @@
 package bounded_terminal_handler
 
 import (
+	"errors"
+
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 )
@@ -28,6 +30,37 @@ func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) er
 		i.output.EraseScreen()
 	}
 
-	i.output.DisplayPackages(i.ctestsTracker.Packages())
+	i.output.DisplayPackages(i.ctestsTracker.RunningPackages(), i.ctestsTracker.PassedPackages())
 	return nil
+}
+
+func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
+	existingPackageUt := i.ctestsTracker.FindPackageWithName(evt.PackageName)
+	if existingPackageUt == nil {
+		i.output.Error()
+		return errors.New("No existing test found for test pass event.")
+	}
+	if !existingPackageUt.HasAtLeastOnePassedTest() && !existingPackageUt.HasAtLeastOneSkippedTest() {
+		i.output.Error()
+		return errors.New("No passing test found for the package that received a PackagePassedEvent.")
+	}
+	existingPackageUt.MarkAsFinished()
+	i.output.EraseScreen()
+	i.output.DisplayPackages(i.ctestsTracker.RunningPackages(), i.ctestsTracker.PassedPackages())
+	return nil
+}
+
+func (i *Interactor) HandleCtestFailedEvent(evt events.CtestFailedEvent) {
+	ctest := ctests_tracker.NewFailedCtest(evt)
+	i.ctestsTracker.InsertCtest(ctest)
+}
+
+func (i Interactor) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
+	ctest := ctests_tracker.NewPassedCtest(evt)
+	i.ctestsTracker.InsertCtest(ctest)
+}
+
+func (i *Interactor) HandleCtestSkippedEvt(evt events.CtestSkippedEvent) {
+	ctest := ctests_tracker.NewSkippedCtest(evt)
+	i.ctestsTracker.InsertCtest(ctest)
 }

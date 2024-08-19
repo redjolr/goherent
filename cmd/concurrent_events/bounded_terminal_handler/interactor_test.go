@@ -22,7 +22,7 @@ func setup(terminalHeight int) (*bounded_terminal_handler.Interactor, *fake_ansi
 	return &interactor, &fakeAnsiTerminal, &ctestTracker
 }
 
-func makeNPackageStartedEvents(packageNames ...string) map[string]events.PackageStartedEvent {
+func makePackageStartedEvents(packageNames ...string) map[string]events.PackageStartedEvent {
 	evts := make(map[string]events.PackageStartedEvent)
 	for _, packName := range packageNames {
 		evts[packName] = events.NewPackageStartedEvent(
@@ -33,6 +33,33 @@ func makeNPackageStartedEvents(packageNames ...string) map[string]events.Package
 			})
 	}
 	return evts
+}
+
+func makePackagePassedEvents(packageNames ...string) map[string]events.PackagePassedEvent {
+	evts := make(map[string]events.PackagePassedEvent)
+	timeElapsed := 1.2
+	for _, packName := range packageNames {
+		evts[packName] = events.NewPackagePassedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: packName,
+				Elapsed: &timeElapsed,
+			})
+	}
+	return evts
+}
+
+func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestPassedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
 }
 
 func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
@@ -94,7 +121,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 	 And we have a bounded terminal with height 1
 	 When a HandlePackageStartedEvent for package "somePackage 2" occurs
 	 And the printed text in the viewport should be "⏳ somePackage 1"`, func(t *testing.T) {
-		packStartedEvents := makeNPackageStartedEvents("somePackage 1", "somePackage 2")
+		packStartedEvents := makePackageStartedEvents("somePackage 1", "somePackage 2")
 
 		// Given
 		eventsHandler, terminal, _ := setup(1)
@@ -115,7 +142,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 	And we have a bounded terminal with height 5
 	When 3 HandlePackageStartedEvent for packages "package 1", ..., "package 5" occur
 	And the printed text should be "⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5"`, func(t *testing.T) {
-		packStartedEvents := makeNPackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		packStartedEvents := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
 
 		// Given
 		eventsHandler, terminal, _ := setup(5)
@@ -139,7 +166,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 	And we have a bounded terminal with height 5
 	When 6 HandlePackageStartedEvent for packages "package 1", ..., "package 6" occur
 	And the printed text should be "⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5"`, func(t *testing.T) {
-		packStartedEvents := makeNPackageStartedEvents(
+		packStartedEvents := makePackageStartedEvents(
 			"package 1",
 			"package 2",
 			"package 3",
@@ -205,7 +232,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	When 2 HandlePackageStartedEvent for packages "package 1", and "package 2" occur
 	And the printed text should be"⏳ package 1\n⏳ package 2" and the summary of tests:
 	"<bold>Packages</bold>: 2 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
-		packStartedEvents := makeNPackageStartedEvents("package 1", "package 2")
+		packStartedEvents := makePackageStartedEvents("package 1", "package 2")
 		// Given
 		eventsHandler, terminal, _ := setup(6)
 
@@ -229,7 +256,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	When 2 HandlePackageStartedEvent for packages "package 1", "package 2", "package 3" occur
 	And the printed text should be "⏳ package 1\n⏳ package 2" and the summary of tests:
 	"<bold>Packages</bold>: 3 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
-		packStartedEvents := makeNPackageStartedEvents("package 1", "package 2", "package 3")
+		packStartedEvents := makePackageStartedEvents("package 1", "package 2", "package 3")
 		// Given
 		eventsHandler, terminal, _ := setup(6)
 
@@ -245,6 +272,103 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 3 running"+
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+}
+
+func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	 Given that no events have occurred
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 Then an error will be presented to the user.`, func(t *testing.T) {
+		packagePassedEvts := makePackagePassedEvents("package 1")
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(5)
+
+		// When
+		err := eventsHandler.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		packPassedEvts := makePackagePassedEvents("somePackage")
+
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(5)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+
+		// When
+		err := eventsHandler.HandlePackagePassed(packPassedEvts["somePackage"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 Then this text will be on the terminal "✅ somePackage".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestPassedEvent(ctestPassedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ somePackage",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And a CtestPassedEvent has occurred for "package 1"
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "package 1"
+	 Then this text will be on the terminal "✅ package 1\n⏳ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		packagePassedEvts := makePackagePassedEvents("package 1")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ package 1\n⏳ package 2",
 		)
 	}, t)
 }

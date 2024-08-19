@@ -5,6 +5,10 @@ import (
 )
 
 type OutputPort interface {
+	Error()
 	EraseScreen()
-	DisplayPackages(runningTests []*ctests_tracker.PackageUnderTest)
+	DisplayPackages(
+		runningPackages []*ctests_tracker.PackageUnderTest,
+		passedPackages []*ctests_tracker.PackageUnderTest,
+	)
 }
