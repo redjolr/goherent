@@ -35,11 +35,18 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 ) {
 	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
 	packagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
-	for i, packageut := range packagesThatFitInTerminal {
+
+	for i, packageUt := range passedPackages {
 		if i != 0 {
 			p.terminal.Print("\n")
 		}
-		p.terminal.Print("⏳ " + packageut.Name())
+		p.terminal.Print("✅ " + packageUt.Name())
+	}
+	for i, packageUt := range packagesThatFitInTerminal {
+		if i != 0 {
+			p.terminal.Print("\n")
+		}
+		p.terminal.Print("⏳ " + packageUt.Name())
 	}
 
 	if p.terminal.Height() > 5 {
