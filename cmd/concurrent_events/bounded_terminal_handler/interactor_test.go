@@ -164,7 +164,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan4(t *testing.T) {
 	Test(`
 	Given that no events have occurred
 	And we have a bounded terminal with height 5
-	When 3 HandlePackageStartedEvent for packages "package 1" occur
+	When 1 HandlePackageStartedEvent for package "package 1" occur
 	And the printed text should be "⏳ package 1" and the summary of tests:
 	"<bold>Packages</bold>: 1 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
 		// Given
@@ -185,6 +185,30 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan4(t *testing.T) {
 			terminal.Text(),
 			"⏳ package 1"+
 				"\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that no events have occurred
+	And we have a bounded terminal with height 5
+	When 2 HandlePackageStartedEvent for packages "package 1", and "package 2" occur
+	And the printed text should be "⏳ package 1" and the summary of tests:
+	"<bold>Packages</bold>: 2 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
+		packStartedEvents := makeNPackageStartedEvents("package 1", "package 2")
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+
+		// When
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["package 1"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["package 2"])
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"⏳ package 1"+
+				"\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running"+
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)

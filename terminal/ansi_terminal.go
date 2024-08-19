@@ -33,6 +33,11 @@ func (at *AnsiTerminal) Print(text string) {
 	fmt.Print(text)
 }
 
+func (at *AnsiTerminal) Printf(text string, args ...any) {
+	print := fmt.Sprintf(text, args...)
+	at.Print(print)
+}
+
 func (at *AnsiTerminal) MoveDown(n int) {
 	fmt.Print(ansi_escape.MoveCursorDownNRows(n))
 }

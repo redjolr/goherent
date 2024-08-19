@@ -1,6 +1,7 @@
 package fake_ansi_terminal
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/redjolr/goherent/terminal/ansi_escape"
@@ -107,6 +108,11 @@ func (fat *FakeAnsiTerminal) Print(t string) {
 			}
 		}
 	}
+}
+
+func (fat *FakeAnsiTerminal) Printf(text string, args ...any) {
+	print := fmt.Sprintf(text, args...)
+	fat.Print(print)
 }
 
 func (fat *FakeAnsiTerminal) Text() string {
