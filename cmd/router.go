@@ -7,7 +7,6 @@ import (
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
-	"github.com/redjolr/goherent/cmd/testing_finished"
 	"github.com/redjolr/goherent/cmd/testing_started"
 )
 
@@ -15,21 +14,18 @@ type Router struct {
 	sequential *sequential_events.Router
 	concurrent *concurrent_events.Router
 
-	startedHandler  *testing_started.Interactor
-	finishedHandler *testing_finished.Interactor
+	startedHandler *testing_started.Interactor
 }
 
 func NewRouter(
 	sequential *sequential_events.Router,
 	concurrent *concurrent_events.Router,
 	startedHandler *testing_started.Interactor,
-	finishedHandler *testing_finished.Interactor,
 ) Router {
 	return Router{
-		sequential:      sequential,
-		concurrent:      concurrent,
-		startedHandler:  startedHandler,
-		finishedHandler: finishedHandler,
+		sequential:     sequential,
+		concurrent:     concurrent,
+		startedHandler: startedHandler,
 	}
 }
 

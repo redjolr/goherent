@@ -6,10 +6,8 @@ import (
 	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
-	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
-	"github.com/redjolr/goherent/cmd/testing_finished"
 	"github.com/redjolr/goherent/cmd/testing_started"
 	"github.com/redjolr/goherent/internal/consolesize"
 	"github.com/redjolr/goherent/terminal"
@@ -46,13 +44,10 @@ func setup() *Router {
 	} else {
 		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
 	}
-	testingFinishedPresenter := testing_finished.NewTerminalPresenter(&ansiTerminal)
 	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
-	ctestsTracker := ctests_tracker.NewCtestsTracker()
-	testingFinishedInteractor := testing_finished.NewInteractor(&testingFinishedPresenter, &ctestsTracker)
 	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
 	sequentialEventsRouter := sequential_events.Setup(&ansiTerminal)
 	concurrentEventsRouter := concurrent_events.Setup(&ansiTerminal)
-	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler, &testingFinishedInteractor)
+	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler)
 	return &router
 }
