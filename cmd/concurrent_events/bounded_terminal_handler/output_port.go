@@ -10,5 +10,6 @@ type OutputPort interface {
 	DisplayPackages(
 		runningPackages []*ctests_tracker.PackageUnderTest,
 		passedPackages []*ctests_tracker.PackageUnderTest,
+		failedPackages []*ctests_tracker.PackageUnderTest,
 	)
 }

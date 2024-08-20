@@ -54,6 +54,16 @@ func (tracker *CtestsTracker) PassedPackages() []*PackageUnderTest {
 	return runningPackages
 }
 
+func (tracker *CtestsTracker) FinishedFailedPackages() []*PackageUnderTest {
+	runningPackages := []*PackageUnderTest{}
+	for _, pack := range tracker.packagesUnderTest {
+		if pack.HasAtLeastOneFailedTest() && !pack.TestsAreRunning() {
+			runningPackages = append(runningPackages, pack)
+		}
+	}
+	return runningPackages
+}
+
 func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
 	existingPackageUt := tracker.FindPackageWithName(name)
 	if existingPackageUt != nil {

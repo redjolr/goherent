@@ -30,7 +30,11 @@ func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) er
 		i.output.EraseScreen()
 	}
 
-	i.output.DisplayPackages(i.ctestsTracker.RunningPackages(), i.ctestsTracker.PassedPackages())
+	i.output.DisplayPackages(
+		i.ctestsTracker.RunningPackages(),
+		i.ctestsTracker.PassedPackages(),
+		i.ctestsTracker.FinishedFailedPackages(),
+	)
 	return nil
 }
 
@@ -46,7 +50,31 @@ func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
 	}
 	existingPackageUt.MarkAsFinished()
 	i.output.EraseScreen()
-	i.output.DisplayPackages(i.ctestsTracker.RunningPackages(), i.ctestsTracker.PassedPackages())
+	i.output.DisplayPackages(
+		i.ctestsTracker.RunningPackages(),
+		i.ctestsTracker.PassedPackages(),
+		i.ctestsTracker.FinishedFailedPackages(),
+	)
+	return nil
+}
+
+func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
+	existingPackageUt := i.ctestsTracker.FindPackageWithName(evt.PackageName)
+	if existingPackageUt == nil {
+		i.output.Error()
+		return errors.New("No existing test found for test pass event.")
+	}
+	if !existingPackageUt.HasAtLeastOneFailedTest() {
+		i.output.Error()
+		return errors.New("No failing test found for the package that received a PackageFailedEvent.")
+	}
+	existingPackageUt.MarkAsFinished()
+	i.output.EraseScreen()
+	i.output.DisplayPackages(
+		i.ctestsTracker.RunningPackages(),
+		i.ctestsTracker.PassedPackages(),
+		i.ctestsTracker.FinishedFailedPackages(),
+	)
 	return nil
 }
 

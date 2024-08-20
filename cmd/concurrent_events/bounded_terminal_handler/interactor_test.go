@@ -49,6 +49,33 @@ func makePackagePassedEvents(packageNames ...string) map[string]events.PackagePa
 	return evts
 }
 
+func makePackageFailedEvents(packageNames ...string) map[string]events.PackageFailedEvent {
+	evts := make(map[string]events.PackageFailedEvent)
+	timeElapsed := 1.2
+	for _, packName := range packageNames {
+		evts[packName] = events.NewPackageFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: packName,
+				Elapsed: &timeElapsed,
+			})
+	}
+	return evts
+}
+
+func makeCtestFailedEvent(packageName, testName string) events.CtestFailedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestFailedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
 func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent {
 	timeElapsed := 1.2
 	return events.NewCtestPassedEvent(
@@ -134,6 +161,52 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 		assert.Equal(
 			terminal.Text(),
 			"⏳ somePackage 1",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "package 1"
+	And a CtestFailedEvent has occurred for "package 1"
+	And there is a terminal with height 5
+	When a PackageStartedEvent occurrs for package "package 2"
+	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ package 1\n⏳ package 2",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "package 1"
+	And a CtestPassedEvent has occurred for "package 1"
+	And there is a terminal with height 5
+	When a PackageStartedEvent occurrs for package "package 2"
+	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
+
+		// When
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ package 1\n⏳ package 2",
 		)
 	}, t)
 
@@ -888,6 +961,368 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+}
+
+func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	 Given that no events have occurred
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "somePackage" occurs
+	 Then an error will be presented to the user.`, func(t *testing.T) {
+		packagePassedEvts := makePackageFailedEvents("package 1")
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(5)
+
+		// When
+		err := eventsHandler.HandlePackageFailed(packagePassedEvts["package 1"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "somePackage" occurs
+	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		packFailedEvts := makePackageFailedEvents("somePackage")
+
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(5)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+
+		// When
+		err := eventsHandler.HandlePackageFailed(packFailedEvts["somePackage"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "somePackage" occurs
+	 Then this text will be on the terminal "❌ somePackage".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ somePackage",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And a CtestFailedEvent has occurred for "package 1"
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "package 1"
+	 Then this text will be on the terminal "❌ package 1\n⏳ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		packageFailedEvts := makePackageFailedEvents("package 1")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n⏳ package 2",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And a CtestFailedEvent has occurred for each of them
+	 And a PackageFailedEvent for package "package 1" has occurred
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "package 2"
+	 Then this text will be on the terminal "❌ package 1\n❌ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n❌ package 2",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 5"
+	 And a CtestFailedEvent has occurred for packages "package 1", ..., "package 4"
+	 And a PackageFailedEvent for packages "package 1",..., "package 3"
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "package 4"
+	 Then the printed text will be:
+	 	"❌ package 1\n❌ package 2\n❌ package 3\n❌ package 4\n⏳ package 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		packageFailedEvts := makePackageFailedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("package 3", "testName")
+		ctest4FailedEvt := makeCtestFailedEvent("package 4", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 5"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest3FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest4FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+		interactor.HandlePackageFailed(packageFailedEvts["package 3"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 4"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n❌ package 2\n❌ package 3\n❌ package 4\n⏳ package 5",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 5"
+	 And a CtestFailedEvent has occurred for packages "package 1", ..., "package 4"
+	 And a PackageFailedEvent for packages "package 1",..., "package 5"
+	 And there is a terminal with height 5
+	 When a PackageFailedEvent for package "package 5"
+	 Then the printed text will be:
+	 	"❌ package 1\n❌ package 2\n❌ package 3\n❌ package 4\n❌ package 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		packageFailedEvts := makePackageFailedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("package 3", "testName")
+		ctest4FailedEvt := makeCtestFailedEvent("package 4", "testName")
+		ctest5FailedEvt := makeCtestFailedEvent("package 5", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 5"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest3FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest4FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest5FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+		interactor.HandlePackageFailed(packageFailedEvts["package 3"])
+		interactor.HandlePackageFailed(packageFailedEvts["package 4"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 5"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n❌ package 2\n❌ package 3\n❌ package 4\n❌ package 5",
+		)
+	}, t)
+
+	Test(`
+	Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestFailedEvent has occurred for packages "pack 1", ..., "pack 6"
+	And a PackageFailedEvent for packages "pack 1",..., "pack 5"
+	And there is a terminal with height 5
+	When a PackageFailedEvent for package "pack 6"
+	Then the printed text will be: "❌ pack 2\n❌ pack 3\n❌ pack 4\n❌ pack 5\n❌ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+		ctest4FailedEvt := makeCtestFailedEvent("pack 4", "testName")
+		ctest5FailedEvt := makeCtestFailedEvent("pack 5", "testName")
+		ctest6FailedEvt := makeCtestFailedEvent("pack 6", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest3FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest4FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest5FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest6FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+		interactor.HandlePackageFailed(packageFailedEvts["pack 2"])
+		interactor.HandlePackageFailed(packageFailedEvts["pack 3"])
+		interactor.HandlePackageFailed(packageFailedEvts["pack 4"])
+		interactor.HandlePackageFailed(packageFailedEvts["pack 5"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 6"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ pack 2\n❌ pack 3\n❌ pack 4\n❌ pack 5\n❌ pack 6",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 5"
+	And a CtestFailedEvent has occurred for packages "pack 1"
+	And a PackageFailedEvent for packages "pack 1"
+	And there is a terminal with height 5
+	When a PackageFailedEvent for package "pack 1"
+	Then the printed text will be:
+		"❌ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
+		packageFailedEvts := makePackageFailedEvents("pack 1")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestFailedEvent has occurred for packages "pack 1", "pack 2"
+	And a PackageFailedEvent for packages "pack 1"
+	And there is a terminal with height 5
+	When a PackageFailedEvent for package "pack 2"
+	Then the printed text will be:
+		"❌ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestFailedEvent has occurred for packages "pack 1"
+	And there is a terminal with height 5
+	And a PackageFailedEvent for packages "pack 1"
+	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
 		)
 	}, t)
 }

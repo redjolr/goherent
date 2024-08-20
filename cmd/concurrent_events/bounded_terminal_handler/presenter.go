@@ -23,9 +23,10 @@ func NewPresenter(term terminal.Terminal) Presenter {
 func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	passedPackages []*ctests_tracker.PackageUnderTest,
+	failedPackages []*ctests_tracker.PackageUnderTest,
 ) {
 	if p.terminal.Height() <= 5 {
-		p.displayPackagesInSmallTerminal(runningPackages, passedPackages)
+		p.displayPackagesInSmallTerminal(runningPackages, passedPackages, failedPackages)
 	} else {
 		p.displayPackagesInLargeTerminal(runningPackages, passedPackages)
 	}
@@ -84,6 +85,7 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 func (p *Presenter) displayPackagesInSmallTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	passedPackages []*ctests_tracker.PackageUnderTest,
+	failedPackages []*ctests_tracker.PackageUnderTest,
 ) {
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), p.terminal.Height())]
 
@@ -95,6 +97,20 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 				p.terminal.Print("\n")
 			}
 			p.terminal.Print("✅ " + packageut.Name())
+		}
+		if len(runningPackages) > 0 {
+			p.terminal.Print("\n")
+		}
+	}
+
+	if len(runningPackages) < p.terminal.Height() && len(failedPackages) > 0 {
+		showFailedPackagesCount := min(len(failedPackages), p.terminal.Height()-len(runningPackages))
+		latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
+		for i, packageut := range latestFailedPackages {
+			if i != 0 {
+				p.terminal.Print("\n")
+			}
+			p.terminal.Print("❌ " + packageut.Name())
 		}
 		if len(runningPackages) > 0 {
 			p.terminal.Print("\n")
