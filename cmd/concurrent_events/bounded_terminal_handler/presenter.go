@@ -26,7 +26,7 @@ func (p *Presenter) DisplayPackages(
 	testingSummary ctests_tracker.TestingSummary,
 ) {
 	if p.terminal.Height() <= 5 {
-		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages, testingSummary)
+		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages)
 	} else {
 		p.displayPackagesInLargeTerminal(runningPackages, finishedPackages, testingSummary)
 	}
@@ -57,21 +57,6 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 			p.terminal.Print("\n")
 		}
 	}
-
-	// if len(runningPackages) < packagesThatFitInTerminalCount && len(failedPackages) > 0 {
-	// 	showFailedPackagesCount := min(len(failedPackages), packagesThatFitInTerminalCount-len(runningPackages))
-	// 	latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
-	// 	for i, packageUt := range latestFailedPackages {
-	// 		if i != 0 {
-	// 			p.terminal.Print("\n")
-	// 		}
-	// 		p.terminal.Print("❌ " + packageUt.Name())
-
-	// 	}
-	// 	if len(runningPackages) > 0 {
-	// 		p.terminal.Print("\n")
-	// 	}
-	// }
 
 	for i, packageUt := range runningPackagesThatFitInTerminal {
 		if i != 0 {
@@ -106,7 +91,6 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 func (p *Presenter) displayPackagesInSmallTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,
-	testingSummary ctests_tracker.TestingSummary,
 ) {
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), p.terminal.Height())]
 
@@ -127,20 +111,6 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 			p.terminal.Print("\n")
 		}
 	}
-
-	// if len(runningPackages) < p.terminal.Height() && len(failedPackages) > 0 {
-	// 	showFailedPackagesCount := min(len(failedPackages), p.terminal.Height()-len(runningPackages))
-	// 	latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
-	// 	for i, packageut := range latestFailedPackages {
-	// 		if i != 0 {
-	// 			p.terminal.Print("\n")
-	// 		}
-	// 		p.terminal.Print("❌ " + packageut.Name())
-	// 	}
-	// 	if len(runningPackages) > 0 {
-	// 		p.terminal.Print("\n")
-	// 	}
-	// }
 
 	for i, packageut := range runningPackagesThatFitInTerminal {
 		if i != 0 {
