@@ -76,6 +76,19 @@ func makeCtestFailedEvent(packageName, testName string) events.CtestFailedEvent 
 	)
 }
 
+func makeCtestSkippedEvent(packageName, testName string) events.CtestSkippedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestSkippedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "skip",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
 func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent {
 	timeElapsed := 1.2
 	return events.NewCtestPassedEvent(
@@ -1812,4 +1825,362 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
+}
+
+func TestSkippedPackages_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 Then this text will be on the terminal "⏩ somePackage".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ somePackage",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And a CtestSkippedEvent has occurred for "package 1"
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "package 1"
+	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		packagePassedEvts := makePackagePassedEvents("package 1")
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏳ package 2",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And 2 CtestSkippedEvents have occurred for each of them
+	 And a PackagePassedEvent for package "package 1" has occurred
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "package 2"
+	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
+		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName 1")
+		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("package 1", "testName 2")
+		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("package 2", "testName 1")
+		pack2Ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName 2")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestSkippedEvent(pack1Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack1Ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack2Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack2Ctest2SkippedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏩ package 2",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 5"
+	 And a CtestSkippedEvent has occurred for packages "package 1", ..., "package 4"
+	 And a PackagePassedEvent for packages "package 1",..., "package 3"
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "package 4"
+	 Then the printed text will be:
+	 	"⏩ package 1\n⏩ package 2\n⏩ package 3\n⏩ package 4\n⏳ package 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		packagePassedEvts := makePackagePassedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("package 3", "testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("package 4", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 5"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest3SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest4SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+		interactor.HandlePackagePassed(packagePassedEvts["package 3"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 4"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏩ package 2\n⏩ package 3\n⏩ package 4\n⏳ package 5",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 5"
+	 And a CtestSkippedEvent has occurred for packages "package 1", ..., "package 4"
+	 And a PackagePassedEvent for packages "package 1",..., "package 5"
+	 And there is a terminal with height 5
+	 When a PackagePassedEvent for package "package 5"
+	 Then the printed text will be:
+	 	"✅ package 1\n✅ package 2\n✅ package 3\n✅ package 4\n✅ package 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		packagePassedEvts := makePackagePassedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("package 3", "testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("package 4", "testName")
+		ctest5SkippedEvt := makeCtestSkippedEvent("package 5", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 5"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest3SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest4SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest5SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+		interactor.HandlePackagePassed(packagePassedEvts["package 3"])
+		interactor.HandlePackagePassed(packagePassedEvts["package 4"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 5"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏩ package 2\n⏩ package 3\n⏩ package 4\n⏩ package 5",
+		)
+	}, t)
+
+	Test(`
+	Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestSkippedEvent has occurred for packages "pack 1", ..., "pack 6"
+	And a PackagePassedEvent for packages "pack 1",..., "pack 5"
+	And there is a terminal with height 5
+	When a PackagePassedEvent for package "pack 6"
+	Then the printed text will be: "⏩ pack 2\n⏩ pack 3\n⏩ pack 4\n⏩ pack 5\n⏩ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pack 3", "testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("pack 4", "testName")
+		ctest5SkippedEvt := makeCtestSkippedEvent("pack 5", "testName")
+		ctest6SkippedEvt := makeCtestSkippedEvent("pack 6", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest3SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest4SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest5SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest6SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+		interactor.HandlePackagePassed(packagePassedEvts["pack 2"])
+		interactor.HandlePackagePassed(packagePassedEvts["pack 3"])
+		interactor.HandlePackagePassed(packagePassedEvts["pack 4"])
+		interactor.HandlePackagePassed(packagePassedEvts["pack 5"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 6"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ pack 2\n⏩ pack 3\n⏩ pack 4\n⏩ pack 5\n⏩ pack 6",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 5"
+	And a CtestSkippedEvent has occurred for packages "pack 1"
+	And a PackagePassedEvent for packages "pack 1"
+	And there is a terminal with height 5
+	When a PackagePassedEvent for package "pack 1"
+	Then the printed text will be:
+		"✅ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
+		packagePassedEvts := makePackagePassedEvents("pack 1")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestSkippedEvent has occurred for packages "pack 1", "pack 2"
+	And a PackagePassedEvent for packages "pack 1"
+	And there is a terminal with height 5
+	When a PackagePassedEvent for package "pack 2"
+	Then the printed text will be:
+		"⏩ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
+		)
+	}, t)
+
+	Test(`
+	Given that 5 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 6"
+	And a CtestSkippedEvent has occurred for packages "pack 1"
+	And there is a terminal with height 5
+	And a PackagePassedEvent for packages "pack 1"
+	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
+		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 5"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 6"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
+		)
+	}, t)
+
+	Test(`
+	Given these events have occurred in this order:
+	- 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	- 1 CtestFailedEvent has occurred for "package 1"
+	- 1 CtestSkippedEvent has occurred for "package 2"
+	- 1 PackageFailedEvent has ocurred for "package 1"
+	And there is a terminal with height 5
+	When a PackagePassedEvent for package "package 2" occurrs
+	Then this text will be on the terminal "❌ package 1\n⏩ package 2".`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+
+		packageFailedEvts := makePackageFailedEvents("package 1")
+		packagePassedEvts := makePackagePassedEvents("package 2")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n⏩ package 2",
+		)
+	}, t)
+
 }

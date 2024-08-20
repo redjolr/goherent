@@ -88,7 +88,7 @@ func (i Interactor) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
 	i.ctestsTracker.InsertCtest(ctest)
 }
 
-func (i *Interactor) HandleCtestSkippedEvt(evt events.CtestSkippedEvent) {
+func (i *Interactor) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
 	ctest := ctests_tracker.NewSkippedCtest(evt)
 	i.ctestsTracker.InsertCtest(ctest)
 }

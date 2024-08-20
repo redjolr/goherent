@@ -105,6 +105,8 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 				p.terminal.Print("✅ " + packageUt.Name())
 			} else if packageUt.HasAtLeastOneFailedTest() {
 				p.terminal.Print("❌ " + packageUt.Name())
+			} else if packageUt.IsSkipped() {
+				p.terminal.Print("⏩ " + packageUt.Name())
 			}
 		}
 		if len(runningPackages) > 0 {
