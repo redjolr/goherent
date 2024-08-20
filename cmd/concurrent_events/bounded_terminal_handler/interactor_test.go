@@ -376,7 +376,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T)
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 5
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
+	 And the user will be informed that an error has occurred.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packPassedEvts := makePackagePassedEvents("somePackage")
 
@@ -736,14 +736,14 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
-	 And there is a terminal with height 5
+	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packPassedEvts := makePackagePassedEvents("somePackage")
 
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(5)
+		eventsHandler, fakeTerminal, _ := setup(6)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 
 		// When
@@ -763,7 +763,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	 "\n\nPackages: 0 running\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 1 passed\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
@@ -792,7 +792,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "pack 1"
 	 Then this text will be on the terminal "✅ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 0 running\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
@@ -824,7 +824,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "package 2"
 	 Then this text will be on the terminal "✅ package 1\n✅ package 2" and the summary of tests
-	 "\n\nPackages: 0 running\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
@@ -859,7 +859,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "package 2"
 	 Then the printed text will be: "✅ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
@@ -897,7 +897,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackagePassedEvent for package "pack 6"
 	Then the printed text will be: "✅ pack 2\n✅ pack 3" and the summary of tests
-	"\n\nPackages: 0 running\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 3 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
@@ -937,7 +937,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	And a PackagePassedEvent for packages "pack 1"
 	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 2 running, 1 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
@@ -1323,6 +1323,260 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T)
 		assert.Equal(
 			fakeTerminal.Text(),
 			"⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
+		)
+	}, t)
+}
+
+func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	 Given that no events have occurred
+	 And there is a terminal with height 6
+	 When a PackageFailedEvent for package "somePackage" occurs
+	 Then an error will be presented to the user.`, func(t *testing.T) {
+		packageFailedEvts := makePackageFailedEvents("package 1")
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(6)
+
+		// When
+		err := eventsHandler.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And there is a terminal with height 6
+	 When a PackageFailedEvent for package "somePackage" occurs
+	 And the user will be informed that an error has occurred.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		packPassedEvts := makePackagePassedEvents("somePackage")
+
+		// Given
+		eventsHandler, fakeTerminal, _ := setup(6)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+
+		// When
+		err := eventsHandler.HandlePackagePassed(packPassedEvts["somePackage"])
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			fakeTerminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	And there is a terminal with height 6
+	When a PackageFailedEvent for package "somePackage" occurs
+	Then this text will be on the terminal "❌ somePackage" and the summary of tests
+	"\n\nPackages: 0 running, 1 failed\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "pack 1" and "pack 2"
+	 And a CtestFailedEvent has occurred for "pack 1"
+	 And there is a terminal with height 6
+	 When a PackageFailedEvent for package "pack 1"
+	 Then this text will be on the terminal "❌ package 1\n⏳ package 2" and the summary of tests
+	 "\n\nPackages: 1 running, 1 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		packageFailedEvts := makePackageFailedEvents("package 1")
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n⏳ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	And a CtestFailedEvent has occurred for each of them
+	And a PackageFailedEvent for package "package 1" has occurred
+	And there is a terminal with height 6
+	When a PackageFailedEvent for package "package 2"
+	Then this text will be on the terminal "❌ package 1\n❌ package 2" and the summary of tests
+	"\n\nPackages: 0 running, 2 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n❌ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 3"
+	 And a CtestFailedEvent has occurred for packages "package 1"
+	 And a PackageFailedEvent for packages "package 1", "package 2"
+	 And there is a terminal with height 6
+	 When a PackageFailedEvent for package "package 2"
+	 Then the printed text will be: "❌ package 2\n⏳ package 3" and the summary of tests
+	 "\n\nPackages: 1 running, 2 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
+		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 2\n⏳ package 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
+				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	And a CtestFailedEvent has occurred for packages "pack 1", ..., "pack 3"
+	And a PackageFailedEvent for packages "pack 1", and "pack 2"
+	And there is a terminal with height 6
+	When a PackageFailedEvent for package "pack 6"
+	Then the printed text will be: "❌ pack 2\n❌ pack 3" and the summary of tests
+	"\n\nPackages: 0 running, 3 failed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
+		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2", "pack 3")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandleCtestFailedEvent(ctest3FailedEvt)
+
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+		interactor.HandlePackageFailed(packageFailedEvts["pack 2"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 3"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ pack 2\n❌ pack 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	And a CtestFailedEvent has occurred for packages "pack 1"
+	And there is a terminal with height 6
+	And a PackageFailedEvent for packages "pack 1"
+	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
+	"\n\nPackages: 2 running, 1 failedd\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
+		packageFailedEvts := makePackageFailedEvents("pack 1")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ pack 2\n⏳ pack 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 }

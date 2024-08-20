@@ -28,13 +28,14 @@ func (p *Presenter) DisplayPackages(
 	if p.terminal.Height() <= 5 {
 		p.displayPackagesInSmallTerminal(runningPackages, passedPackages, failedPackages)
 	} else {
-		p.displayPackagesInLargeTerminal(runningPackages, passedPackages)
+		p.displayPackagesInLargeTerminal(runningPackages, passedPackages, failedPackages)
 	}
 }
 
 func (p *Presenter) displayPackagesInLargeTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	passedPackages []*ctests_tracker.PackageUnderTest,
+	failedPackages []*ctests_tracker.PackageUnderTest,
 ) {
 	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
@@ -54,6 +55,21 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 		}
 	}
 
+	if len(runningPackages) < packagesThatFitInTerminalCount && len(failedPackages) > 0 {
+		showFailedPackagesCount := min(len(failedPackages), packagesThatFitInTerminalCount-len(runningPackages))
+		latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
+		for i, packageUt := range latestFailedPackages {
+			if i != 0 {
+				p.terminal.Print("\n")
+			}
+			p.terminal.Print("❌ " + packageUt.Name())
+
+		}
+		if len(runningPackages) > 0 {
+			p.terminal.Print("\n")
+		}
+	}
+
 	for i, packageUt := range runningPackagesThatFitInTerminal {
 		if i != 0 {
 			p.terminal.Print("\n")
@@ -61,25 +77,27 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 		p.terminal.Print("⏳ " + packageUt.Name())
 	}
 
-	if p.terminal.Height() > 5 {
-		packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
-		testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
-		timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
-		runningPackagesCount := len(runningPackages)
-		passedPackagesCount := len(passedPackages)
+	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
+	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
+	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
+	runningPackagesCount := len(runningPackages)
+	passedPackagesCount := len(passedPackages)
+	failedPackagesCount := len(failedPackages)
 
-		packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
-		if passedPackagesCount > 0 {
-			packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
-		}
+	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
 
-		p.terminal.Print(
-			"\n\n" +
-				packagesSummary + "\n" +
-				testsSummary + "0 running\n" +
-				timeSummary,
-		)
+	if failedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.RED + fmt.Sprintf("%d failed", failedPackagesCount) + ansi_escape.COLOR_RESET
 	}
+	if passedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
+	}
+	p.terminal.Print(
+		"\n\n" +
+			packagesSummary + "\n" +
+			testsSummary + "0 running\n" +
+			timeSummary,
+	)
 }
 
 func (p *Presenter) displayPackagesInSmallTerminal(
