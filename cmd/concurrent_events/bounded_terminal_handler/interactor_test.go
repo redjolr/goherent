@@ -2182,5 +2182,255 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
 			"❌ package 1\n⏩ package 2",
 		)
 	}, t)
+}
 
+func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	 Given that a PackageStartedEvent has occurred for "somePackage"
+	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	 And there is a terminal with height 6
+	 When a PackagePassedEvent for package "somePackage" occurs
+	 Then this text will be on the terminal "⏩ somePackage" and the summary of tests
+	 "\n\nPackages: 0 running, 1 skipped\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "pack 1" and "pack 2"
+	 And a CtestSkippedEvent has occurred for "pack 1"
+	 And there is a terminal with height 6
+	 When a PackagePassedEvent for package "pack 1"
+	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2" and the summary of tests
+	 "\n\nPackages: 1 running, 1 skipped\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		packagePassedEvts := makePackagePassedEvents("package 1")
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏳ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	 And a CtestSkippedEvent has occurred for each of them
+	 And a PackagePassedEvent for package "package 1" has occurred
+	 And there is a terminal with height 6
+	 When a PackagePassedEvent for package "package 2"
+	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2" and the summary of tests
+	 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 1\n⏩ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 3"
+	 And a CtestSkippedEvent has occurred for packages "package 1"
+	 And a PackagePassedEvent for packages "package 1", "package 2"
+	 And there is a terminal with height 6
+	 When a PackagePassedEvent for package "package 2"
+	 Then the printed text will be: "⏩ package 2\n⏳ package 3" and the summary of tests
+	 "\n\nPackages: 1 running, 2 skipped\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
+		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ package 2\n⏳ package 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
+				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	And a CtestSkippedEvent has occurred for packages "pack 1", ..., "pack 3"
+	And a PackagePassedEvent for packages "pack 1", and "pack 2"
+	And there is a terminal with height 6
+	When a PackagePassedEvent for package "pack 6"
+	Then the printed text will be: "⏩ pack 2\n⏩ pack 3" and the summary of tests
+	"\n\nPackages: 0 running, 3 skipped\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
+		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pack 3", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(ctest3SkippedEvt)
+
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+		interactor.HandlePackagePassed(packagePassedEvts["pack 2"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 3"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ pack 2\n⏩ pack 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.YELLOW+"3 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	And a CtestSkippedEvent has occurred for packages "pack 1"
+	And there is a terminal with height 6
+	And a PackagePassedEvent for packages "pack 1"
+	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
+	"\n\nPackages: 2 running, 1 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
+		packagePassedEvts := makePackagePassedEvents("pack 1")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+
+		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏳ pack 2\n⏳ pack 3"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given these events have occurred in this order:
+	- 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	- 1 CtestFailedEvent has occurred for "package 1"
+	- 1 CtestSkippedEvent has occurred for "package 2"
+	- 1 PackageFailedEvent has ocurred for "package 1"
+	And there is a terminal with height 6
+	When a PackagePassedEvent for package "package 2" occurrs
+	Then this text will be on the terminal "❌ package 1\n✅ package 2" and the summary of tests
+	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+
+		packageFailedEvts := makePackageFailedEvents("package 1")
+		packagePassedEvts := makePackagePassedEvents("package 2")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
+		interactor.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
+
+		// When
+		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ package 1\n⏩ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
 }

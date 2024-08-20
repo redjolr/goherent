@@ -51,6 +51,8 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 				p.terminal.Print("✅ " + packageUt.Name())
 			} else if packageUt.HasAtLeastOneFailedTest() {
 				p.terminal.Print("❌ " + packageUt.Name())
+			} else if packageUt.IsSkipped() {
+				p.terminal.Print("⏩ " + packageUt.Name())
 			}
 		}
 		if len(runningPackages) > 0 {
@@ -71,11 +73,15 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 	runningPackagesCount := len(runningPackages)
 	passedPackagesCount := testingSummary.PassedPackagesCount
 	failedPackagesCount := testingSummary.FailedPackagesCount
+	skippedPackagesCount := testingSummary.SkippedPackagesCount
 
 	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
 
 	if failedPackagesCount > 0 {
 		packagesSummary += ", " + ansi_escape.RED + fmt.Sprintf("%d failed", failedPackagesCount) + ansi_escape.COLOR_RESET
+	}
+	if skippedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.YELLOW + fmt.Sprintf("%d skipped", skippedPackagesCount) + ansi_escape.COLOR_RESET
 	}
 	if passedPackagesCount > 0 {
 		packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET

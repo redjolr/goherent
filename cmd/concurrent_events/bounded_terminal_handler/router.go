@@ -46,8 +46,8 @@ func (router *Router) Route(jsonEvt events.JsonEvent) {
 		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 		router.interactor.HandleCtestFailedEvent(ctestFailedEvt)
 	}
-	// if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
-	// 	ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
-	// 	router.interactor.HandleCtestSkippedEvt(ctestSkippedEvt)
-	// }
+	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
+		router.interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
+	}
 }
