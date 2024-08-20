@@ -24,11 +24,10 @@ func (router *Router) Route(jsonEvt events.JsonEvent) {
 		packagePassedEvt := router.eventsMapper.JsonTestEvt2PackagePassedEvt(jsonEvt)
 		router.interactor.HandlePackagePassed(packagePassedEvt)
 	}
-	// if jsonEvt.Test == nil && jsonEvt.Action == "fail" {
-	// 	packageFailedEvt := router.eventsMapper.JsonTestEvt2PackageFailedEvt(jsonEvt)
-	// 	router.interactor.HandlePackageFailed(packageFailedEvt)
-	// }
-
+	if jsonEvt.Test == nil && jsonEvt.Action == "fail" {
+		packageFailedEvt := router.eventsMapper.JsonTestEvt2PackageFailedEvt(jsonEvt)
+		router.interactor.HandlePackageFailed(packageFailedEvt)
+	}
 	if jsonEvt.Test == nil && jsonEvt.Action == "start" {
 		packageStartedEvt := router.eventsMapper.JsonTestEvt2PackageStartedEvt(jsonEvt)
 		router.interactor.HandlePackageStartedEvent(packageStartedEvt)
@@ -43,10 +42,10 @@ func (router *Router) Route(jsonEvt events.JsonEvent) {
 		ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
 		router.interactor.HandleCtestPassedEvent(ctestPassedEvt)
 	}
-	// if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
-	// 	ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
-	// 	router.interactor.HandleCtestFailedEvent(ctestFailedEvt)
-	// }
+	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
+		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
+		router.interactor.HandleCtestFailedEvent(ctestFailedEvt)
+	}
 	// if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
 	// 	ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
 	// 	router.interactor.HandleCtestSkippedEvt(ctestSkippedEvt)
