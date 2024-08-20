@@ -22,53 +22,56 @@ func NewPresenter(term terminal.Terminal) Presenter {
 
 func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
-	passedPackages []*ctests_tracker.PackageUnderTest,
-	failedPackages []*ctests_tracker.PackageUnderTest,
+	finishedPackages []*ctests_tracker.PackageUnderTest,
+	testingSummary ctests_tracker.TestingSummary,
 ) {
 	if p.terminal.Height() <= 5 {
-		p.displayPackagesInSmallTerminal(runningPackages, passedPackages, failedPackages)
+		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages, testingSummary)
 	} else {
-		p.displayPackagesInLargeTerminal(runningPackages, passedPackages, failedPackages)
+		p.displayPackagesInLargeTerminal(runningPackages, finishedPackages, testingSummary)
 	}
 }
 
 func (p *Presenter) displayPackagesInLargeTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
-	passedPackages []*ctests_tracker.PackageUnderTest,
-	failedPackages []*ctests_tracker.PackageUnderTest,
+	finishedPackages []*ctests_tracker.PackageUnderTest,
+	testingSummary ctests_tracker.TestingSummary,
 ) {
 	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
 
-	if len(runningPackages) < packagesThatFitInTerminalCount && len(passedPackages) > 0 {
-		showPassedPackagesCount := min(len(passedPackages), packagesThatFitInTerminalCount-len(runningPackages))
-		latestPassedPackages := passedPackages[len(passedPackages)-showPassedPackagesCount:]
-		for i, packageUt := range latestPassedPackages {
+	if len(runningPackages) < packagesThatFitInTerminalCount && len(finishedPackages) > 0 {
+		showFinishedPackagesCount := min(len(finishedPackages), packagesThatFitInTerminalCount-len(runningPackages))
+		latestFinishedPackages := finishedPackages[len(finishedPackages)-showFinishedPackagesCount:]
+		for i, packageUt := range latestFinishedPackages {
 			if i != 0 {
 				p.terminal.Print("\n")
 			}
-			p.terminal.Print("✅ " + packageUt.Name())
-
+			if packageUt.HasPassed() {
+				p.terminal.Print("✅ " + packageUt.Name())
+			} else if packageUt.HasAtLeastOneFailedTest() {
+				p.terminal.Print("❌ " + packageUt.Name())
+			}
 		}
 		if len(runningPackages) > 0 {
 			p.terminal.Print("\n")
 		}
 	}
 
-	if len(runningPackages) < packagesThatFitInTerminalCount && len(failedPackages) > 0 {
-		showFailedPackagesCount := min(len(failedPackages), packagesThatFitInTerminalCount-len(runningPackages))
-		latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
-		for i, packageUt := range latestFailedPackages {
-			if i != 0 {
-				p.terminal.Print("\n")
-			}
-			p.terminal.Print("❌ " + packageUt.Name())
+	// if len(runningPackages) < packagesThatFitInTerminalCount && len(failedPackages) > 0 {
+	// 	showFailedPackagesCount := min(len(failedPackages), packagesThatFitInTerminalCount-len(runningPackages))
+	// 	latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
+	// 	for i, packageUt := range latestFailedPackages {
+	// 		if i != 0 {
+	// 			p.terminal.Print("\n")
+	// 		}
+	// 		p.terminal.Print("❌ " + packageUt.Name())
 
-		}
-		if len(runningPackages) > 0 {
-			p.terminal.Print("\n")
-		}
-	}
+	// 	}
+	// 	if len(runningPackages) > 0 {
+	// 		p.terminal.Print("\n")
+	// 	}
+	// }
 
 	for i, packageUt := range runningPackagesThatFitInTerminal {
 		if i != 0 {
@@ -81,8 +84,8 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
 	runningPackagesCount := len(runningPackages)
-	passedPackagesCount := len(passedPackages)
-	failedPackagesCount := len(failedPackages)
+	passedPackagesCount := testingSummary.PassedPackagesCount
+	failedPackagesCount := testingSummary.FailedPackagesCount
 
 	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
 
@@ -102,38 +105,42 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 
 func (p *Presenter) displayPackagesInSmallTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
-	passedPackages []*ctests_tracker.PackageUnderTest,
-	failedPackages []*ctests_tracker.PackageUnderTest,
+	finishedPackages []*ctests_tracker.PackageUnderTest,
+	testingSummary ctests_tracker.TestingSummary,
 ) {
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), p.terminal.Height())]
 
-	if len(runningPackages) < p.terminal.Height() && len(passedPackages) > 0 {
-		showPassedPackagesCount := min(len(passedPackages), p.terminal.Height()-len(runningPackages))
-		latestPassedPackages := passedPackages[len(passedPackages)-showPassedPackagesCount:]
-		for i, packageut := range latestPassedPackages {
+	if len(runningPackages) < p.terminal.Height() && len(finishedPackages) > 0 {
+		showFinishedPackagesCount := min(len(finishedPackages), p.terminal.Height()-len(runningPackages))
+		latestFinishedPackages := finishedPackages[len(finishedPackages)-showFinishedPackagesCount:]
+		for i, packageUt := range latestFinishedPackages {
 			if i != 0 {
 				p.terminal.Print("\n")
 			}
-			p.terminal.Print("✅ " + packageut.Name())
+			if packageUt.HasPassed() {
+				p.terminal.Print("✅ " + packageUt.Name())
+			} else if packageUt.HasAtLeastOneFailedTest() {
+				p.terminal.Print("❌ " + packageUt.Name())
+			}
 		}
 		if len(runningPackages) > 0 {
 			p.terminal.Print("\n")
 		}
 	}
 
-	if len(runningPackages) < p.terminal.Height() && len(failedPackages) > 0 {
-		showFailedPackagesCount := min(len(failedPackages), p.terminal.Height()-len(runningPackages))
-		latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
-		for i, packageut := range latestFailedPackages {
-			if i != 0 {
-				p.terminal.Print("\n")
-			}
-			p.terminal.Print("❌ " + packageut.Name())
-		}
-		if len(runningPackages) > 0 {
-			p.terminal.Print("\n")
-		}
-	}
+	// if len(runningPackages) < p.terminal.Height() && len(failedPackages) > 0 {
+	// 	showFailedPackagesCount := min(len(failedPackages), p.terminal.Height()-len(runningPackages))
+	// 	latestFailedPackages := failedPackages[len(failedPackages)-showFailedPackagesCount:]
+	// 	for i, packageut := range latestFailedPackages {
+	// 		if i != 0 {
+	// 			p.terminal.Print("\n")
+	// 		}
+	// 		p.terminal.Print("❌ " + packageut.Name())
+	// 	}
+	// 	if len(runningPackages) > 0 {
+	// 		p.terminal.Print("\n")
+	// 	}
+	// }
 
 	for i, packageut := range runningPackagesThatFitInTerminal {
 		if i != 0 {

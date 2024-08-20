@@ -1579,4 +1579,43 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
+
+	Test(`
+	Given these events have occurred in this order:
+	- 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+	- 1 CtestPassedEvent has occurred for "package 1"
+	- 1 CtestFailedEvent has occurred for "package 2"
+	- 1 PackagePassedEvent has ocurred for "package 1"
+	And there is a terminal with height 6
+	When a PackageFailedEvent for package "package 2" occurrs
+	Then this text will be on the terminal "✅ package 1\n❌ package 2" and the summary of tests
+	"\n\nPackages: 0 running, 2 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
+		packagePassedEvts := makePackagePassedEvents("package 1")
+		packageFailedEvts := makePackageFailedEvents("package 2")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+
+		// Given
+		interactor, fakeTerminal, _ := setup(6)
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
+		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
+		interactor.HandleCtestFailedEvent(ctest2FailedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
+
+		// When
+		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ package 1\n❌ package 2"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
 }

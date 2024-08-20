@@ -44,6 +44,16 @@ func (tracker *CtestsTracker) RunningPackages() []*PackageUnderTest {
 	return runningPackages
 }
 
+func (tracker *CtestsTracker) FinishedPackages() []*PackageUnderTest {
+	runningPackages := []*PackageUnderTest{}
+	for _, pack := range tracker.packagesUnderTest {
+		if !pack.TestsAreRunning() {
+			runningPackages = append(runningPackages, pack)
+		}
+	}
+	return runningPackages
+}
+
 func (tracker *CtestsTracker) PassedPackages() []*PackageUnderTest {
 	runningPackages := []*PackageUnderTest{}
 	for _, pack := range tracker.packagesUnderTest {
@@ -224,6 +234,22 @@ func (tracker *CtestsTracker) RunningCtestsCount() int {
 		count += packageUt.RunningCtestsCount()
 	}
 	return count
+}
+
+func (tracker *CtestsTracker) TestingSummary() TestingSummary {
+	return TestingSummary{
+		PackagesCount:        tracker.PackagesCount(),
+		PassedPackagesCount:  tracker.PassedPackagesCount(),
+		FailedPackagesCount:  tracker.FailedPackagesCount(),
+		SkippedPackagesCount: tracker.SkippedPackagesCount(),
+
+		TestsCount:        tracker.CtestsCount(),
+		PassedTestsCount:  tracker.PassedCtestsCount(),
+		FailedTestsCount:  tracker.FailedCtestsCount(),
+		SkippedTestsCount: tracker.SkippedCtestsCount(),
+
+		DurationS: 0,
+	}
 }
 
 func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {

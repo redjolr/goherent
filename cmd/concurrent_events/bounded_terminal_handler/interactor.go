@@ -32,8 +32,8 @@ func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) er
 
 	i.output.DisplayPackages(
 		i.ctestsTracker.RunningPackages(),
-		i.ctestsTracker.PassedPackages(),
-		i.ctestsTracker.FinishedFailedPackages(),
+		i.ctestsTracker.FinishedPackages(),
+		i.ctestsTracker.TestingSummary(),
 	)
 	return nil
 }
@@ -52,8 +52,8 @@ func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
 	i.output.EraseScreen()
 	i.output.DisplayPackages(
 		i.ctestsTracker.RunningPackages(),
-		i.ctestsTracker.PassedPackages(),
-		i.ctestsTracker.FinishedFailedPackages(),
+		i.ctestsTracker.FinishedPackages(),
+		i.ctestsTracker.TestingSummary(),
 	)
 	return nil
 }
@@ -72,8 +72,8 @@ func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 	i.output.EraseScreen()
 	i.output.DisplayPackages(
 		i.ctestsTracker.RunningPackages(),
-		i.ctestsTracker.PassedPackages(),
-		i.ctestsTracker.FinishedFailedPackages(),
+		i.ctestsTracker.FinishedPackages(),
+		i.ctestsTracker.TestingSummary(),
 	)
 	return nil
 }
