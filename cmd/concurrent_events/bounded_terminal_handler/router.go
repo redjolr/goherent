@@ -33,10 +33,10 @@ func (router *Router) Route(jsonEvt events.JsonEvent) {
 		router.interactor.HandlePackageStartedEvent(packageStartedEvt)
 	}
 
-	// if jsonEvt.Test == nil && jsonEvt.Action == "skip" {
-	// 	noPackageTestsFoundEvt := router.eventsMapper.JsonTestEvt2NoPackTestsFoundEvent(jsonEvt)
-	// 	router.interactor.HandleNoPackageTestsFoundEvent(noPackageTestsFoundEvt)
-	// }
+	if jsonEvt.Test == nil && jsonEvt.Action == "skip" {
+		noPackageTestsFoundEvt := router.eventsMapper.JsonTestEvt2NoPackTestsFoundEvent(jsonEvt)
+		router.interactor.HandleNoPackageTestsFoundEvent(noPackageTestsFoundEvt)
+	}
 
 	if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
 		ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)

@@ -92,3 +92,23 @@ func (i *Interactor) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
 	ctest := ctests_tracker.NewSkippedCtest(evt)
 	i.ctestsTracker.InsertCtest(ctest)
 }
+
+func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFoundEvent) error {
+	packageUt := i.ctestsTracker.PackageUnderTest(evt.PackageName)
+	if packageUt == nil {
+		i.output.Error()
+		return errors.New("No existing test found for NoPackageTestsFoundEvent event.")
+	}
+	if packageUt.HasAtLeastOneTest() {
+		i.output.Error()
+		return errors.New("No existing test found for NoPackageTestsFoundEvent event.")
+	}
+	i.ctestsTracker.DeletePackage(packageUt)
+	i.output.EraseScreen()
+	i.output.DisplayPackages(
+		i.ctestsTracker.RunningPackages(),
+		i.ctestsTracker.FinishedPackages(),
+		i.ctestsTracker.TestingSummary(),
+	)
+	return nil
+}

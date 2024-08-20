@@ -2526,3 +2526,202 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		)
 	}, t)
 }
+
+func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	Given that no events have occurred
+	And there is a terminal with height 5
+	When a NoPackageTestsFoundEvent for package "somePackage" occurs
+	Then the user should see an error in the terminal.
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+
+		// When
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage",
+			},
+		)
+		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			terminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent for package "somePackage" has occured
+	And there is a terminal with height 5
+	When a NoPackageTestsFoundEvent for the same package occurs
+	Then the user should not see anything on the terminal.
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+		packStartedEvt := events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		// When
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"             ",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent for package "somePackage 1" has occured
+	And a PackageStartedEvent for package "somePackage 2" has occured
+	And there is a terminal with height 5
+	When a NoPackageTestsFoundEvent for packag "somePackage 1" occurs
+	Then the user should only see that the the tests for "somePackage 2" are running.
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+		packStartedEvt1 := events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 1",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
+
+		packStartedEvt2 := events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage 2",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt2)
+
+		// When
+		noPackTestsFoundEvt1 := events.NewNoPackageTestsFoundEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage 1",
+			},
+		)
+		eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt1)
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"⏳ somePackage 2\n               ",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent for package "somePackage" has occured
+	And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
+	And there is a terminal with height 5
+	When a NoPackageTestsFoundEvent for the same package occurs
+	Then the user should see an error in the terminal
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+		timeElapsed := 1.2
+		packStartedEvt := events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		ctestPassedEvt := events.NewCtestPassedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
+
+		// When
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage",
+			},
+		)
+		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			terminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent for package "somePackage" has occured
+	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	And there is a terminal with height 5
+	When a NoPackageTestsFoundEvent for the same package occurs
+	Then the user should see an error in the terminal
+	`, func(t *testing.T) {
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+		timeElapsed := 1.2
+		packStartedEvt := events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: "somePackage",
+			},
+		)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
+
+		ctestFaileddEvt := events.NewCtestFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "pass",
+				Test:    "testName",
+				Package: "somePackage",
+				Elapsed: &timeElapsed,
+			},
+		)
+		eventsHandler.HandleCtestFailedEvent(ctestFaileddEvt)
+
+		// When
+		noPackTestsFoundEvt := events.NewNoPackageTestsFoundEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: "somePackage",
+			},
+		)
+		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
+
+		// Then
+		assert.Error(err)
+		assert.Contains(
+			terminal.Text(),
+			"❗ Error.",
+		)
+	}, t)
+}
