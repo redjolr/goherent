@@ -320,6 +320,48 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 			"❌ pack 2\n✅ pack 3\n⏳ pack 4\n⏳ pack 5\n⏳ pack 6",
 		)
 	}, t)
+
+	Test(`
+	Given that thse events have occurred in this order:
+	- 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	- 1 CtestPassedEvent have occurred for "pack 1" 
+	- 1 CtestSkippedEvent have occurred for "pack 2" 
+	- 1 CtestFailedEvent has occurred for "pack 3"
+	- 2 PackagePassedEvents for "pack 1" and "pack 2"
+	- 1 PackageFailedEvent for "pack 2"
+	And we have a bounded terminal with height 5
+	When 3 HandlePackageStartedEvents for packages "pack 4", "pack 5" occur
+	And the printed text should be "✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5"`, func(t *testing.T) {
+		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
+		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
+		packFailedEvents := makePackageFailedEvents("pack 3")
+
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+
+		// Given
+		eventsHandler, terminal, _ := setup(5)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 1"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 2"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 3"])
+		eventsHandler.HandleCtestPassedEvent(ctest1PassedEvt)
+		eventsHandler.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		eventsHandler.HandleCtestFailedEvent(ctest3FailedEvt)
+		eventsHandler.HandlePackagePassed(packPassedEvents["pack 1"])
+		eventsHandler.HandlePackagePassed(packPassedEvents["pack 2"])
+		eventsHandler.HandlePackageFailed(packFailedEvents["pack 3"])
+
+		// When
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 4"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 5"])
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5",
+		)
+	}, t)
 }
 
 func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
@@ -412,7 +454,8 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	- 1 PackageFailedEvent for "pack 3"
 	And we have a bounded terminal with height 7
 	When a HandlePackageStartedEvent for "pack 4" ocurrs
-	And the printed text should be "✅ pack 2\n❌ pack 3\n⏳ pack 4"`, func(t *testing.T) {
+	And the printed text should be "✅ pack 2\n❌ pack 3\n⏳ pack 4" and the summary of tests:
+	"Packages: 1 running, 1 failed, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
@@ -443,6 +486,55 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		)
+	}, t)
+
+	Test(`
+	Given that thse events have occurred in this order:
+	- 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+	- 1 CtestPassedEvent have occurred for "pack 1" 
+	- 1 CtestSkippedEvent have occurred for "pack 2" 
+	- 1 CtestFailedEvent has occurred for "pack 3"
+	- 2 PackagePassedEvents for "pack 1" and "pack 2"
+	- 1 PackageFailedEvent for "pack 2"
+	And we have a bounded terminal with height 9
+	When 3 HandlePackageStartedEvents for packages "pack 4", "pack 5" occur
+	And the printed text should be "✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5" and the summary of tests:
+	"Packages: 2 running, 1 failed, 1 skipped, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
+		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
+		packFailedEvents := makePackageFailedEvents("pack 3")
+
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+
+		// Given
+		eventsHandler, terminal, _ := setup(9)
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 1"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 2"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 3"])
+		eventsHandler.HandleCtestPassedEvent(ctest1PassedEvt)
+		eventsHandler.HandleCtestSkippedEvent(ctest2SkippedEvt)
+		eventsHandler.HandleCtestFailedEvent(ctest3FailedEvt)
+		eventsHandler.HandlePackagePassed(packPassedEvents["pack 1"])
+		eventsHandler.HandlePackagePassed(packPassedEvents["pack 2"])
+		eventsHandler.HandlePackageFailed(packFailedEvents["pack 3"])
+
+		// When
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 4"])
+		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 5"])
+
+		// Then
+		assert.Equal(
+			terminal.Text(),
+			"✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
