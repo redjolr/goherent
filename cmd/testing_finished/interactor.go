@@ -19,7 +19,7 @@ func NewInteractor(output OutputPort, ctestTracker *ctests_tracker.CtestsTracker
 
 func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 
-	i.ctestsTracker.MarkAllPackagesAsFinished()
+	i.ctestsTracker.TestingFinished(evt)
 
 	summary := TestingSummary{
 		packagesCount:        i.ctestsTracker.PackagesCount(),

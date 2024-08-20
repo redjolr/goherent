@@ -8,11 +8,13 @@ import (
 
 type CtestsTracker struct {
 	packagesUnderTest []*PackageUnderTest
+	testingDurationS  float32
 }
 
 func NewCtestsTracker() CtestsTracker {
 	return CtestsTracker{
 		packagesUnderTest: []*PackageUnderTest{},
+		testingDurationS:  0,
 	}
 }
 
@@ -121,10 +123,11 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	return indexOfPackUttWithName != -1
 }
 
-func (tracker *CtestsTracker) MarkAllPackagesAsFinished() {
+func (tracker *CtestsTracker) TestingFinished(testingFinishedEvt events.TestingFinishedEvent) {
 	for _, packageUt := range tracker.packagesUnderTest {
 		packageUt.MarkAsFinished()
 	}
+	tracker.testingDurationS = testingFinishedEvt.DurationS()
 }
 
 func (tracker *CtestsTracker) FindPackageWithName(packageName string) *PackageUnderTest {
@@ -248,13 +251,7 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 		FailedTestsCount:  tracker.FailedCtestsCount(),
 		SkippedTestsCount: tracker.SkippedCtestsCount(),
 
-		DurationS: 0,
-	}
-}
-
-func (tracker *CtestsTracker) insertPackageUnderTestIfNew(packUt PackageUnderTest) {
-	if !tracker.ContainsPackageUtWithName(packUt.name) {
-		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
+		DurationS: tracker.testingDurationS,
 	}
 }
 

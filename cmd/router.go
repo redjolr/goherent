@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"strings"
 	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
@@ -33,10 +34,40 @@ func NewRouter(
 }
 
 func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
+	eventsMapper := events.NewEventsMapper()
+	var evt any
+	if jsonEvt.Test == nil && jsonEvt.Action == "pass" {
+		evt = eventsMapper.JsonTestEvt2PackagePassedEvt(jsonEvt)
+	}
+	if jsonEvt.Test == nil && jsonEvt.Action == "fail" {
+		evt = eventsMapper.JsonTestEvt2PackageFailedEvt(jsonEvt)
+	}
+	if jsonEvt.Test == nil && jsonEvt.Action == "start" {
+		evt = eventsMapper.JsonTestEvt2PackageStartedEvt(jsonEvt)
+	}
+	if jsonEvt.Test == nil && jsonEvt.Action == "skip" {
+		evt = eventsMapper.JsonTestEvt2NoPackTestsFoundEvent(jsonEvt)
+	}
+	if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
+		evt = eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
+	}
+	if jsonEvt.Test != nil && jsonEvt.Action == "run" && strings.Contains(*jsonEvt.Test, "/") {
+		evt = eventsMapper.JsonTestEvt2CtestRanEvt(jsonEvt)
+	}
+	if jsonEvt.Test != nil && jsonEvt.Action == "output" && strings.Contains(*jsonEvt.Test, "/") {
+		evt = eventsMapper.JsonTestEvt2CtestOutputEvt(jsonEvt)
+	}
+	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
+		evt = eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
+	}
+	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
+		evt = eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
+	}
+
 	if concurrently {
-		r.concurrent.Route(jsonEvt)
+		r.concurrent.Route(evt)
 	} else {
-		r.sequential.Route(jsonEvt)
+		r.sequential.Route(evt)
 	}
 }
 
@@ -45,7 +76,11 @@ func (router *Router) RouteTestingStartedEvent(timestamp time.Time) {
 	router.startedHandler.HandleTestingStarted(testingStartedEvt)
 }
 
-func (router *Router) RouteTestingFinishedEvent(duration time.Duration) {
+func (r *Router) RouteTestingFinishedEvent(duration time.Duration, concurrently bool) {
 	testingFinishedEvt := events.NewTestingFinishedEvent(duration)
-	router.finishedHandler.HandleTestingFinished(testingFinishedEvt)
+	if concurrently {
+		r.concurrent.Route(testingFinishedEvt)
+	} else {
+		r.sequential.Route(testingFinishedEvt)
+	}
 }

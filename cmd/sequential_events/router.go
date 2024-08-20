@@ -1,8 +1,6 @@
 package sequential_events
 
 import (
-	"strings"
-
 	"github.com/redjolr/goherent/cmd/events"
 )
 
@@ -20,29 +18,20 @@ func NewRouter(
 	}
 }
 
-func (router Router) Route(jsonEvt events.JsonEvent) {
-	if jsonEvt.Test != nil && jsonEvt.Action == "pass" && strings.Contains(*jsonEvt.Test, "/") {
-		ctestPassedEvt := router.eventsMapper.JsonTestEvt2CtestPassedEvt(jsonEvt)
-		router.eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
-	}
+func (router Router) Route(unknownEvt any) {
 
-	if jsonEvt.Test != nil && jsonEvt.Action == "run" && strings.Contains(*jsonEvt.Test, "/") {
-		ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestRanEvt(jsonEvt)
-		router.eventsHandler.HandleCtestRanEvt(ctestRanEvt)
-	}
-
-	if jsonEvt.Test != nil && jsonEvt.Action == "output" && strings.Contains(*jsonEvt.Test, "/") {
-		ctestRanEvt := router.eventsMapper.JsonTestEvt2CtestOutputEvt(jsonEvt)
-		router.eventsHandler.HandleCtestOutputEvent(ctestRanEvt)
-	}
-
-	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
-		ctestFailedEvt := router.eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
-		router.eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-	}
-
-	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {
-		ctestSkippedEvt := router.eventsMapper.JsonTestEvt2CtestSkippedEvt(jsonEvt)
-		router.eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+	switch evt := unknownEvt.(type) {
+	case events.CtestPassedEvent:
+		router.eventsHandler.HandleCtestPassedEvt(evt)
+	case events.CtestRanEvent:
+		router.eventsHandler.HandleCtestRanEvt(evt)
+	case events.CtestOutputEvent:
+		router.eventsHandler.HandleCtestOutputEvent(evt)
+	case events.CtestFailedEvent:
+		router.eventsHandler.HandleCtestFailedEvt(evt)
+	case events.CtestSkippedEvent:
+		router.eventsHandler.HandleCtestSkippedEvt(evt)
+	case events.TestingFinishedEvent:
+		router.eventsHandler.HandleTestingFinished(evt)
 	}
 }

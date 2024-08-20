@@ -3,7 +3,6 @@ package concurrent_events
 import (
 	"github.com/redjolr/goherent/cmd/concurrent_events/bounded_terminal_handler"
 	"github.com/redjolr/goherent/cmd/concurrent_events/unbounded_terminal_handler"
-	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/terminal"
 )
 
@@ -25,10 +24,10 @@ func NewRouter(
 	}
 }
 
-func (r *Router) Route(jsonEvt events.JsonEvent) {
+func (r *Router) Route(evt any) {
 	if r.ansiTerminal.IsBounded() {
-		r.boundedTerminalRouter.Route(jsonEvt)
+		r.boundedTerminalRouter.Route(evt)
 	} else {
-		r.unboundedTerminalRouter.Route(jsonEvt)
+		r.unboundedTerminalRouter.Route(evt)
 	}
 }

@@ -9,4 +9,5 @@ type OutputPort interface {
 	EraseScreen()
 	Packages(packages []*ctests_tracker.PackageUnderTest)
 	Error()
+	TestingFinishedSummary(summary ctests_tracker.TestingSummary)
 }

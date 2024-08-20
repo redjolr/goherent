@@ -34,7 +34,7 @@ func Main(extraCmdArgs []string) int {
 		router.Route(jsonEvt, testCmd.RunsTestsConcurrently())
 	}
 	testCmd.Wait()
-	router.RouteTestingFinishedEvent(testCmd.ExecutionTime())
+	router.RouteTestingFinishedEvent(testCmd.ExecutionTime(), testCmd.RunsTestsConcurrently())
 	return 0
 }
 
