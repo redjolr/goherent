@@ -33,5 +33,7 @@ func (router *Router) Route(unknwonEvt any) {
 		router.interactor.HandlePackageStartedEvent(evt)
 	case events.NoPackageTestsFoundEvent:
 		router.interactor.HandleNoPackageTestsFoundEvent(evt)
+	case events.TestingFinishedEvent:
+		router.interactor.HandleTestingFinished(evt)
 	}
 }

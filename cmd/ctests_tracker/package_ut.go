@@ -103,7 +103,8 @@ func (packageUt *PackageUnderTest) HasAtLeastOneSkippedTest() bool {
 }
 
 func (packageUt *PackageUnderTest) HasPassed() bool {
-	return !packageUt.TestsAreRunning() && packageUt.PassedCtestsCount() == len(packageUt.ctests)
+	return !packageUt.TestsAreRunning() && packageUt.PassedCtestsCount() > 0 &&
+		packageUt.PassedCtestsCount()+packageUt.SkippedCtestsCount() == len(packageUt.ctests)
 }
 
 func (packageUt *PackageUnderTest) IsSkipped() bool {

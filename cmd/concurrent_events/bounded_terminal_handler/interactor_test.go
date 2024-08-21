@@ -2754,3 +2754,154 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		)
 	}, t)
 }
+
+func TestTestingFinishedSummary(t *testing.T) {
+	assert := assert.New(t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
+	And a PackagePassedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	Then this text will be on the terminal "✅ somePackage" and the summary of tests
+	"\n\nPackages: 1 passed\nTests: 1 passed\nTime: 1.200s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestPassedEvent(ctestPassedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	And a PackagePassedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.372s occurs
+	Then this text will be on the terminal "⏩ somePackage" and the summary of tests
+	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1372))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.372s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that these events have occurred in this order:
+	- 4 PackageStartedEvent has occurred for "pack 1", ..., "pack 4"
+	- 7 CtestSkippedEvents:  2x"pack 1", 1x"pack 2", 1x"pack 3", 3x"pack 4"
+	- 4 CtestPassedEvents: 2x"pack 1",  2x"pack 3"
+	- 3 CtestFailedEvent:  2x"pack 2", 1x"pack 3"
+	- 2 PackagePassedEvent: 1x"pack 1", 1x"pack 4"
+	- 2 PackageFailedEvent: 1x"pack 2", 1x"pack 3"
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.372s occurs
+	Then this text will be on the terminal "✅ pack 1\n❌pack 2\n❌ pack 3\n⏩ pack 4" and the summary of tests
+	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4")
+		packPassedEvts := makePackagePassedEvents("pack 1", "pack 4")
+		packFailedEvts := makePackageFailedEvents("pack 2", "pack 3")
+		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName 1")
+		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("pack 1", "testName 2")
+		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("pack 2", "testName 3")
+		pack3Ctest1SkippedEvt := makeCtestSkippedEvent("pack 3", "testName 4")
+		pack4Ctest1SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 5")
+		pack4Ctest2SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 6")
+		pack4Ctest3SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 7")
+		pack1Ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName 8")
+		pack1Ctest2PassedEvt := makeCtestPassedEvent("pack 1", "testName 9")
+		pack3Ctest1PassedEvt := makeCtestPassedEvent("pack 3", "testName 10")
+		pack3Ctest2PassedEvt := makeCtestPassedEvent("pack 3", "testName 11")
+		pack2Ctest1FailedEvt := makeCtestFailedEvent("pack 2", "testName 12")
+		pack2Ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName 13")
+		pack3Ctest1FailedEvt := makeCtestFailedEvent("pack 3", "testName 14")
+
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1372))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
+		interactor.HandlePackageStartedEvent(packStartedEvts["pack 4"])
+		interactor.HandleCtestSkippedEvent(pack1Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack1Ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack2Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack3Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack4Ctest1SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack4Ctest2SkippedEvt)
+		interactor.HandleCtestSkippedEvent(pack4Ctest3SkippedEvt)
+		interactor.HandleCtestPassedEvent(pack1Ctest1PassedEvt)
+		interactor.HandleCtestPassedEvent(pack1Ctest2PassedEvt)
+		interactor.HandleCtestPassedEvent(pack3Ctest1PassedEvt)
+		interactor.HandleCtestPassedEvent(pack3Ctest2PassedEvt)
+		interactor.HandleCtestFailedEvent(pack2Ctest1FailedEvt)
+		interactor.HandleCtestFailedEvent(pack2Ctest2FailedEvt)
+		interactor.HandleCtestFailedEvent(pack3Ctest1FailedEvt)
+		interactor.HandlePackagePassed(packPassedEvts["pack 1"])
+		interactor.HandlePackagePassed(packPassedEvts["pack 4"])
+		interactor.HandlePackageFailed(packFailedEvts["pack 2"])
+		interactor.HandlePackageFailed(packFailedEvts["pack 3"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ pack 1\n❌ pack 2\n❌ pack 3\n⏩ pack 4"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 4 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"7 skipped"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"4 passed"+ansi_escape.COLOR_RESET+", 14 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.372s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+}
