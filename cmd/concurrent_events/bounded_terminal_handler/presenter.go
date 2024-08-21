@@ -20,22 +20,24 @@ func NewPresenter(term terminal.Terminal) Presenter {
 	}
 }
 
+func (p *Presenter) IsViewPortLarge() bool {
+	return p.terminal.Height() > 5
+}
+
 func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,
-	testingSummary ctests_tracker.TestingSummary,
 ) {
 	if p.terminal.Height() <= 5 {
 		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages)
 	} else {
-		p.displayPackagesInLargeTerminal(runningPackages, finishedPackages, testingSummary)
+		p.displayPackagesInLargeTerminal(runningPackages, finishedPackages)
 	}
 }
 
 func (p *Presenter) displayPackagesInLargeTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,
-	testingSummary ctests_tracker.TestingSummary,
 ) {
 	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
@@ -66,32 +68,6 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 		}
 		p.terminal.Print("⏳ " + packageUt.Name())
 	}
-
-	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
-	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
-	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
-	runningPackagesCount := len(runningPackages)
-	passedPackagesCount := testingSummary.PassedPackagesCount
-	failedPackagesCount := testingSummary.FailedPackagesCount
-	skippedPackagesCount := testingSummary.SkippedPackagesCount
-
-	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
-
-	if failedPackagesCount > 0 {
-		packagesSummary += ", " + ansi_escape.RED + fmt.Sprintf("%d failed", failedPackagesCount) + ansi_escape.COLOR_RESET
-	}
-	if skippedPackagesCount > 0 {
-		packagesSummary += ", " + ansi_escape.YELLOW + fmt.Sprintf("%d skipped", skippedPackagesCount) + ansi_escape.COLOR_RESET
-	}
-	if passedPackagesCount > 0 {
-		packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
-	}
-	p.terminal.Print(
-		"\n\n" +
-			packagesSummary + "\n" +
-			testsSummary + "0 running\n" +
-			timeSummary,
-	)
 }
 
 func (p *Presenter) displayPackagesInSmallTerminal(
@@ -126,6 +102,34 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 		}
 		p.terminal.Print("⏳ " + packageut.Name())
 	}
+}
+
+func (p *Presenter) DisplayRunningTestsSummary(testingSummary ctests_tracker.TestingSummary) {
+	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
+	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
+	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
+	runningPackagesCount := testingSummary.RunningPackagesCount
+	passedPackagesCount := testingSummary.PassedPackagesCount
+	failedPackagesCount := testingSummary.FailedPackagesCount
+	skippedPackagesCount := testingSummary.SkippedPackagesCount
+
+	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
+
+	if failedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.RED + fmt.Sprintf("%d failed", failedPackagesCount) + ansi_escape.COLOR_RESET
+	}
+	if skippedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.YELLOW + fmt.Sprintf("%d skipped", skippedPackagesCount) + ansi_escape.COLOR_RESET
+	}
+	if passedPackagesCount > 0 {
+		packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
+	}
+	p.terminal.Print(
+		"\n\n" +
+			packagesSummary + "\n" +
+			testsSummary + "0 running\n" +
+			timeSummary,
+	)
 }
 
 func (p *Presenter) EraseScreen() {

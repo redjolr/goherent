@@ -209,6 +209,16 @@ func (tracker *CtestsTracker) SkippedPackagesCount() int {
 	return count
 }
 
+func (tracker *CtestsTracker) RunningPackagesCount() int {
+	count := 0
+	for _, pack := range tracker.packagesUnderTest {
+		if pack.TestsAreRunning() {
+			count++
+		}
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) PackageUnderTest(name string) *PackageUnderTest {
 	if tracker.ContainsPackageUtWithName(name) {
 		indexOfPackUtWithName := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
@@ -245,11 +255,13 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 		PassedPackagesCount:  tracker.PassedPackagesCount(),
 		FailedPackagesCount:  tracker.FailedPackagesCount(),
 		SkippedPackagesCount: tracker.SkippedPackagesCount(),
+		RunningPackagesCount: tracker.RunningPackagesCount(),
 
 		TestsCount:        tracker.CtestsCount(),
 		PassedTestsCount:  tracker.PassedCtestsCount(),
 		FailedTestsCount:  tracker.FailedCtestsCount(),
 		SkippedTestsCount: tracker.SkippedCtestsCount(),
+		RunningTestsCount: tracker.RunningCtestsCount(),
 
 		DurationS: tracker.testingDurationS,
 	}
