@@ -2,6 +2,7 @@ package bounded_terminal_handler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/terminal"
@@ -104,7 +105,7 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 	}
 }
 
-func (p *Presenter) DisplayRunningTestsSummary(testingSummary ctests_tracker.TestingSummary) {
+func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSummary) {
 	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
@@ -112,6 +113,9 @@ func (p *Presenter) DisplayRunningTestsSummary(testingSummary ctests_tracker.Tes
 	passedPackagesCount := testingSummary.PassedPackagesCount
 	failedPackagesCount := testingSummary.FailedPackagesCount
 	skippedPackagesCount := testingSummary.SkippedPackagesCount
+	passedTestsCount := testingSummary.PassedTestsCount
+	failedTestsCount := testingSummary.FailedTestsCount
+	skippedTestsCount := testingSummary.SkippedTestsCount
 
 	packagesSummary += fmt.Sprintf("%d running", runningPackagesCount)
 
@@ -124,17 +128,29 @@ func (p *Presenter) DisplayRunningTestsSummary(testingSummary ctests_tracker.Tes
 	if passedPackagesCount > 0 {
 		packagesSummary += ", " + ansi_escape.GREEN + fmt.Sprintf("%d passed", passedPackagesCount) + ansi_escape.COLOR_RESET
 	}
-	p.terminal.Print(
-		"\n\n" +
-			packagesSummary + "\n" +
-			testsSummary + "0 running\n" +
-			timeSummary,
-	)
+	if failedTestsCount > 0 {
+		testsSummary += ansi_escape.RED + fmt.Sprintf("%d failed", failedTestsCount) + ansi_escape.COLOR_RESET + ", "
+	}
+	if skippedTestsCount > 0 {
+		testsSummary += ansi_escape.YELLOW + fmt.Sprintf("%d skipped", skippedTestsCount) + ansi_escape.COLOR_RESET + ", "
+	}
+	if passedTestsCount > 0 {
+		testsSummary += ansi_escape.GREEN + fmt.Sprintf("%d passed", passedTestsCount) + ansi_escape.COLOR_RESET + ", "
+	}
+
+	testsSummary, _ = strings.CutSuffix(testsSummary, ", ")
+
+	summary := "\n\n" +
+		packagesSummary + "\n" +
+		testsSummary + "\n" +
+		timeSummary
+
+	p.terminal.Print(summary)
 }
 
 func (p *Presenter) EraseScreen() {
-	p.terminal.Print(ansi_escape.ERASE_SCREEN)
 	p.terminal.Print(ansi_escape.CURSOR_TO_HOME)
+	p.terminal.Print(ansi_escape.ERASE_SCREEN)
 }
 
 func (p *Presenter) Error() {

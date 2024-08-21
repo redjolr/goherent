@@ -35,7 +35,7 @@ func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) er
 		i.ctestsTracker.FinishedPackages(),
 	)
 	if i.output.IsViewPortLarge() {
-		i.output.DisplayRunningTestsSummary(i.ctestsTracker.TestingSummary())
+		i.output.RunningTestsSummary(i.ctestsTracker.TestingSummary())
 	}
 	return nil
 }
@@ -57,7 +57,7 @@ func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
 		i.ctestsTracker.FinishedPackages(),
 	)
 	if i.output.IsViewPortLarge() {
-		i.output.DisplayRunningTestsSummary(i.ctestsTracker.TestingSummary())
+		i.output.RunningTestsSummary(i.ctestsTracker.TestingSummary())
 	}
 	return nil
 }
@@ -79,7 +79,7 @@ func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 		i.ctestsTracker.FinishedPackages(),
 	)
 	if i.output.IsViewPortLarge() {
-		i.output.DisplayRunningTestsSummary(i.ctestsTracker.TestingSummary())
+		i.output.RunningTestsSummary(i.ctestsTracker.TestingSummary())
 	}
 	return nil
 }
@@ -116,7 +116,7 @@ func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFou
 		i.ctestsTracker.FinishedPackages(),
 	)
 	if i.output.IsViewPortLarge() {
-		i.output.DisplayRunningTestsSummary(i.ctestsTracker.TestingSummary())
+		i.output.RunningTestsSummary(i.ctestsTracker.TestingSummary())
 	}
 	return nil
 }

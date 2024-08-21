@@ -324,8 +324,8 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T
 	Test(`
 	Given that thse events have occurred in this order:
 	- 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
-	- 1 CtestPassedEvent have occurred for "pack 1" 
-	- 1 CtestSkippedEvent have occurred for "pack 2" 
+	- 1 CtestPassedEvent have occurred for "pack 1"
+	- 1 CtestSkippedEvent have occurred for "pack 2"
 	- 1 CtestFailedEvent has occurred for "pack 3"
 	- 2 PackagePassedEvents for "pack 1" and "pack 2"
 	- 1 PackageFailedEvent for "pack 2"
@@ -372,7 +372,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And we have a bounded terminal with height 6
 	When 1 HandlePackageStartedEvent for package "package 1" occur
 	And the printed text should be "⏳ package 1" and the summary of tests:
-	"<bold>Packages</bold>: 1 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
+	"Packages: 1 running\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
 		// Given
 		eventsHandler, terminal, _ := setup(6)
 
@@ -391,7 +391,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			terminal.Text(),
 			"⏳ package 1"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -401,7 +401,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And we have a bounded terminal with height 6
 	When 2 HandlePackageStartedEvent for packages "package 1", and "package 2" occur
 	And the printed text should be"⏳ package 1\n⏳ package 2" and the summary of tests:
-	"<bold>Packages</bold>: 2 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
+	"Packages: 2 running\nTests: \nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvents := makePackageStartedEvents("package 1", "package 2")
 		// Given
 		eventsHandler, terminal, _ := setup(6)
@@ -415,7 +415,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			terminal.Text(),
 			"⏳ package 1\n⏳ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -425,7 +425,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And we have a bounded terminal with height 6
 	When 2 HandlePackageStartedEvent for packages "package 1", "package 2", "package 3" occur
 	And the printed text should be "⏳ package 1\n⏳ package 2" and the summary of tests:
-	"<bold>Packages</bold>: 3 running\n<bold>Tests</bold>: 0 running\n<bold>Time</bold>: 0.000s"`, func(t *testing.T) {
+	"Packages: 3 running\nTests: \nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvents := makePackageStartedEvents("package 1", "package 2", "package 3")
 		// Given
 		eventsHandler, terminal, _ := setup(6)
@@ -440,7 +440,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			terminal.Text(),
 			"⏳ package 1\n⏳ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 3 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -455,7 +455,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And we have a bounded terminal with height 7
 	When a HandlePackageStartedEvent for "pack 4" ocurrs
 	And the printed text should be "✅ pack 2\n❌ pack 3\n⏳ pack 4" and the summary of tests:
-	"Packages: 1 running, 1 failed, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	"Packages: 1 running, 1 failed, 2 passed\nTests: 1 failed, 2 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
@@ -486,7 +486,9 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -494,15 +496,15 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	Test(`
 	Given that thse events have occurred in this order:
 	- 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
-	- 1 CtestPassedEvent have occurred for "pack 1" 
-	- 1 CtestSkippedEvent have occurred for "pack 2" 
+	- 1 CtestPassedEvent have occurred for "pack 1"
+	- 1 CtestSkippedEvent have occurred for "pack 2"
 	- 1 CtestFailedEvent has occurred for "pack 3"
 	- 2 PackagePassedEvents for "pack 1" and "pack 2"
 	- 1 PackageFailedEvent for "pack 2"
 	And we have a bounded terminal with height 9
 	When 3 HandlePackageStartedEvents for packages "pack 4", "pack 5" occur
 	And the printed text should be "✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5" and the summary of tests:
-	"Packages: 2 running, 1 failed, 1 skipped, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	"Packages: 2 running, 1 failed, 1 skipped, 1 passed\nTests: 1 failed, 1 skipped, 1 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
@@ -535,7 +537,10 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -989,7 +994,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	 "\n\nPackages: 0 running, 1 passed\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 1 passed\nTests: 1 passed\nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
@@ -1007,7 +1012,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"✅ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1018,7 +1024,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "pack 1"
 	 Then this text will be on the terminal "✅ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 passed\nTests: 1 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
@@ -1038,7 +1044,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"✅ package 1\n⏳ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1050,7 +1057,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "package 2"
 	 Then this text will be on the terminal "✅ package 1\n✅ package 2" and the summary of tests
-	 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
@@ -1073,7 +1080,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"✅ package 1\n✅ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1085,7 +1093,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackagePassedEvent for package "package 2"
 	 Then the printed text will be: "✅ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
@@ -1111,7 +1119,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"✅ package 2\n⏳ package 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1123,7 +1132,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackagePassedEvent for package "pack 6"
 	Then the printed text will be: "✅ pack 2\n✅ pack 3" and the summary of tests
-	"\n\nPackages: 0 running, 3 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 3 passed\nTests: 3 passed\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
@@ -1152,7 +1161,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"✅ pack 2\n✅ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.GREEN+"3 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"3 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1163,7 +1173,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	And a PackagePassedEvent for packages "pack 1"
 	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running, 1 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 2 running, 1 passed\nTests: 1 passed\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
@@ -1185,7 +1195,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏳ pack 2\n⏳ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1199,7 +1210,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackagePassedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "❌ package 1\n✅ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
@@ -1225,7 +1236,9 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1678,7 +1691,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackageFailedEvent for package "somePackage" occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed\nTests: 1 failed\nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
@@ -1696,7 +1709,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"❌ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1707,7 +1721,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackageFailedEvent for package "pack 1"
 	 Then this text will be on the terminal "❌ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
@@ -1727,7 +1741,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"❌ package 1\n⏳ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1739,7 +1754,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackageFailedEvent for package "package 2"
 	Then this text will be on the terminal "❌ package 1\n❌ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 2 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
@@ -1762,7 +1777,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"❌ package 1\n❌ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1774,7 +1790,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	 And there is a terminal with height 6
 	 When a PackageFailedEvent for package "package 2"
 	 Then the printed text will be: "❌ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running, 2 failed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
@@ -1800,7 +1816,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"❌ package 2\n⏳ package 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1841,7 +1858,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"❌ pack 2\n❌ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1852,7 +1870,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	And a PackageFailedEvent for packages "pack 1"
 	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running, 1 failedd\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 2 running, 1 failedd\nTests: 1 failed\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packageFailedEvts := makePackageFailedEvents("pack 1")
 		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
@@ -1874,7 +1892,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏳ pack 2\n⏳ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -1888,7 +1907,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 6
 	When a PackageFailedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "✅ package 1\n❌ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		packageFailedEvts := makePackageFailedEvents("package 2")
@@ -1913,7 +1932,9 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -2148,7 +2169,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
 	And there is a terminal with height 5
 	When a PackagePassedEvent for package "pack 1"
 	Then the printed text will be:
-		"✅ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5".`, func(t *testing.T) {
+		"⏩ pack 1\n⏳ pack 2\n⏳ pack 3\n⏳ pack 4\n⏳ pack 5".`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
@@ -2280,12 +2301,12 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-	 Given that a PackageStartedEvent has occurred for "somePackage"
-	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
-	 And there is a terminal with height 6
-	 When a PackagePassedEvent for package "somePackage" occurs
-	 Then this text will be on the terminal "⏩ somePackage" and the summary of tests
-	 "\n\nPackages: 0 running, 1 skipped\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+		 Given that a PackageStartedEvent has occurred for "somePackage"
+		 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+		 And there is a terminal with height 6
+		 When a PackagePassedEvent for package "somePackage" occurs
+		 Then this text will be on the terminal "⏩ somePackage" and the summary of tests
+		 "\n\nPackages: 0 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
@@ -2303,18 +2324,19 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏩ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	 Given that 2 PackageStartedEvent have occurred for packages "pack 1" and "pack 2"
-	 And a CtestSkippedEvent has occurred for "pack 1"
-	 And there is a terminal with height 6
-	 When a PackagePassedEvent for package "pack 1"
-	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 skipped\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		 Given that 2 PackageStartedEvent have occurred for packages "pack 1" and "pack 2"
+		 And a CtestSkippedEvent has occurred for "pack 1"
+		 And there is a terminal with height 6
+		 When a PackagePassedEvent for package "pack 1"
+		 Then this text will be on the terminal "⏩ package 1\n⏳ package 2" and the summary of tests
+		 "\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
@@ -2334,19 +2356,20 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏩ package 1\n⏳ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
-	 And a CtestSkippedEvent has occurred for each of them
-	 And a PackagePassedEvent for package "package 1" has occurred
-	 And there is a terminal with height 6
-	 When a PackagePassedEvent for package "package 2"
-	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2" and the summary of tests
-	 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		 Given that 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+		 And a CtestSkippedEvent has occurred for each of them
+		 And a PackagePassedEvent for package "package 1" has occurred
+		 And there is a terminal with height 6
+		 When a PackagePassedEvent for package "package 2"
+		 Then this text will be on the terminal "⏩ package 1\n⏩ package 2" and the summary of tests
+		 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
@@ -2369,19 +2392,20 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏩ package 1\n⏩ package 2"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 3"
-	 And a CtestSkippedEvent has occurred for packages "package 1"
-	 And a PackagePassedEvent for packages "package 1", "package 2"
-	 And there is a terminal with height 6
-	 When a PackagePassedEvent for package "package 2"
-	 Then the printed text will be: "⏩ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running, 2 skipped\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		 Given that 5 PackageStartedEvent have occurred for packages "package 1", ..., "package 3"
+		 And a CtestSkippedEvent has occurred for packages "package 1"
+		 And a PackagePassedEvent for packages "package 1", "package 2"
+		 And there is a terminal with height 6
+		 When a PackagePassedEvent for package "package 2"
+		 Then the printed text will be: "⏩ package 2\n⏳ package 3" and the summary of tests
+		 "\n\nPackages: 1 running, 2 skipped\nTests: 2 skipped\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
@@ -2407,19 +2431,20 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏩ package 2\n⏳ package 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
 				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
-	And a CtestSkippedEvent has occurred for packages "pack 1", ..., "pack 3"
-	And a PackagePassedEvent for packages "pack 1", and "pack 2"
-	And there is a terminal with height 6
-	When a PackagePassedEvent for package "pack 6"
-	Then the printed text will be: "⏩ pack 2\n⏩ pack 3" and the summary of tests
-	"\n\nPackages: 0 running, 3 skipped\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		Given that 6 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+		And a CtestSkippedEvent has occurred for packages "pack 1", ..., "pack 3"
+		And a PackagePassedEvent for packages "pack 1", and "pack 2"
+		And there is a terminal with height 6
+		When a PackagePassedEvent for package "pack 6"
+		Then the printed text will be: "⏩ pack 2\n⏩ pack 3" and the summary of tests
+		"\n\nPackages: 0 running, 3 skipped\nTests: 3 skipped\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
@@ -2448,18 +2473,19 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏩ pack 2\n⏩ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.YELLOW+"3 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"3 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	Given that 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
-	And a CtestSkippedEvent has occurred for packages "pack 1"
-	And there is a terminal with height 6
-	And a PackagePassedEvent for packages "pack 1"
-	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running, 1 passed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+		Given that 3 PackageStartedEvent have occurred for packages "pack 1", ..., "pack 3"
+		And a CtestSkippedEvent has occurred for packages "pack 1"
+		And there is a terminal with height 6
+		And a PackagePassedEvent for packages "pack 1"
+		Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
+		"\n\nPackages: 2 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s.`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
@@ -2481,21 +2507,22 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 			"⏳ pack 2\n⏳ pack 3"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
 
 	Test(`
-	Given these events have occurred in this order:
-	- 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
-	- 1 CtestFailedEvent has occurred for "package 1"
-	- 1 CtestSkippedEvent has occurred for "package 2"
-	- 1 PackageFailedEvent has ocurred for "package 1"
-	And there is a terminal with height 6
-	When a PackagePassedEvent for package "package 2" occurrs
-	Then this text will be on the terminal "❌ package 1\n✅ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		Given these events have occurred in this order:
+		- 2 PackageStartedEvent have occurred for packages "package 1" and "package 2"
+		- 1 CtestFailedEvent has occurred for "package 1"
+		- 1 CtestSkippedEvent has occurred for "package 2"
+		- 1 PackageFailedEvent has ocurred for "package 1"
+		And there is a terminal with height 6
+		When a PackagePassedEvent for package "package 2" occurrs
+		Then this text will be on the terminal "❌ package 1\n⏩ package 2" and the summary of tests
+		"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
@@ -2521,7 +2548,9 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 running"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
 		)
 	}, t)
@@ -2585,7 +2614,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"             ",
+			"",
 		)
 	}, t)
 
@@ -2627,7 +2656,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			"⏳ somePackage 2\n               ",
+			"⏳ somePackage 2\n",
 		)
 	}, t)
 
