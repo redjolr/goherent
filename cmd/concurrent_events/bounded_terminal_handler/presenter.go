@@ -25,6 +25,10 @@ func (p *Presenter) IsViewPortLarge() bool {
 	return p.terminal.Height() > 5
 }
 
+func (p *Presenter) TestingStarted() {
+	p.terminal.Print("\n🚀 Starting...")
+}
+
 func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,

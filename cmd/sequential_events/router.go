@@ -5,16 +5,16 @@ import (
 )
 
 type Router struct {
-	eventsMapper  events.EventsMapper
-	eventsHandler *Interactor
+	eventsMapper events.EventsMapper
+	interactor   *Interactor
 }
 
 func NewRouter(
-	eventsHandler *Interactor,
+	interactor *Interactor,
 ) Router {
 	return Router{
-		eventsHandler: eventsHandler,
-		eventsMapper:  events.NewEventsMapper(),
+		interactor:   interactor,
+		eventsMapper: events.NewEventsMapper(),
 	}
 }
 
@@ -22,16 +22,18 @@ func (router Router) Route(unknownEvt any) {
 
 	switch evt := unknownEvt.(type) {
 	case events.CtestPassedEvent:
-		router.eventsHandler.HandleCtestPassedEvt(evt)
+		router.interactor.HandleCtestPassedEvt(evt)
 	case events.CtestRanEvent:
-		router.eventsHandler.HandleCtestRanEvt(evt)
+		router.interactor.HandleCtestRanEvt(evt)
 	case events.CtestOutputEvent:
-		router.eventsHandler.HandleCtestOutputEvent(evt)
+		router.interactor.HandleCtestOutputEvent(evt)
 	case events.CtestFailedEvent:
-		router.eventsHandler.HandleCtestFailedEvt(evt)
+		router.interactor.HandleCtestFailedEvt(evt)
 	case events.CtestSkippedEvent:
-		router.eventsHandler.HandleCtestSkippedEvt(evt)
+		router.interactor.HandleCtestSkippedEvt(evt)
+	case events.TestingStartedEvent:
+		router.interactor.HandleTestingStarted(evt)
 	case events.TestingFinishedEvent:
-		router.eventsHandler.HandleTestingFinished(evt)
+		router.interactor.HandleTestingFinished(evt)
 	}
 }

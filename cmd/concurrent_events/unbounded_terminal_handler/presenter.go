@@ -18,6 +18,10 @@ func NewPresenter(term terminal.Terminal) Presenter {
 	}
 }
 
+func (p *Presenter) TestingStarted() {
+	p.terminal.Print("\n🚀 Starting...")
+}
+
 func (p *Presenter) PackageStarted(packageUt ctests_tracker.PackageUnderTest) {
 	p.terminal.Print(fmt.Sprintf("\n⏳ %s", packageUt.Name()))
 }

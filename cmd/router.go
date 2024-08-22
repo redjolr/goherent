@@ -7,25 +7,20 @@ import (
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
-	"github.com/redjolr/goherent/cmd/testing_started"
 )
 
 type Router struct {
 	sequential *sequential_events.Router
 	concurrent *concurrent_events.Router
-
-	startedHandler *testing_started.Interactor
 }
 
 func NewRouter(
 	sequential *sequential_events.Router,
 	concurrent *concurrent_events.Router,
-	startedHandler *testing_started.Interactor,
 ) Router {
 	return Router{
-		sequential:     sequential,
-		concurrent:     concurrent,
-		startedHandler: startedHandler,
+		sequential: sequential,
+		concurrent: concurrent,
 	}
 }
 
@@ -67,9 +62,13 @@ func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	}
 }
 
-func (router *Router) RouteTestingStartedEvent(timestamp time.Time) {
+func (r *Router) RouteTestingStartedEvent(timestamp time.Time, concurrently bool) {
 	testingStartedEvt := events.NewTestingStartedEvent(timestamp)
-	router.startedHandler.HandleTestingStarted(testingStartedEvt)
+	if concurrently {
+		r.concurrent.Route(testingStartedEvt)
+	} else {
+		r.sequential.Route(testingStartedEvt)
+	}
 }
 
 func (r *Router) RouteTestingFinishedEvent(duration time.Duration, concurrently bool) {

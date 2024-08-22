@@ -2,14 +2,11 @@ package ctests_tracker
 
 import (
 	"github.com/redjolr/goherent/cmd/events"
-
-	"github.com/redjolr/goherent/internal/uuidgen"
 )
 
 // Ctest stands for Client Test
 // It represents the tests that the client of the Goherent package runs
 type Ctest struct {
-	id          string
 	name        string
 	packageName string
 	outputEvts  []events.CtestOutputEvent
@@ -21,7 +18,6 @@ type Ctest struct {
 
 func NewCtest(testName string, packageName string) Ctest {
 	return Ctest{
-		id:          uuidgen.NewString(),
 		name:        testName,
 		packageName: packageName,
 		outputEvts:  []events.CtestOutputEvent{},
@@ -34,7 +30,6 @@ func NewCtest(testName string, packageName string) Ctest {
 
 func NewRunningCtest(ranEvt events.CtestRanEvent) Ctest {
 	return Ctest{
-		id:          uuidgen.NewString(),
 		name:        ranEvt.TestName,
 		packageName: ranEvt.PackageName,
 		outputEvts:  []events.CtestOutputEvent{},
@@ -47,7 +42,6 @@ func NewRunningCtest(ranEvt events.CtestRanEvent) Ctest {
 
 func NewPassedCtest(passedEvt events.CtestPassedEvent) Ctest {
 	return Ctest{
-		id:          uuidgen.NewString(),
 		name:        passedEvt.TestName,
 		packageName: passedEvt.PackageName,
 		outputEvts:  []events.CtestOutputEvent{},
@@ -60,7 +54,6 @@ func NewPassedCtest(passedEvt events.CtestPassedEvent) Ctest {
 
 func NewFailedCtest(failedEvt events.CtestFailedEvent) Ctest {
 	return Ctest{
-		id:          uuidgen.NewString(),
 		name:        failedEvt.TestName,
 		packageName: failedEvt.PackageName,
 		outputEvts:  []events.CtestOutputEvent{},
@@ -73,7 +66,6 @@ func NewFailedCtest(failedEvt events.CtestFailedEvent) Ctest {
 
 func NewSkippedCtest(skippedEvt events.CtestSkippedEvent) Ctest {
 	return Ctest{
-		id:          uuidgen.NewString(),
 		name:        skippedEvt.TestName,
 		packageName: skippedEvt.PackageName,
 		outputEvts:  []events.CtestOutputEvent{},
@@ -82,10 +74,6 @@ func NewSkippedCtest(skippedEvt events.CtestSkippedEvent) Ctest {
 		hasFailed:   false,
 		isSkipped:   true,
 	}
-}
-
-func (ctest *Ctest) Id() string {
-	return ctest.id
 }
 
 func (ctest *Ctest) Name() string {

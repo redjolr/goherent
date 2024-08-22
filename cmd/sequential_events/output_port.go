@@ -5,6 +5,7 @@ import (
 )
 
 type OutputPort interface {
+	Error()
 	TestingStarted()
 	PackageTestsStartedRunning(packageName string)
 	CtestPassed(ctest *ctests_tracker.Ctest, duration float64)
@@ -13,5 +14,4 @@ type OutputPort interface {
 	CtestStartedRunning(ctest *ctests_tracker.Ctest)
 	CtestOutput(ctest *ctests_tracker.Ctest)
 	TestingFinishedSummary(summary ctests_tracker.TestingSummary)
-	Error()
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
-	"github.com/redjolr/goherent/cmd/testing_started"
 	"github.com/redjolr/goherent/internal/consolesize"
 	"github.com/redjolr/goherent/terminal"
 )
@@ -20,7 +19,7 @@ func Main(extraCmdArgs []string) int {
 	testCmd.
 		NonVerbose().
 		Exec()
-	router.RouteTestingStartedEvent(time.Now())
+	router.RouteTestingStartedEvent(time.Now(), testCmd.RunsTestsConcurrently())
 	for testCmd.IsRunning() {
 		var jsonEvt events.JsonEvent
 		output := testCmd.Output()
@@ -44,10 +43,8 @@ func setup() *Router {
 	} else {
 		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
 	}
-	testingStartedPresenter := testing_started.NewTerminalPresenter(&ansiTerminal)
-	testingStartedHandler := testing_started.NewEventsHandler(&testingStartedPresenter)
 	sequentialEventsRouter := sequential_events.Setup(&ansiTerminal)
 	concurrentEventsRouter := concurrent_events.Setup(&ansiTerminal)
-	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter, &testingStartedHandler)
+	router := NewRouter(sequentialEventsRouter, concurrentEventsRouter)
 	return &router
 }
