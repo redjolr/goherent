@@ -2765,7 +2765,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 5
 	When a TestingFinishedEvent  with durationS = 1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	"\n\nPackages: 1 passed\nTests: 1 passed\nTime: 1.200s"`, func(t *testing.T) {
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 passed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
@@ -2800,7 +2800,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 5
 	When a TestingFinishedEvent  with durationS = 1.372s occurs
 	Then this text will be on the terminal "⏩ somePackage" and the summary of tests
-	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(t *testing.T) {
+	"\n\nPackages: 1 skipped, 1 total\nTests: 1 skipped, 1 total\nTime: 1.372s"`, func(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
@@ -2824,6 +2824,112 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
 				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.372s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	And a PackageFailedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	Then this text will be on the terminal "❌ somePackage" and the summary of tests
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a CtestPassedEvent for "test 1" in "somePackage" has occurred
+	And a CtestSkippedEvent for "test 2" in "somePackage" has occurred
+	And a PackagePassedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	Then this text will be on the terminal "✅ somePackage" and the summary of tests
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "test 1")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "test 2")
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestPassedEvent(ctestPassedEvt)
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"✅ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
+				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a PackageStartedEvent has occurred for "somePackage"
+	And a PackagePassedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	Then this text will be on the terminal "✅ somePackage" and the summary of tests
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+		packStartedEvts := makePackageStartedEvents("somePackage")
+
+		packagePassedEvts := makePackagePassedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"⏩ somePackage"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
 		)
 	}, t)
