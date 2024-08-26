@@ -2759,20 +2759,26 @@ func TestTestingFinishedSummary(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-	Given that a PackageStartedEvent has occurred for "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
 	And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	"\n\nPackages: 1 passed, 1 total\nTests: 1 passed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 passed, 1 totalt1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		testingStartedEvt := events.NewTestingSt\nTime: 1.200s"`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
@@ -2794,20 +2800,24 @@ func TestTestingFinishedSummary(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a PackageStartedEvent has occurred for "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
 	And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.372s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.372s occurs
 	Then this text will be on the terminal "⏩ somePackage" and the summary of tests
 	"\n\nPackages: 1 skipped, 1 total\nTests: 1 skipped, 1 total\nTime: 1.372s"`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1372))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
@@ -2829,20 +2839,24 @@ func TestTestingFinishedSummary(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a PackageStartedEvent has occurred for "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
 	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
 	And a PackageFailedEvent for package "somePackage" occurs
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
 	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestFailedEvent(ctestFailedEvt)
 		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
@@ -2864,22 +2878,26 @@ func TestTestingFinishedSummary(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a PackageStartedEvent has occurred for "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
 	And a CtestPassedEvent for "test 1" in "somePackage" has occurred
 	And a CtestSkippedEvent for "test 2" in "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
 	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "test 1")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "test 2")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
@@ -2903,19 +2921,22 @@ func TestTestingFinishedSummary(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a PackageStartedEvent has occurred for "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.2s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
 	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-
 		packagePassedEvts := makePackagePassedEvents("somePackage")
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1200))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
 
@@ -2936,6 +2957,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 
 	Test(`
 	Given that these events have occurred in this order:
+	- 1 TestingStartedEvent with timestamp t1
 	- 4 PackageStartedEvent has occurred for "pack 1", ..., "pack 4"
 	- 7 CtestSkippedEvents:  2x"pack 1", 1x"pack 2", 1x"pack 3", 3x"pack 4"
 	- 4 CtestPassedEvents: 2x"pack 1",  2x"pack 3"
@@ -2943,9 +2965,11 @@ func TestTestingFinishedSummary(t *testing.T) {
 	- 2 PackagePassedEvent: 1x"pack 1", 1x"pack 4"
 	- 2 PackageFailedEvent: 1x"pack 2", 1x"pack 3"
 	And there is a terminal with height 5
-	When a TestingFinishedEvent  with durationS = 1.372s occurs
+	When a TestingFinishedEvent with a timestamp of t1+1.372s occurs
 	Then this text will be on the terminal "✅ pack 1\n❌pack 2\n❌ pack 3\n⏩ pack 4" and the summary of tests
 	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4")
 		packPassedEvts := makePackagePassedEvents("pack 1", "pack 4")
 		packFailedEvts := makePackageFailedEvents("pack 2", "pack 3")
@@ -2964,10 +2988,11 @@ func TestTestingFinishedSummary(t *testing.T) {
 		pack2Ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName 13")
 		pack3Ctest1FailedEvt := makeCtestFailedEvent("pack 3", "testName 14")
 
-		testingFinishedEvt := events.NewTestingFinishedEvent(time.Duration(time.Millisecond * 1372))
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
 		// Given
 		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])

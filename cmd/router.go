@@ -62,8 +62,8 @@ func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	}
 }
 
-func (r *Router) RouteTestingStartedEvent(timestamp time.Time, concurrently bool) {
-	testingStartedEvt := events.NewTestingStartedEvent(timestamp)
+func (r *Router) RouteTestingStartedEvent(concurrently bool) {
+	testingStartedEvt := events.NewTestingStartedEvent(time.Now())
 	if concurrently {
 		r.concurrent.Route(testingStartedEvt)
 	} else {
@@ -71,8 +71,8 @@ func (r *Router) RouteTestingStartedEvent(timestamp time.Time, concurrently bool
 	}
 }
 
-func (r *Router) RouteTestingFinishedEvent(duration time.Duration, concurrently bool) {
-	testingFinishedEvt := events.NewTestingFinishedEvent(duration)
+func (r *Router) RouteTestingFinishedEvent(concurrently bool) {
+	testingFinishedEvt := events.NewTestingFinishedEvent(time.Now())
 	if concurrently {
 		r.concurrent.Route(testingFinishedEvt)
 	} else {

@@ -1,6 +1,9 @@
 package internal
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func Test_EncodeGoherentTestName(t *testing.T) {
 	type TestCase struct {
@@ -96,35 +99,35 @@ func Test_EncodeGoherentTestName(t *testing.T) {
 		{
 			name:                      "Single_tab1",
 			goherentTestName:          "\t",
-			expectedEncodedGoTestName: ENCODED_TAB,
+			expectedEncodedGoTestName: strings.Repeat(ENCODED_WHITESPACE, 4),
 		},
 		{
 			name:                      "Single_tab2",
 			goherentTestName:          "	",
-			expectedEncodedGoTestName: ENCODED_TAB,
+			expectedEncodedGoTestName: strings.Repeat(ENCODED_WHITESPACE, 4),
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_trailing_tab",
 			goherentTestName:          "aasdsa	",
-			expectedEncodedGoTestName: "aasdsa" + ENCODED_TAB,
+			expectedEncodedGoTestName: "aasdsa" + strings.Repeat(ENCODED_WHITESPACE, 4),
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_leading_tab",
 			goherentTestName:          "	aasdsa",
-			expectedEncodedGoTestName: ENCODED_TAB + "aasdsa",
+			expectedEncodedGoTestName: strings.Repeat(ENCODED_WHITESPACE, 4) + "aasdsa",
 		},
 		{
 			name:                      "Multiple_alpha_characters_with_tab_in_between",
 			goherentTestName:          "aas\tdsa",
-			expectedEncodedGoTestName: "aas" + ENCODED_TAB + "dsa",
+			expectedEncodedGoTestName: "aas" + strings.Repeat(ENCODED_WHITESPACE, 4) + "dsa",
 		},
 		{
 			name:             "Multiple_alpha_chars_with_newlines_tabs_and_whitespaces",
 			goherentTestName: "\t \nasd \t\ndsa\n\t ",
-			expectedEncodedGoTestName: ENCODED_TAB + ENCODED_WHITESPACE + ENCODED_NEWLINE +
+			expectedEncodedGoTestName: strings.Repeat(ENCODED_WHITESPACE, 4) + ENCODED_WHITESPACE + ENCODED_NEWLINE +
 				"asd" +
-				ENCODED_WHITESPACE + ENCODED_TAB + ENCODED_NEWLINE +
-				"dsa" + ENCODED_NEWLINE + ENCODED_TAB + ENCODED_WHITESPACE,
+				ENCODED_WHITESPACE + strings.Repeat(ENCODED_WHITESPACE, 4) + ENCODED_NEWLINE +
+				"dsa" + ENCODED_NEWLINE + strings.Repeat(ENCODED_WHITESPACE, 4) + ENCODED_WHITESPACE,
 		},
 	}
 

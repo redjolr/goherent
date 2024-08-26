@@ -30,22 +30,26 @@ func TestHandleTestingFinished(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
-	Given that no test events have occurred
+	Given that a TestingStartedEvent occured with timestamp t1
+	And no test events have occurred
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
 	And that summary should present that 0 packages have been tested, 0 tests have been run
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
+		t1 := time.Now()
 		interactor, terminal, _ := setupForTestingFinished()
-
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" 0 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" 0 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -53,15 +57,19 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a Ctest with name "testName" in package "somePackage" has passed
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a Ctest with name "testName" in package "somePackage" has passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has passed
 	And 1 test was run in total and 1 has passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestPassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
@@ -75,13 +83,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		)
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt))
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -89,7 +98,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
 	And both those tests have passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -97,8 +107,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 have passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		elapsedTime := 1.2
+		t1 := time.Now()
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -124,13 +137,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -138,7 +152,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1"
 	And there are is a Ctest with names "testName 2" from the package "somePackage 2"
 	And both those tests have passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
@@ -147,8 +162,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 have passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 		ctestPassedEvt1 := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -173,13 +191,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -187,15 +206,19 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a Ctest with name "testName" in package "somePackage" has failed
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a Ctest with name "testName" in package "somePackage" has failed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has failed
 	And 1 test was run in total and 1 has failed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestFailedEvt := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
@@ -210,13 +233,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -224,7 +248,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
 	And both those tests have failed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -232,8 +257,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 have failed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
@@ -258,13 +286,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt1))
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt2))
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -272,7 +301,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1"
 	And there are is a Ctest with names "testName 2" from the package "somePackage 2"
 	And both those tests have passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
@@ -281,8 +311,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 have passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
@@ -309,13 +342,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -323,7 +357,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
 	And the first Ctest has passed and the second has failed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -331,8 +366,12 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total, 1 has passed and 1 has failed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
+
 		ctest1PassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -358,13 +397,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctest2FailedEvt))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -372,7 +412,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are two Ctests: "testName 1" from package "somePackage 1" and "testName 2" from package "somePackage 2"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are two Ctests: "testName 1" from package "somePackage 1" and "testName 2" from package "somePackage 2"
 	And the first Ctest has passed and the second has failed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -380,8 +421,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total, 1 has passed and 1 has failed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		elapsedTime := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctest1PassedEvt := events.NewCtestPassedEvent(
 			events.JsonTestEvent{
@@ -408,13 +452,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctest2FailedEvt))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -422,14 +467,18 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a Ctest with name "testName" in package "somePackage" is skipped
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a Ctest with name "testName" in package "somePackage" is skipped
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 was skipped
 	And 1 test was run in total and 1 was skipped
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
+		t1 := time.Now()
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestSkippedEvt := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
@@ -442,13 +491,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -456,7 +506,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are two Ctests with names "testName 1" and "testName 2" from the package "somePackage"
 	And both those tests are skipped
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -464,7 +515,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 were skipped
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
+		t1 := time.Now()
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
+
 		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -485,13 +540,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -499,7 +555,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1"
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1"
 	And there are is a Ctest with names "testName 2" from the package "somePackage 2"
 	And both those tests have passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
@@ -508,7 +565,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total and 2 were skipped
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
+		t1 := time.Now()
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
+
 		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -530,13 +591,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -544,7 +606,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1" that is skipped
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1" that is skipped
 	And there are is a Ctest with names "testName 2" from the package "somePackage 2" that has passed
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -552,8 +615,12 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total, of which 1 was skipped and 1 has passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		testPassedElapsed := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
+
 		ctestSkippedEvt1 := events.NewCtestSkippedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -576,13 +643,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt2))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -590,7 +658,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1" that has failed
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1" that has failed
 	And there are is a Ctest with names "testName 2" from the package "somePackage 1" that has passed
 	And there are is a Ctest with names "testName 3" from the package "somePackage 2" that is skipped
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
@@ -599,8 +668,12 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 3 tests were run in total, of which 1 failed, 1 was skipped, and 1 passed
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		testElapsed := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
+
 		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
 				Time:    time.Now(),
@@ -632,13 +705,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt3))
 
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",
@@ -646,7 +720,8 @@ func TestHandleTestingFinished(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that there are is a Ctest with names "testName 1" from the package "somePackage 1" that has failed
+	Given that a TestingStartedEvent occured with timestamp t1
+	And there are is a Ctest with names "testName 1" from the package "somePackage 1" that has failed
 	And there are is a Ctest with names "testName 2" from the package "somePackage 2" that is skipped
 	When a TestingFinishedEvent with a duration of 1.2 seconds occurs
 	Then a test summary should be presented
@@ -654,8 +729,11 @@ func TestHandleTestingFinished(t *testing.T) {
 	And 2 tests were run in total, of which 1 failed and 1 was skipped
 	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
 		// Given
-		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		t1 := time.Now()
 		testFailedElapsed := 1.2
+		interactor, terminal, ctestsTracker := setupForTestingFinished()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		interactor.HandleTestingStarted(testingStartedEvt)
 
 		ctestFailedEvt1 := events.NewCtestFailedEvent(
 			events.JsonTestEvent{
@@ -678,13 +756,14 @@ func TestHandleTestingFinished(t *testing.T) {
 		ctestsTracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestFailedEvt1))
 		ctestsTracker.InsertCtest(ctests_tracker.NewSkippedCtest(ctestSkippedEvt2))
 		// When
-		testingFinishedEvent := events.NewTestingFinishedEvent(time.Millisecond * 1200)
+		testingFinishedEvent := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
 		assert.Equal(
 			terminal.Text(),
-			ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
+			"\n🚀 Starting..."+
+				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
 				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
 				"Ran all tests.",

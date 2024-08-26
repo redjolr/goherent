@@ -2,19 +2,22 @@ package ctests_tracker
 
 import (
 	"slices"
+	"time"
 
 	"github.com/redjolr/goherent/cmd/events"
 )
 
 type CtestsTracker struct {
 	packagesUnderTest []*PackageUnderTest
-	testingDurationS  float32
+	testingStartedAt  time.Time
+	testingFinishedAt time.Time
 }
 
 func NewCtestsTracker() CtestsTracker {
 	return CtestsTracker{
 		packagesUnderTest: []*PackageUnderTest{},
-		testingDurationS:  0,
+		testingStartedAt:  time.Time{},
+		testingFinishedAt: time.Time{},
 	}
 }
 
@@ -123,11 +126,15 @@ func (tracker *CtestsTracker) ContainsPackageUtWithName(name string) bool {
 	return indexOfPackUttWithName != -1
 }
 
+func (tracker *CtestsTracker) TestingStarted(testingStartedEvt events.TestingStartedEvent) {
+	tracker.testingStartedAt = testingStartedEvt.Timestamp
+}
+
 func (tracker *CtestsTracker) TestingFinished(testingFinishedEvt events.TestingFinishedEvent) {
 	for _, packageUt := range tracker.packagesUnderTest {
 		packageUt.MarkAsFinished()
 	}
-	tracker.testingDurationS = testingFinishedEvt.DurationS()
+	tracker.testingFinishedAt = testingFinishedEvt.Timestamp
 }
 
 func (tracker *CtestsTracker) FindPackageWithName(packageName string) *PackageUnderTest {
@@ -263,7 +270,7 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 		SkippedTestsCount: tracker.SkippedCtestsCount(),
 		RunningTestsCount: tracker.RunningCtestsCount(),
 
-		DurationS: tracker.testingDurationS,
+		DurationS: float32(tracker.testingFinishedAt.Sub(tracker.testingStartedAt).Seconds()),
 	}
 }
 

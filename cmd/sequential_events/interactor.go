@@ -116,6 +116,7 @@ func (i *Interactor) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
 }
 
 func (i *Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
+	i.ctestsTracker.TestingStarted(evt)
 	i.output.TestingStarted()
 }
 

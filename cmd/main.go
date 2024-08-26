@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"log"
-	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
@@ -19,7 +18,7 @@ func Main(extraCmdArgs []string) int {
 	testCmd.
 		NonVerbose().
 		Exec()
-	router.RouteTestingStartedEvent(time.Now(), testCmd.RunsTestsConcurrently())
+	router.RouteTestingStartedEvent(testCmd.RunsTestsConcurrently())
 	for testCmd.IsRunning() {
 		var jsonEvt events.JsonEvent
 		output := testCmd.Output()
@@ -31,7 +30,7 @@ func Main(extraCmdArgs []string) int {
 		router.Route(jsonEvt, testCmd.RunsTestsConcurrently())
 	}
 	testCmd.Wait()
-	router.RouteTestingFinishedEvent(testCmd.ExecutionTime(), testCmd.RunsTestsConcurrently())
+	router.RouteTestingFinishedEvent(testCmd.RunsTestsConcurrently())
 	return 0
 }
 

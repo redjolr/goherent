@@ -122,6 +122,7 @@ func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFou
 }
 
 func (i Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
+	i.ctestsTracker.TestingStarted(evt)
 	i.output.TestingStarted()
 }
 

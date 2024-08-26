@@ -3,15 +3,11 @@ package events
 import "time"
 
 type TestingFinishedEvent struct {
-	Duration time.Duration
+	Timestamp time.Time
 }
 
-func NewTestingFinishedEvent(duration time.Duration) TestingFinishedEvent {
+func NewTestingFinishedEvent(timestamp time.Time) TestingFinishedEvent {
 	return TestingFinishedEvent{
-		Duration: duration,
+		Timestamp: timestamp,
 	}
-}
-
-func (evt TestingFinishedEvent) DurationS() float32 {
-	return float32(evt.Duration.Seconds())
 }
