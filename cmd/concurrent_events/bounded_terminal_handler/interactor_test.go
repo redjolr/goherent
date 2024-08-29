@@ -76,6 +76,18 @@ func makeCtestFailedEvent(packageName, testName string) events.CtestFailedEvent 
 	)
 }
 
+func makeCtestOutputEvent(packageName, testName, output string) events.CtestOutputEvent {
+	return events.NewCtestOutputEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "output",
+			Test:    testName,
+			Package: packageName,
+			Output:  output,
+		},
+	)
+}
+
 func makeCtestSkippedEvent(packageName, testName string) events.CtestSkippedEvent {
 	timeElapsed := 1.2
 	return events.NewCtestSkippedEvent(
@@ -2867,7 +2879,52 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"❌ somePackage"+
+			"❌ somePackage\n\n"+
+				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n"+
+				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
+				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
+				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
+	And a CtestOutputEvent for test "testName" of package "somePackage" with out "Some output" has occurred
+	And a CtestFailedEvent for test with name "testName" of package "somePackage" has occurred
+	And a PackageFailedEvent for package "somePackage" occurs
+	And there is a terminal with height 5
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
+	Then this text will be on the terminal "❌ somePackage" and the summary of tests
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "testName", "Some output")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
+
+		// Given
+		interactor, fakeTerminal, _ := setup(5)
+		interactor.HandleTestingStarted(testingStartedEvt)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+		interactor.HandleCtestOutputEvent(ctestOutputEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		assert.Equal(
+			fakeTerminal.Text(),
+			"❌ somePackage\n\n"+
+				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n\n"+
+				"  Some output\n"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
 				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
@@ -3022,7 +3079,13 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"✅ pack 1\n❌ pack 2\n❌ pack 3\n⏩ pack 4"+
+			"✅ pack 1\n"+
+				"❌ pack 2\n\n"+
+				"  "+ansi_escape.RED+"● testName 12"+ansi_escape.COLOR_RESET+"\n\n"+
+				"  "+ansi_escape.RED+"● testName 13"+ansi_escape.COLOR_RESET+"\n\n"+
+				"❌ pack 3\n\n"+
+				"  "+ansi_escape.RED+"● testName 14"+ansi_escape.COLOR_RESET+"\n\n"+
+				"⏩ pack 4"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+

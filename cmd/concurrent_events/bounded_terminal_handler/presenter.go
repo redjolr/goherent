@@ -29,6 +29,31 @@ func (p *Presenter) TestingStarted() {
 	p.terminal.Print("\n🚀 Starting...")
 }
 
+func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUnderTest) {
+	for i, packageUt := range packages {
+		if i != 0 {
+			p.terminal.Print("\n")
+		}
+		if packageUt.HasPassed() {
+			p.terminal.Print("✅ " + packageUt.Name())
+		} else if packageUt.HasAtLeastOneFailedTest() {
+			p.terminal.Print("❌ " + packageUt.Name())
+			for _, ctest := range packageUt.FailedCtests() {
+				p.terminal.Print("\n\n")
+				p.terminal.Print("  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)
+				if ctest.ContainsOutput() {
+					p.terminal.Print("\n\n")
+					p.terminal.Print("  " + ctest.Output())
+				}
+			}
+			p.terminal.Print("\n")
+
+		} else if packageUt.IsSkipped() {
+			p.terminal.Print("⏩ " + packageUt.Name())
+		}
+	}
+}
+
 func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,

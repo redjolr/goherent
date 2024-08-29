@@ -12,6 +12,7 @@ type OutputPort interface {
 		runningPackages []*ctests_tracker.PackageUnderTest,
 		finishedPackages []*ctests_tracker.PackageUnderTest,
 	)
+	DisplayFinishedPackages(packages []*ctests_tracker.PackageUnderTest)
 	RunningTestsSummary(testingSummary ctests_tracker.TestingSummary)
 	TestingFinishedSummary(testingSummary ctests_tracker.TestingSummary)
 	IsViewPortLarge() bool

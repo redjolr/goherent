@@ -62,6 +62,18 @@ func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
 	return nil
 }
 
+func (i *Interactor) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
+	existingCtest := i.ctestsTracker.FindCtestWithNameInPackage(evt.TestName, evt.PackageName)
+	if existingCtest != nil {
+		existingCtest.RecordOutputEvt(evt)
+		return
+	}
+
+	ctest := ctests_tracker.NewCtest(evt.TestName, evt.PackageName)
+	ctest.RecordOutputEvt(evt)
+	i.ctestsTracker.InsertCtest(ctest)
+}
+
 func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 	existingPackageUt := i.ctestsTracker.FindPackageWithName(evt.PackageName)
 	if existingPackageUt == nil {
@@ -129,8 +141,7 @@ func (i Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
 func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 	i.ctestsTracker.TestingFinished(evt)
 	i.output.EraseScreen()
-	i.output.DisplayPackages(
-		i.ctestsTracker.RunningPackages(),
+	i.output.DisplayFinishedPackages(
 		i.ctestsTracker.FinishedPackages(),
 	)
 	i.output.TestingFinishedSummary(i.ctestsTracker.TestingSummary())

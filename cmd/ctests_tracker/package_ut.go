@@ -61,6 +61,19 @@ func (packageUt *PackageUnderTest) FailedCtestsCount() int {
 	return count
 }
 
+func (packageUt *PackageUnderTest) FailedCtests() []Ctest {
+	failedCtestCount := packageUt.FailedCtestsCount()
+	failedCtests := make([]Ctest, failedCtestCount, failedCtestCount)
+	failedCtestInd := 0
+	for _, ctest := range packageUt.ctests {
+		if ctest.hasFailed {
+			failedCtests[failedCtestInd] = ctest
+			failedCtestInd++
+		}
+	}
+	return failedCtests
+}
+
 func (packageUt *PackageUnderTest) SkippedCtestsCount() int {
 	count := 0
 	for _, ctest := range packageUt.ctests {
