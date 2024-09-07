@@ -1312,6 +1312,34 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 	}, t)
 }
 
+func TestHandleCtestSkippedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		//Given
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
+	}, t)
+}
+
 func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
 	assert := assert.New(t)
 

@@ -97,8 +97,7 @@ func (i Interactor) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
 }
 
 func (i *Interactor) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
-	ctest := ctests_tracker.NewSkippedCtest(evt)
-	i.ctestsTracker.InsertCtest(ctest)
+	i.ctestsTracker.HandleCtestSkippedEvent(evt)
 }
 
 func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFoundEvent) error {
