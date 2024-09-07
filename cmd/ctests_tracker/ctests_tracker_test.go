@@ -63,21 +63,39 @@ func makeCtestOutputEvent(packageName, testName, output string) events.CtestOutp
 	)
 }
 
-func TestHandleCtestRanEvent(t *testing.T) {
-	assert := assert.New(t)
+func makeCtestSkippedEvent(packageName, testName string) events.CtestSkippedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestSkippedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "skip",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
 
+func TestHandleCtestRanEvent(t *testing.T) {
+	Expect := expect.New(t)
 	Test(`
 	Given an empty CtestsTracker
-	When a CtestRanEvent for a certain test in a certain package is received
+	When a CtestRanEvent for a test named "someTest" in package "somePackage"
 	Then the CtestsTracker should contain that PackageUnderTest
+	And a running Ctest with that name should be added. 
 	`, func(t *testing.T) {
 		tracker := ctests_tracker.NewCtestsTracker()
 
-		packageName := "somePackageName"
-		ctestRanEvent := makeCtestRanEvent(packageName, "someTestName")
+		ctestRanEvent := makeCtestRanEvent("somePackage", "someTest")
 
 		tracker.HandleCtestRanEvent(ctestRanEvent)
-		assert.True(tracker.ContainsPackageUtWithName(packageName))
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		Expect(tracker.ContainsPackageUtWithName("somePackage")).ToEqual(true)
+
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.IsRunning()).ToEqual(true)
 	}, t)
 }
 
@@ -215,6 +233,76 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 		Expect(ctest.Name()).ToEqual("someTest")
 		Expect(ctest.PackageName()).ToEqual("somePackage")
 		Expect(ctest.HasFailed()).ToEqual(true)
+		Expect(
+			tracker.FindPackageWithName("somePackage").CtestsCount(),
+		).ToEqual(1)
+	}, t)
+}
+
+func TestHandleCtestSkippedEvent(t *testing.T) {
+	Expect := expect.New(t)
+	Test(`
+	Given that there is an empty CtestsTracker
+	When a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
+	Then a failed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestSkippedEvent(ctestSkippedEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		// Then
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.IsSkipped()).ToEqual(true)
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	When a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		tracker.HandleCtestSkippedEvent(ctestSkippedEvt)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.IsSkipped()).ToEqual(true)
+
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	And a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
+	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestSkippedEvt1 := makeCtestSkippedEvent("somePackage", "someTest")
+		ctestSkippedEvt2 := makeCtestSkippedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestSkippedEvent(ctestSkippedEvt1)
+
+		// When
+		tracker.HandleCtestSkippedEvent(ctestSkippedEvt2)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.IsSkipped()).ToEqual(true)
 		Expect(
 			tracker.FindPackageWithName("somePackage").CtestsCount(),
 		).ToEqual(1)

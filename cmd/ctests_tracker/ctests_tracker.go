@@ -119,6 +119,21 @@ func (tracker *CtestsTracker) HandleCtestPassedEvent(evt events.CtestPassedEvent
 	ctest.MarkAsPassed(evt)
 }
 
+func (tracker *CtestsTracker) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
+	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
+		packUt := NewPackageUnderTest(evt.PackageName)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
+	}
+	packUt := tracker.FindPackageWithName(evt.PackageName)
+
+	if !packUt.containsCtest(evt.TestName) {
+		packUt.insertCtest(NewSkippedCtest(evt))
+		return
+	}
+	ctest := packUt.ctestByName(evt.TestName)
+	ctest.MarkAsSkipped(evt)
+}
+
 func (tracker *CtestsTracker) HandleCtestFailedEvent(evt events.CtestFailedEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
 		packUt := NewPackageUnderTest(evt.PackageName)
