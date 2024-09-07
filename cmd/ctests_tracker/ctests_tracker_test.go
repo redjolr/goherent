@@ -90,7 +90,6 @@ func TestNewCtestOutput(t *testing.T) {
 	When we call the Output() method on the given ctest
 	Then the method will return "some output"`, func(t *testing.T) {
 		// Given
-
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertCtest(ctests_tracker.NewCtest("someTest", "somePackage"))
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
