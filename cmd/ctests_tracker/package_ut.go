@@ -136,7 +136,7 @@ func (packageUt *PackageUnderTest) isCtestTheFirstOne(ctest Ctest) bool {
 }
 
 func (packageUt *PackageUnderTest) insertCtest(ctest Ctest) Ctest {
-	if !packageUt.containsCtest(ctest) {
+	if !packageUt.containsCtest(ctest.name) {
 		packageUt.ctests = append(packageUt.ctests, ctest)
 		return ctest
 	}
@@ -153,9 +153,9 @@ func (packageUt *PackageUnderTest) ctestByName(ctestName string) *Ctest {
 	return nil
 }
 
-func (packageUt *PackageUnderTest) containsCtest(ctest Ctest) bool {
+func (packageUt *PackageUnderTest) containsCtest(ctestName string) bool {
 	indexOfCtestWithName := slices.IndexFunc(packageUt.ctests, func(aCtest Ctest) bool {
-		return ctest.Equals(aCtest)
+		return aCtest.HasName(ctestName)
 	})
 	return indexOfCtestWithName != -1
 }

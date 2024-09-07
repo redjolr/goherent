@@ -6,10 +6,62 @@ import (
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/expect"
 
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/stretchr/testify/assert"
 )
+
+func makeCtestRanEvent(packageName, testName string) events.CtestRanEvent {
+	elapsedTime := 1.2
+	return events.NewCtestRanEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "run",
+			Package: packageName,
+			Test:    testName,
+			Elapsed: &elapsedTime,
+		},
+	)
+}
+
+func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestPassedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
+func makeCtestFailedEvent(packageName, testName string) events.CtestFailedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestFailedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
+func makeCtestOutputEvent(packageName, testName, output string) events.CtestOutputEvent {
+	return events.NewCtestOutputEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "output",
+			Test:    testName,
+			Package: packageName,
+			Output:  output,
+		},
+	)
+}
 
 func TestNewCtestRanEvent(t *testing.T) {
 	assert := assert.New(t)
@@ -22,16 +74,136 @@ func TestNewCtestRanEvent(t *testing.T) {
 		tracker := ctests_tracker.NewCtestsTracker()
 
 		packageName := "somePackageName"
-		ctestRanEvent := events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Package: packageName,
-				Test:    "someTestName",
-			},
-		)
+		ctestRanEvent := makeCtestRanEvent(packageName, "someTestName")
 
-		tracker.NewCtestRanEvent(ctestRanEvent)
+		tracker.HandleCtestRanEvent(ctestRanEvent)
 		assert.True(tracker.ContainsPackageUtWithName(packageName))
+	}, t)
+}
+
+func TestNewCtestOutput(t *testing.T) {
+	Expect := expect.New(t)
+
+	Test(`
+	Given that there is a Ctest with name "someTest" of package "somePackage"
+	And a CtestOutputEvent has occurred with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertCtest(ctests_tracker.NewCtest("someTest", "somePackage"))
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
+	}, t)
+
+	Test(`
+	Given that there is a running Ctest with name "someTest" of package "somePackage"
+	And a CtestOutputEvent has occurred with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+		ctestRanEvt := makeCtestRanEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.HandleCtestRanEvent(ctestRanEvt)
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
+	}, t)
+
+	Test(`
+	Given that there is a passed Ctest with name "someTest" of package "somePackage"
+	And a CtestOutputEvent has occurred with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertCtest(ctests_tracker.NewPassedCtest(ctestPassedEvt))
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
+	}, t)
+
+	Test(`
+	Given that there is a failed Ctest with name "someTest" of package "somePackage"
+	And a CtestOutputEvent has occurred with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+		ctestPassedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertCtest(ctests_tracker.NewFailedCtest(ctestPassedEvt))
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
+	}, t)
+
+	Test(`
+	Given that there is a package "somePackage"
+	And a CtestOutputEvent has occurred for "someTest" of "somePackage" with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+
+		tracker := ctests_tracker.NewCtestsTracker()
+		tracker.InsertPackageUt("somePackage")
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
+	}, t)
+
+	Test(`
+	Given a CtestOutputEvent has occurred for "someTest" of "somePackage" with output "some output"
+	When we call the Output() method on the given ctest
+	Then the method will return "some output"`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		ctestOutput := ctest.Output()
+
+		// Then
+		Expect(ctestOutput).ToEqual("some output")
 	}, t)
 }
 
@@ -313,17 +485,8 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 0
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewPassedCtest(events.NewCtestPassedEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest := ctests_tracker.NewPassedCtest(makeCtestPassedEvent("somePackage", "testName"))
 		tracker.InsertCtest(ctest)
 
 		// When
@@ -339,17 +502,8 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 0
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewFailedCtest(events.NewCtestFailedEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest := ctests_tracker.NewFailedCtest(makeCtestFailedEvent("somePackage", "testName"))
 		tracker.InsertCtest(ctest)
 
 		// When
@@ -365,17 +519,8 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 1
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
 		tracker.InsertCtest(ctest)
 
 		// When
@@ -391,27 +536,10 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 2
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
 
-		ctest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName2",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest2 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName2"))
 		tracker.InsertCtest(ctest1)
 		tracker.InsertCtest(ctest2)
 
@@ -428,27 +556,10 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 2
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		ctest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
 
-		ctest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage2",
-				Test:    "testName2",
-				Elapsed: &elapsedTime,
-			},
-		))
+		ctest2 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage2", "testName2"))
 		tracker.InsertCtest(ctest1)
 		tracker.InsertCtest(ctest2)
 
@@ -466,37 +577,12 @@ func TestRunningTestsCount(t *testing.T) {
 	Then the return value should be 2
 	`, func(t *testing.T) {
 		// Given
-		elapsedTime := 2.3
 		tracker := ctests_tracker.NewCtestsTracker()
-		runningCtest1 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName1",
-				Elapsed: &elapsedTime,
-			},
-		))
+		runningCtest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName1"))
 
-		passingCtest := ctests_tracker.NewPassedCtest(events.NewCtestPassedEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage",
-				Test:    "testName2",
-				Elapsed: &elapsedTime,
-			},
-		))
+		passingCtest := ctests_tracker.NewPassedCtest(makeCtestPassedEvent("somePackage", "testName2"))
 
-		runningCtest2 := ctests_tracker.NewRunningCtest(events.NewCtestRanEvent(
-			events.JsonTestEvent{
-				Time:    time.Now(),
-				Action:  "pass",
-				Package: "somePackage2",
-				Test:    "testName3",
-				Elapsed: &elapsedTime,
-			},
-		))
+		runningCtest2 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage2", "testName3"))
 		tracker.InsertCtest(runningCtest1)
 		tracker.InsertCtest(passingCtest)
 		tracker.InsertCtest(runningCtest2)

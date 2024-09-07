@@ -104,11 +104,30 @@ func (tracker *CtestsTracker) DeletePackage(packageUt *PackageUnderTest) {
 	}
 }
 
-func (tracker *CtestsTracker) NewCtestRanEvent(evt events.CtestRanEvent) {
+func (tracker *CtestsTracker) HandleCtestRanEvent(evt events.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
 		packUt := NewPackageUnderTest(evt.PackageName)
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
+
+	packUt := tracker.FindPackageWithName(evt.PackageName)
+	if !packUt.containsCtest(evt.TestName) {
+		packUt.insertCtest(NewRunningCtest(evt))
+	}
+}
+
+func (tracker *CtestsTracker) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
+	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
+		packUt := NewPackageUnderTest(evt.PackageName)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
+	}
+	packUt := tracker.FindPackageWithName(evt.PackageName)
+
+	if !packUt.containsCtest(evt.TestName) {
+		packUt.insertCtest(NewCtest(evt.TestName, evt.PackageName))
+	}
+	ctest := tracker.FindCtestWithNameInPackage(evt.TestName, evt.PackageName)
+	ctest.RecordOutputEvt(evt)
 }
 
 func (tracker *CtestsTracker) IsCtestFirstOfItsPackage(ctest Ctest) bool {

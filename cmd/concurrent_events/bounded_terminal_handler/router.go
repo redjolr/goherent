@@ -29,6 +29,8 @@ func (router *Router) Route(unknwonEvt any) {
 		router.interactor.HandlePackagePassed(evt)
 	case events.PackageFailedEvent:
 		router.interactor.HandlePackageFailed(evt)
+	// case events.CtestOutputEvent:
+	// 	router.interactor.HandleCtestOutputEvent(evt)
 	case events.PackageStartedEvent:
 		router.interactor.HandlePackageStartedEvent(evt)
 	case events.NoPackageTestsFoundEvent:
