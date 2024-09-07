@@ -104,6 +104,36 @@ func (tracker *CtestsTracker) DeletePackage(packageUt *PackageUnderTest) {
 	}
 }
 
+func (tracker *CtestsTracker) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
+	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
+		packUt := NewPackageUnderTest(evt.PackageName)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
+	}
+	packUt := tracker.FindPackageWithName(evt.PackageName)
+
+	if !packUt.containsCtest(evt.TestName) {
+		packUt.insertCtest(NewPassedCtest(evt))
+		return
+	}
+	ctest := packUt.ctestByName(evt.TestName)
+	ctest.MarkAsPassed(evt)
+}
+
+func (tracker *CtestsTracker) HandleCtestFailedEvent(evt events.CtestFailedEvent) {
+	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
+		packUt := NewPackageUnderTest(evt.PackageName)
+		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
+	}
+	packUt := tracker.FindPackageWithName(evt.PackageName)
+
+	if !packUt.containsCtest(evt.TestName) {
+		packUt.insertCtest(NewFailedCtest(evt))
+		return
+	}
+	ctest := packUt.ctestByName(evt.TestName)
+	ctest.MarkAsFailed(evt)
+}
+
 func (tracker *CtestsTracker) HandleCtestRanEvent(evt events.CtestRanEvent) {
 	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
 		packUt := NewPackageUnderTest(evt.PackageName)

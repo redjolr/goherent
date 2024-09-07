@@ -63,7 +63,7 @@ func makeCtestOutputEvent(packageName, testName, output string) events.CtestOutp
 	)
 }
 
-func TestNewCtestRanEvent(t *testing.T) {
+func TestHandleCtestRanEvent(t *testing.T) {
 	assert := assert.New(t)
 
 	Test(`
@@ -78,6 +78,146 @@ func TestNewCtestRanEvent(t *testing.T) {
 
 		tracker.HandleCtestRanEvent(ctestRanEvent)
 		assert.True(tracker.ContainsPackageUtWithName(packageName))
+	}, t)
+}
+
+func TestHandleCtestPassedEvent(t *testing.T) {
+	Expect := expect.New(t)
+	Test(`
+	Given that there is an empty CtestsTracker
+	When a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestPassedEvent(ctestPassedEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		// Then
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasPassed()).ToEqual(true)
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	When a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		tracker.HandleCtestPassedEvent(ctestPassedEvt)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasPassed()).ToEqual(true)
+
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	And a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestPassedEvt1 := makeCtestPassedEvent("somePackage", "someTest")
+		ctestPassedEvt2 := makeCtestPassedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestPassedEvent(ctestPassedEvt1)
+
+		// When
+		tracker.HandleCtestPassedEvent(ctestPassedEvt2)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasPassed()).ToEqual(true)
+		Expect(
+			tracker.FindPackageWithName("somePackage").CtestsCount(),
+		).ToEqual(1)
+	}, t)
+}
+
+func TestHandleCtestFailedEvent(t *testing.T) {
+	Expect := expect.New(t)
+	Test(`
+	Given that there is an empty CtestsTracker
+	When a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
+	Then a failed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestFailedEvent(ctestFailedEvt)
+
+		// When
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		// Then
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasFailed()).ToEqual(true)
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	When a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		tracker.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		tracker.HandleCtestFailedEvent(ctestFailedEvt)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasFailed()).ToEqual(true)
+
+	}, t)
+
+	Test(`
+	Given that there is a CtestsTracker
+	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
+	And a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
+	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
+	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+		// Given
+		tracker := ctests_tracker.NewCtestsTracker()
+		ctestFailedEvt1 := makeCtestFailedEvent("somePackage", "someTest")
+		ctestFailedEvt2 := makeCtestFailedEvent("somePackage", "someTest")
+
+		tracker.HandleCtestFailedEvent(ctestFailedEvt1)
+
+		// When
+		tracker.HandleCtestFailedEvent(ctestFailedEvt2)
+
+		// Then
+		ctest := tracker.FindCtestWithNameInPackage("someTest", "somePackage")
+		Expect(ctest.Name()).ToEqual("someTest")
+		Expect(ctest.PackageName()).ToEqual("somePackage")
+		Expect(ctest.HasFailed()).ToEqual(true)
+		Expect(
+			tracker.FindPackageWithName("somePackage").CtestsCount(),
+		).ToEqual(1)
 	}, t)
 }
 

@@ -1256,6 +1256,62 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan5(t *testing.T) {
 	}, t)
 }
 
+func TestHandleCtestPassedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		//Given
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
+	}, t)
+}
+
+func TestHandleCtestFailedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		//Given
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup(6)
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
+	}, t)
+}
+
 func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo5(t *testing.T) {
 	assert := assert.New(t)
 
