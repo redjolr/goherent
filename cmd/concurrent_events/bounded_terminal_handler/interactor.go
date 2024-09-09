@@ -26,10 +26,8 @@ func (i Interactor) HandlePackageStartedEvent(evt events.PackageStartedEvent) er
 	}
 
 	i.ctestsTracker.InsertPackageUt(evt.PackageName)
-	if i.ctestsTracker.HasPackages() {
-		i.output.EraseScreen()
-	}
 
+	i.output.EraseScreen()
 	i.output.DisplayPackages(
 		i.ctestsTracker.RunningPackages(),
 		i.ctestsTracker.FinishedPackages(),
@@ -130,6 +128,7 @@ func (i Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
 func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 	i.ctestsTracker.TestingFinished(evt)
 	i.output.EraseScreen()
+	i.output.TestingFinishedSummaryLabel()
 	i.output.DisplayFinishedPackages(
 		i.ctestsTracker.FinishedPackages(),
 	)

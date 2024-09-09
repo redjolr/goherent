@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/redjolr/goherent/cmd/concurrent_events/bounded_terminal_handler/templates"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
+	"github.com/redjolr/goherent/internal/utils"
 	"github.com/redjolr/goherent/terminal"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
@@ -13,8 +15,6 @@ type Presenter struct {
 	terminal terminal.Terminal
 }
 
-const SummaryLineCount int = 4
-
 func NewPresenter(term terminal.Terminal) Presenter {
 	return Presenter{
 		terminal: term,
@@ -22,11 +22,16 @@ func NewPresenter(term terminal.Terminal) Presenter {
 }
 
 func (p *Presenter) IsViewPortLarge() bool {
-	return p.terminal.Height() > 5
+	return p.terminal.Height() > utils.StrLinesCount(templates.RunningTestsSummary("", "", ""))+2
 }
 
 func (p *Presenter) TestingStarted() {
+	p.terminal.Print(strings.Repeat("\n", p.terminal.Height()))
 	p.terminal.Print("\n🚀 Starting...")
+}
+
+func (p *Presenter) TestingFinishedSummaryLabel() {
+	p.terminal.Print("📋 Tests summary.\n\n")
 }
 
 func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUnderTest) {
@@ -58,10 +63,10 @@ func (p *Presenter) DisplayPackages(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,
 ) {
-	if p.terminal.Height() <= 5 {
-		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages)
-	} else {
+	if p.IsViewPortLarge() {
 		p.displayPackagesInLargeTerminal(runningPackages, finishedPackages)
+	} else {
+		p.displayPackagesInSmallTerminal(runningPackages, finishedPackages)
 	}
 }
 
@@ -69,7 +74,7 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 	runningPackages []*ctests_tracker.PackageUnderTest,
 	finishedPackages []*ctests_tracker.PackageUnderTest,
 ) {
-	packagesThatFitInTerminalCount := p.terminal.Height() - SummaryLineCount
+	packagesThatFitInTerminalCount := p.terminal.Height() - utils.StrLinesCount(templates.RunningTestsSummary("", "", "")) - 2
 	runningPackagesThatFitInTerminal := runningPackages[0:min(len(runningPackages), packagesThatFitInTerminalCount)]
 
 	if len(runningPackages) < packagesThatFitInTerminalCount && len(finishedPackages) > 0 {
@@ -169,12 +174,7 @@ func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSum
 
 	testsSummary, _ = strings.CutSuffix(testsSummary, ", ")
 
-	summary := "\n\n" +
-		packagesSummary + "\n" +
-		testsSummary + "\n" +
-		timeSummary
-
-	p.terminal.Print(summary)
+	p.terminal.Print(templates.RunningTestsSummary(packagesSummary, testsSummary, timeSummary))
 }
 
 func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
@@ -217,12 +217,7 @@ func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary
 	testsSummary += fmt.Sprintf("%d total", summary.TestsCount)
 
 	p.terminal.Print(
-		fmt.Sprintf(
-			"\n\n" + packagesSummary + "\n" +
-				testsSummary + "\n" +
-				timeSummary + "\n" +
-				"Ran all tests.",
-		),
+		templates.TestingFinishedSummary(packagesSummary, testsSummary, timeSummary),
 	)
 }
 
