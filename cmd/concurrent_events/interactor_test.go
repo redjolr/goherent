@@ -1,11 +1,11 @@
-package bounded_terminal_handler_test
+package concurrent_events_test
 
 import (
 	"math"
 	"testing"
 	"time"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events/bounded_terminal_handler"
+	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	. "github.com/redjolr/goherent/pkg"
@@ -14,11 +14,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func setup(terminalHeight int) (*bounded_terminal_handler.Interactor, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
+func setup(terminalHeight int) (*concurrent_events.Interactor, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
 	fakeAnsiTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, terminalHeight)
-	fakeAnsiTerminalPresenter := bounded_terminal_handler.NewPresenter(&fakeAnsiTerminal)
+	fakeAnsiTerminalPresenter := concurrent_events.NewPresenter(&fakeAnsiTerminal)
 	ctestTracker := ctests_tracker.NewCtestsTracker()
-	interactor := bounded_terminal_handler.NewInteractor(&fakeAnsiTerminalPresenter, &ctestTracker)
+	interactor := concurrent_events.NewInteractor(&fakeAnsiTerminalPresenter, &ctestTracker)
 	return &interactor, &fakeAnsiTerminal, &ctestTracker
 }
 

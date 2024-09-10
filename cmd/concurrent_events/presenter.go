@@ -1,11 +1,11 @@
-package bounded_terminal_handler
+package concurrent_events
 
 import (
 	"fmt"
 	"math"
 	"strings"
 
-	"github.com/redjolr/goherent/cmd/concurrent_events/bounded_terminal_handler/templates"
+	"github.com/redjolr/goherent/cmd/concurrent_events/templates"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/internal/utils"
 	"github.com/redjolr/goherent/terminal"

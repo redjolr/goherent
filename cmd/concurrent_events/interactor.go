@@ -1,4 +1,4 @@
-package bounded_terminal_handler
+package concurrent_events
 
 import (
 	"errors"
