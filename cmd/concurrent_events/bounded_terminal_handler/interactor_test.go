@@ -3050,7 +3050,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"✅ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
@@ -3090,7 +3090,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"⏩ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
@@ -3130,7 +3130,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"❌ somePackage\n\n"+
 				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
@@ -3174,7 +3174,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"❌ somePackage\n\n"+
 				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n\n"+
 				"  Some output\n"+
@@ -3219,7 +3219,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"✅ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
@@ -3257,7 +3257,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"⏩ somePackage"+
 				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
 				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
@@ -3334,7 +3334,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		// Then
 		assert.Equal(
 			fakeTerminal.Text(),
-			"\n\n📋 Tests summary.\n\n"+
+			"\n\n📋 Tests summary:\n\n"+
 				"✅ pack 1\n"+
 				"❌ pack 2\n\n"+
 				"  "+ansi_escape.RED+"● testName 12"+ansi_escape.COLOR_RESET+"\n\n"+

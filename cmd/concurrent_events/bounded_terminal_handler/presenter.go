@@ -2,6 +2,7 @@ package bounded_terminal_handler
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events/bounded_terminal_handler/templates"
@@ -26,12 +27,17 @@ func (p *Presenter) IsViewPortLarge() bool {
 }
 
 func (p *Presenter) TestingStarted() {
-	p.terminal.Print(strings.Repeat("\n", p.terminal.Height()))
+	if p.terminal.Height() < math.MaxInt {
+		p.terminal.Print(strings.Repeat("\n", p.terminal.Height()))
+	} else {
+		p.terminal.Print(strings.Repeat("\n", 30))
+
+	}
 	p.terminal.Print("\n🚀 Starting...")
 }
 
 func (p *Presenter) TestingFinishedSummaryLabel() {
-	p.terminal.Print("📋 Tests summary.\n\n")
+	p.terminal.Print("📋 Tests summary:\n\n")
 }
 
 func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUnderTest) {

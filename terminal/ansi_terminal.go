@@ -2,6 +2,7 @@ package terminal
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
@@ -20,8 +21,8 @@ func NewBoundedAnsiTerminal(width, height int) AnsiTerminal {
 
 func NewUnboundedAnsiTerminal() AnsiTerminal {
 	return AnsiTerminal{
-		height: -1,
-		width:  -1,
+		height: math.MaxInt,
+		width:  math.MaxInt,
 	}
 }
 
