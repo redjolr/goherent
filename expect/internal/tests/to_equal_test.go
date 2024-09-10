@@ -4,39 +4,38 @@ import (
 	"testing"
 
 	"github.com/redjolr/goherent/expect/internal/assertions"
-	. "github.com/redjolr/goherent/pkg"
 )
 
 func TestToEqualIntegers(t *testing.T) {
-	Test("it should not return an error if we compare 1 and 1.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare 1 and 1.", func(t *testing.T) {
 		oneEqualsOneError := assertions.ToEqual(1, 1)
 		if oneEqualsOneError != nil {
 			t.Error("One equals one, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare 0 and 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare 0 and 0.", func(t *testing.T) {
 		zeroEqualsZeroError := assertions.ToEqual(0, 0)
 		if zeroEqualsZeroError != nil {
 			t.Error("Zero equals zero, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare -1 and -1.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare -1 and -1.", func(t *testing.T) {
 		neg1EqualsNeg1Error := assertions.ToEqual(-1, -1)
 		if neg1EqualsNeg1Error != nil {
 			t.Error("-1 equals -1, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare -1 and 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare -1 and 0.", func(t *testing.T) {
 		zeroEqualsZeroError := assertions.ToEqual(0, 0)
 		if zeroEqualsZeroError != nil {
 			t.Error("Zero equals zero, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare 2 and 3
 	When we use the ToEqual assertions
 	Then it should return an error with this text: "expected: 2\nactual:  3",`, func(t *testing.T) {
@@ -51,9 +50,9 @@ func TestToEqualIntegers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, twoEqualsTwoError.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare int8(2) and int16(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
@@ -70,9 +69,9 @@ func TestToEqualIntegers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, twoEqualsTwoError.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare int32(2) and int64(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
@@ -89,9 +88,9 @@ func TestToEqualIntegers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, twoEqualsTwoError.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare uint8(2) and int8(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
@@ -108,18 +107,18 @@ func TestToEqualIntegers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, twoEqualsTwoError.Error())
 		}
-	}, t)
+	})
 }
 
 func TestToEqualFloatingPointNumbers(t *testing.T) {
-	Test("it should not return an error if we compare float64(3.25) and float64(3.25).", func(t *testing.T) {
+	t.Run("it should not return an error if we compare float64(3.25) and float64(3.25).", func(t *testing.T) {
 		floatsEqualsErr := assertions.ToEqual(3.25, 3.25)
 		if floatsEqualsErr != nil {
 			t.Error("One equals one, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare float32(3.25) and float32(3.25).", func(t *testing.T) {
+	t.Run("it should not return an error if we compare float32(3.25) and float32(3.25).", func(t *testing.T) {
 		var firstFloat64 float32 = 3.25
 		var secondFloat64 float32 = 3.25
 
@@ -127,16 +126,16 @@ func TestToEqualFloatingPointNumbers(t *testing.T) {
 		if floatsEqualsErr != nil {
 			t.Error("One equals one, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare float64(3.25) and float64(3.250).", func(t *testing.T) {
+	t.Run("it should not return an error if we compare float64(3.25) and float64(3.250).", func(t *testing.T) {
 		floatsEqualsErr := assertions.ToEqual(3.25, 3.250)
 		if floatsEqualsErr != nil {
 			t.Error("One equals one, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare float32(3.25) and float64(3.25)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
@@ -154,9 +153,9 @@ func TestToEqualFloatingPointNumbers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, floatsEqualsErr.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare float32(7) and int(7)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
@@ -174,25 +173,25 @@ func TestToEqualFloatingPointNumbers(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, floatsEqualsErr.Error())
 		}
-	}, t)
+	})
 }
 
 func TestToEqualBooleans(t *testing.T) {
-	Test("it should not return an error if we compare true and true.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare true and true.", func(t *testing.T) {
 		boolsEqualErr := assertions.ToEqual(true, true)
 		if boolsEqualErr != nil {
 			t.Error("true equals true, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare false and false.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare false and false.", func(t *testing.T) {
 		boolsEqualErr := assertions.ToEqual(false, false)
 		if boolsEqualErr != nil {
 			t.Error("false equals false, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare true and false
 	When we use the ToEqual assertions
 	Then it should return an error with this text: "Not equal:\nexpected: true\nactual  : false".`, func(t *testing.T) {
@@ -207,9 +206,9 @@ func TestToEqualBooleans(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, boolsEqualErr.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare false and true
 	When we use the ToEqual assertions
 	Then it should return an error with this text: "Not equal:\nexpected: false\nactual  : true".`, func(t *testing.T) {
@@ -224,32 +223,32 @@ func TestToEqualBooleans(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s.\n\nIs:\n%s",
 				expectedErrorMsg, boolsEqualErr.Error())
 		}
-	}, t)
+	})
 }
 
 func TestToEqualStrings(t *testing.T) {
-	Test(`it should not return an error if we compare "A" and "A".`, func(t *testing.T) {
+	t.Run(`it should not return an error if we compare "A" and "A".`, func(t *testing.T) {
 		stringsEqualErr := assertions.ToEqual("A", "A")
 		if stringsEqualErr != nil {
 			t.Error(`"A" equals "A", but ToEqual() assertion says they don't.`)
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare "ABC" and "ABC".`, func(t *testing.T) {
+	t.Run(`it should not return an error if we compare "ABC" and "ABC".`, func(t *testing.T) {
 		stringsEqualErr := assertions.ToEqual("ABC", "ABC")
 		if stringsEqualErr != nil {
 			t.Error(`"ABC" equals "ABC", but ToEqual() assertion says they don't.`)
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare "" and "".`, func(t *testing.T) {
+	t.Run(`it should not return an error if we compare "" and "".`, func(t *testing.T) {
 		stringsEqualErr := assertions.ToEqual("", "")
 		if stringsEqualErr != nil {
 			t.Error("Empty string equals empty, but ToEqual() assertion says they don't.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "D" and "E"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -274,9 +273,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello" and "Hallo"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -301,9 +300,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello\nWorld" and "Hallo\World"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -329,9 +328,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello\nWorld" and "Hallo\nWelt"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -358,9 +357,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello\nThere\nWorld" and "Hallo\nThere\nWorld"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -386,9 +385,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello\nThere\nWorld" and "Hallo\nThere\nWelt"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -416,9 +415,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Hello\nThere\nWorld" and "Hallo\nDort\nWelt"
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -447,9 +446,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "Line1\nLine2\nLine3\nLine4\nLine5\nLine6\nLine7" and 
 	"Rreshti1\nRreshti2\nRreshti3\nRreshti4\nRreshti5\nRreshti6\nRreshti7"
 	When we use the ToEqual assertions
@@ -490,9 +489,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "2" and int(2)
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -511,9 +510,9 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that we compare "2" and float64(2)
 	When we use the ToEqual assertions
 	Then it should return an error that reports that the values are not equal
@@ -533,11 +532,11 @@ func TestToEqualStrings(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 }
 
 func TestToEqualArrays(t *testing.T) {
-	Test("it should not return an error if we compare two integer arrays of size 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two integer arrays of size 0.", func(t *testing.T) {
 		arr1 := [0]int{}
 		arr2 := [0]int{}
 
@@ -545,9 +544,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[0]int{} equals [0]int{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two integer arrays of size 1 with their 0 values.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two integer arrays of size 1 with their 0 values.", func(t *testing.T) {
 		arr1 := [1]int{}
 		arr2 := [1]int{}
 
@@ -555,9 +554,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]int{} equals [1]int{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two integer arrays of size 1 with an element equal to 2.`, func(t *testing.T) {
 		arr1 := [1]int{2}
 		arr2 := [1]int{2}
@@ -566,9 +565,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]int{2} equals [1]int{2}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two integer arrays of size 4 with equal elements.`, func(t *testing.T) {
 		arr1 := [4]int{4, 6, -2, 3}
 		arr2 := [4]int{4, 6, -2, 3}
@@ -577,9 +576,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("integer arrays are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two boolean arrays of size 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two boolean arrays of size 0.", func(t *testing.T) {
 		arr1 := [0]bool{}
 		arr2 := [0]bool{}
 
@@ -587,9 +586,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[0]bool{} equals [0]bool{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two bool arrays of size 1 with their 0 values.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two bool arrays of size 1 with their 0 values.", func(t *testing.T) {
 		arr1 := [1]bool{}
 		arr2 := [1]bool{}
 
@@ -597,9 +596,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]bool{} equals [1]bool{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two bool arrays of size 1 with an element equal to false.`, func(t *testing.T) {
 		arr1 := [1]bool{false}
 		arr2 := [1]bool{false}
@@ -608,9 +607,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]bool{false} equals [1]bool{false}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two bool arrays of size 4 with equal elements.`, func(t *testing.T) {
 		arr1 := [4]bool{false, true, true, false}
 		arr2 := [4]bool{false, true, true, false}
@@ -619,9 +618,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("boolean arrays are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two float64 arrays of size 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two float64 arrays of size 0.", func(t *testing.T) {
 		arr1 := [0]float64{}
 		arr2 := [0]float64{}
 
@@ -629,9 +628,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[0]float64{} equals [0]float64{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two float64 arrays of size 1 with their 0 values.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two float64 arrays of size 1 with their 0 values.", func(t *testing.T) {
 		arr1 := [1]float64{}
 		arr2 := [1]float64{}
 
@@ -639,9 +638,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]float64{} equals [1]float64{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two float64 arrays of size 1 with an element equal to 2.`, func(t *testing.T) {
 		arr1 := [1]float64{2.3}
 		arr2 := [1]float64{2.3}
@@ -650,9 +649,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]float64{2} equals [1]float64{2}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two float64 arrays of size 4 with equal elements.`, func(t *testing.T) {
 		arr1 := [4]float64{4.5, 6.3, -11.2, 2.009}
 		arr2 := [4]float64{4.5, 6.3, -11.2, 2.009}
@@ -661,9 +660,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]float64{2} equals [1]float64{2}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two string arrays of size 0.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two string arrays of size 0.", func(t *testing.T) {
 		arr1 := [0]string{}
 		arr2 := [0]string{}
 
@@ -671,9 +670,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[0]string{} equals [0]string{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two string arrays of size 1 with their 0 values.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two string arrays of size 1 with their 0 values.", func(t *testing.T) {
 		arr1 := [1]string{}
 		arr2 := [1]string{}
 
@@ -681,9 +680,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]string{} equals [1]string{}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two string arrays of size 1 with an element equal to 2.`, func(t *testing.T) {
 		arr1 := [1]string{"A"}
 		arr2 := [1]string{"A"}
@@ -692,9 +691,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("[1]string{2} equals [1]string{2}, but ToEqual() assertion says they do not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error,
+	t.Run(`it should not return an error,
 	if we compare two string arrays of size 4 with equal elements.`, func(t *testing.T) {
 		arr1 := [4]string{"Lorem", "Ipsum", "Dolor", "Sit"}
 		arr2 := [4]string{"Lorem", "Ipsum", "Dolor", "Sit"}
@@ -703,9 +702,9 @@ func TestToEqualArrays(t *testing.T) {
 		if err != nil {
 			t.Error("string arrays are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare two arrays of size 0 and 
+	t.Run(`it should return an error, if we compare two arrays of size 0 and 
 	one of them is of type [0]int and the other of type [0]uint32`, func(t *testing.T) {
 		arr1 := [0]int{}
 		arr2 := [0]uint{}
@@ -722,9 +721,9 @@ func TestToEqualArrays(t *testing.T) {
 				expectedErrorMsg, err.Error())
 		}
 
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare these two arrays: [1]int32{7}, [1]int64{7} `, func(t *testing.T) {
+	t.Run(`it should return an error, if we compare these two arrays: [1]int32{7}, [1]int64{7} `, func(t *testing.T) {
 		arr1 := [1]int32{7}
 		arr2 := [1]int64{7}
 		err := assertions.ToEqual(arr1, arr2)
@@ -739,9 +738,9 @@ func TestToEqualArrays(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare these two arrays:
+	t.Run(`it should return an error, if we compare these two arrays:
 	[2]float32{7.4, 3.2}, [2]float64{7.4, 3.2} `, func(t *testing.T) {
 		arr1 := [2]float32{7.4, 3.2}
 		arr2 := [2]float64{7.4, 3.2}
@@ -757,20 +756,20 @@ func TestToEqualArrays(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 }
 
 func TestToEqualSlices(t *testing.T) {
-	Test("it should not return an error if we compare two empty integer slices.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two empty integer slices.", func(t *testing.T) {
 		slice1 := []int{}
 		slice2 := []int{}
 		err := assertions.ToEqual(slice1, slice2)
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two integer slices,
+	t.Run(`it should not return an error if we compare two integer slices,
 	where both have length 0 and capacity 0.`, func(t *testing.T) {
 		slice1 := make([]int, 0, 0)
 		slice2 := make([]int, 0, 0)
@@ -779,9 +778,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two integer slices,
+	t.Run(`it should not return an error if we compare two integer slices,
 	where both have length 0 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]int, 0, 1)
 		slice2 := make([]int, 0, 1)
@@ -790,9 +789,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two integer slices,
+	t.Run(`it should not return an error if we compare two integer slices,
 	where both have length 1 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]int, 1, 1)
 		slice2 := make([]int, 1, 1)
@@ -801,9 +800,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two integer slices,
+	t.Run(`it should not return an error if we compare two integer slices,
 	where one has len=1,cap=1 and the other has len=1,cap=2.`, func(t *testing.T) {
 		slice1 := make([]int, 1, 1)
 		slice2 := make([]int, 1, 2)
@@ -812,9 +811,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two integer slices,
+	t.Run(`it should not return an error if we compare two integer slices,
 	where both have len=2,cap=3 and they have the same two elements.`, func(t *testing.T) {
 		slice1 := make([]int, 2, 3)
 		slice1[0] = 7
@@ -826,9 +825,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two integer slices,
+	t.Run(`it should return an error if we compare two integer slices,
 	where both have len=2,cap=3 and they have different int elements.`, func(t *testing.T) {
 		slice1 := make([]int, 2, 3)
 		slice1[0] = 7
@@ -856,18 +855,18 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two empty float64 slices.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two empty float64 slices.", func(t *testing.T) {
 		slice1 := []float64{}
 		slice2 := []float64{}
 		err := assertions.ToEqual(slice1, slice2)
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two float64 slices,
+	t.Run(`it should not return an error if we compare two float64 slices,
 	where both have length 0 and capacity 0.`, func(t *testing.T) {
 		slice1 := make([]float64, 0, 0)
 		slice2 := make([]float64, 0, 0)
@@ -876,9 +875,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two float64 slices,
+	t.Run(`it should not return an error if we compare two float64 slices,
 	where both have length 0 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]float64, 0, 1)
 		slice2 := make([]float64, 0, 1)
@@ -887,9 +886,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two float64 slices,
+	t.Run(`it should not return an error if we compare two float64 slices,
 	where both have length 1 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]float64, 1, 1)
 		slice2 := make([]float64, 1, 1)
@@ -898,9 +897,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two float64 slices,
+	t.Run(`it should not return an error if we compare two float64 slices,
 	where one has len=1,cap=1 and the other has len=1,cap=2.`, func(t *testing.T) {
 		slice1 := make([]float64, 1, 1)
 		slice2 := make([]float64, 1, 2)
@@ -909,9 +908,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two float64 slices,
+	t.Run(`it should not return an error if we compare two float64 slices,
 	where both have len=2,cap=3 and they have the same two elements.`, func(t *testing.T) {
 		slice1 := make([]float64, 2, 3)
 		slice1[0] = 7.502
@@ -923,9 +922,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two float64 slices,
+	t.Run(`it should return an error if we compare two float64 slices,
 	where both have len=2,cap=3 and they have different int elements.`, func(t *testing.T) {
 		slice1 := make([]float64, 2, 3)
 		slice1[0] = 7.502
@@ -955,18 +954,18 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two empty bool slices.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two empty bool slices.", func(t *testing.T) {
 		slice1 := []bool{}
 		slice2 := []bool{}
 		err := assertions.ToEqual(slice1, slice2)
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two bool slices,
+	t.Run(`it should not return an error if we compare two bool slices,
 	where both have length 0 and capacity 0.`, func(t *testing.T) {
 		slice1 := make([]bool, 0, 0)
 		slice2 := make([]bool, 0, 0)
@@ -975,9 +974,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two bool slices,
+	t.Run(`it should not return an error if we compare two bool slices,
 	where both have length 0 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]bool, 0, 1)
 		slice2 := make([]bool, 0, 1)
@@ -986,9 +985,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two bool slices,
+	t.Run(`it should not return an error if we compare two bool slices,
 	where both have length 1 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]bool, 1, 1)
 		slice2 := make([]bool, 1, 1)
@@ -997,9 +996,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two bool slices,
+	t.Run(`it should not return an error if we compare two bool slices,
 	where one has len=1,cap=1 and the other has len=1,cap=2.`, func(t *testing.T) {
 		slice1 := make([]bool, 1, 1)
 		slice2 := make([]bool, 1, 2)
@@ -1008,9 +1007,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two bool slices,
+	t.Run(`it should not return an error if we compare two bool slices,
 	where both have len=2,cap=3 and they have the same two elements.`, func(t *testing.T) {
 		slice1 := make([]bool, 2, 3)
 		slice1[0] = true
@@ -1022,9 +1021,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two bool slices,
+	t.Run(`it should return an error if we compare two bool slices,
 	where both have len=2,cap=3 and they have different int elements.`, func(t *testing.T) {
 		slice1 := make([]bool, 2, 3)
 		slice1[0] = true
@@ -1052,18 +1051,18 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two empty string slices.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two empty string slices.", func(t *testing.T) {
 		slice1 := []string{}
 		slice2 := []string{}
 		err := assertions.ToEqual(slice1, slice2)
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two string slices,
+	t.Run(`it should not return an error if we compare two string slices,
 	where both have length 0 and capacity 0.`, func(t *testing.T) {
 		slice1 := make([]string, 0, 0)
 		slice2 := make([]string, 0, 0)
@@ -1072,9 +1071,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two string slices,
+	t.Run(`it should not return an error if we compare two string slices,
 	where both have length 0 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]string, 0, 1)
 		slice2 := make([]string, 0, 1)
@@ -1083,9 +1082,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two string slices,
+	t.Run(`it should not return an error if we compare two string slices,
 	where both have length 1 and capacity 1.`, func(t *testing.T) {
 		slice1 := make([]string, 1, 1)
 		slice2 := make([]string, 1, 1)
@@ -1094,9 +1093,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two string slices,
+	t.Run(`it should not return an error if we compare two string slices,
 	where one has len=1,cap=1 and the other has len=1,cap=2.`, func(t *testing.T) {
 		slice1 := make([]string, 1, 1)
 		slice2 := make([]string, 1, 2)
@@ -1105,9 +1104,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two string slices,
+	t.Run(`it should not return an error if we compare two string slices,
 	where both have len=2,cap=3 and they have the same two elements.`, func(t *testing.T) {
 		slice1 := make([]string, 2, 3)
 		slice1[0] = "Hello"
@@ -1119,9 +1118,9 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two string slices,
+	t.Run(`it should return an error if we compare two string slices,
 	where both have len=2,cap=3 and they have different int elements.`, func(t *testing.T) {
 		slice1 := make([]string, 2, 3)
 		slice1[0] = "Hello"
@@ -1149,9 +1148,9 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare two slices of len=0, cap=0 and
+	t.Run(`it should return an error, if we compare two slices of len=0, cap=0 and
 	one of them is of type []int and the other of type []uint32`, func(t *testing.T) {
 		slice1 := []int{}
 		slice2 := []uint{}
@@ -1167,9 +1166,9 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare these two arrays: []int32{7}, []int64{7} `, func(t *testing.T) {
+	t.Run(`it should return an error, if we compare these two arrays: []int32{7}, []int64{7} `, func(t *testing.T) {
 		slice1 := []int32{7}
 		slice2 := []int64{7}
 		err := assertions.ToEqual(slice1, slice2)
@@ -1184,9 +1183,9 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error, if we compare these two slices:
+	t.Run(`it should return an error, if we compare these two slices:
 	[]float32{7.4, 3.2}, []float64{7.4, 3.2} `, func(t *testing.T) {
 		slice1 := []float32{7.4, 3.2}
 		slice2 := []float64{7.4, 3.2}
@@ -1202,9 +1201,9 @@ func TestToEqualSlices(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is an array arr := [5]int{10, 20, 0, 10, 20}
 	And there is a slice created out of that array sl1 := arr[0:2]
 	And there is another slice created out of that array sl2 := arr[3:5]
@@ -1218,11 +1217,11 @@ func TestToEqualSlices(t *testing.T) {
 		if err != nil {
 			t.Error("Slices should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 }
 
 func TestToEqualStructs(t *testing.T) {
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field int}
 	And two structs of that type s1 := S{field: 1}, s2 := S{field: 1}
 	When we compare them using the ToEqual assertion
@@ -1236,9 +1235,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field int}
 	And two structs of that type s1 := S{field: 1}, s2 := S{field: 2}
 	When we compare them using the ToEqual assertion
@@ -1268,9 +1267,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there are two different struct types but with identical fields: 
 	S1{field int}, S2{field int}
 	And two structs of that type s1 := S1{field: 1}, s2 := S2{field: 1}
@@ -1292,9 +1291,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field float64}
 	And two structs of that type s1 := S{field: 2.3}, s2 := S{field: 2.3}
 	When we compare them using the ToEqual assertion
@@ -1308,9 +1307,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field float64}
 	And two structs of that type s1 := S{field: 2.3}, s2 := S{field: 2.7}
 	When we compare them using the ToEqual assertion
@@ -1340,9 +1339,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field bool}
 	And two structs of that type s1 := S{field: true}, s2 := S{field: true}
 	When we compare them using the ToEqual assertion
@@ -1356,9 +1355,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field bool}
 	And two structs of that type s1 := S{field: true}, s2 := S{field: false}
 	When we compare them using the ToEqual assertion
@@ -1388,9 +1387,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there are two different struct types but with identical fields: 
 	S1{field bool}, S2{field bool}
 	And two structs of that type s1 := S1{field: true}, s2 := S2{field: true}
@@ -1412,9 +1411,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field string}
 	And two structs of that type s1 := S{field: "Hello"}, s2 := S{field: "Hello"}
 	When we compare them using the ToEqual assertion
@@ -1428,9 +1427,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field string}
 	And two structs of that type s1 := S{field: "Hello"}, s2 := S{field: "Hi"}
 	When we compare them using the ToEqual assertion
@@ -1460,9 +1459,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there are two different struct types but with identical fields:
 	S1{field string}, S2{field string}
 	And two structs of that type s1 := S1{field: "Hello"}, s2 := S2{field: "Hello"}
@@ -1484,9 +1483,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field [2]int}
 	And two structs of that type s1 := S{field: [2]int{10, 20}}, s2 := S{field: [2]int{10, 20}}
 	When we compare them using the ToEqual assertion
@@ -1500,9 +1499,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field [2]int}
 	And two structs of that type s1 := S{field: [2]int{10, 20}}, s2 := S{field: [2]int{13, 17}}
 	When we compare them using the ToEqual assertion
@@ -1535,9 +1534,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there are two different struct types but with identical fields:
 	S1{field [2]int}, S2{field [2]int}
 	And two structs of that type s1 := S1{field: [2]int{10, 20}}, s2 := S2{field: [2]int{10, 20}}
@@ -1559,9 +1558,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field []int}
 	And two structs of that type s1 := S{field: []int{10, 20}}, s2 := S{field: []int{10, 20}}
 	When we compare them using the ToEqual assertion
@@ -1575,9 +1574,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there is a struct type: S{field []int}
 	And two structs of that type s1 := S{field: []int{10, 20}}, s2 := S{field: []int{13, 17}}
 	When we compare them using the ToEqual assertion
@@ -1610,9 +1609,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there are two different struct types but with identical fields:
 	S1{field []int}, S2{field []int}
 	And two structs of that type s1 := S1{field: []int{10, 20}}, s2 := S2{field: []int{10, 20}}
@@ -1634,9 +1633,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there a struct type: NestedStruct{field float64} 
 	And another struct type: S{nested NestedStruct}
 	And two structs of that type s1 := S{nested: NestedStruct{field: 2}}, s2 := S{nested: NestedStruct{field: 2}}
@@ -1654,9 +1653,9 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there a struct type: NestedStruct{field float64} 
 	And another struct type: S{nested NestedStruct}
 	And two structs of that type s1 := S{nested: NestedStruct{field: 2}}, s2 := S{nested: NestedStruct{field: 16}}
@@ -1687,9 +1686,9 @@ func TestToEqualStructs(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`
+	t.Run(`
 	Given that there a struct type: NestedStruct{field1 float64, field2 int}
 	And another struct type: S{
 		intField    int
@@ -1747,20 +1746,20 @@ func TestToEqualStructs(t *testing.T) {
 		if err != nil {
 			t.Error("Structs are equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 }
 
 func TestToEqualMaps(t *testing.T) {
-	Test("it should not return an error if we compare two empty maps of the same type.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two empty maps of the same type.", func(t *testing.T) {
 		map1 := map[string]int{}
 		map2 := map[string]int{}
 		err := assertions.ToEqual(map1, map2)
 		if err != nil {
 			t.Error("Maps should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two maps m1: map[string]int{"k1": 2},
+	t.Run(`it should not return an error if we compare two maps m1: map[string]int{"k1": 2},
 	m1: map[string]int{"k1": 2}.`, func(t *testing.T) {
 		map1 := map[string]int{"k1": 2}
 		map2 := map[string]int{"k1": 2}
@@ -1768,9 +1767,9 @@ func TestToEqualMaps(t *testing.T) {
 		if err != nil {
 			t.Error("Maps should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two maps m1: map[int]int{1: 2},
+	t.Run(`it should not return an error if we compare two maps m1: map[int]int{1: 2},
 	m1: map[string]int{1: 2}.`, func(t *testing.T) {
 		map1 := map[int]int{1: 2}
 		map2 := map[int]int{1: 2}
@@ -1778,9 +1777,9 @@ func TestToEqualMaps(t *testing.T) {
 		if err != nil {
 			t.Error("Maps should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two maps m1: map[bool]string{true: "true"},
+	t.Run(`it should not return an error if we compare two maps m1: map[bool]string{true: "true"},
 	m1: map[bool]string{true: "true"}.`, func(t *testing.T) {
 		map1 := map[bool]string{true: "true"}
 		map2 := map[bool]string{true: "true"}
@@ -1788,9 +1787,9 @@ func TestToEqualMaps(t *testing.T) {
 		if err != nil {
 			t.Error("Maps should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should not return an error if we compare two maps m1: map[string][]int{"k": {2}},
+	t.Run(`it should not return an error if we compare two maps m1: map[string][]int{"k": {2}},
 	m1: map[string][]int{"k": {2}.`, func(t *testing.T) {
 		map1 := map[string][]int{"k": {2}}
 		map2 := map[string][]int{"k": {2}}
@@ -1798,9 +1797,9 @@ func TestToEqualMaps(t *testing.T) {
 		if err != nil {
 			t.Error("Maps should be equal, but ToEqual() assertion says they are not.")
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two maps m1: map[string]int{"k1": 2},
+	t.Run(`it should return an error if we compare two maps m1: map[string]int{"k1": 2},
 	m1: map[string]int{"k1": 3}.`, func(t *testing.T) {
 		map1 := map[string]int{"k1": 2}
 		map2 := map[string]int{"k1": 3}
@@ -1824,9 +1823,9 @@ func TestToEqualMaps(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two maps m1: map[string]int{"k1": 2},
+	t.Run(`it should return an error if we compare two maps m1: map[string]int{"k1": 2},
 	m1: map[string]int{"k2": 2}.`, func(t *testing.T) {
 		map1 := map[string]int{"k1": 2}
 		map2 := map[string]int{"k2": 2}
@@ -1850,9 +1849,9 @@ func TestToEqualMaps(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two maps m1: map[int]int{1: 7},
+	t.Run(`it should return an error if we compare two maps m1: map[int]int{1: 7},
 	m1: map[string]int{1: 2}.`, func(t *testing.T) {
 		map1 := map[int]int{1: 7}
 		map2 := map[int]int{1: 2}
@@ -1876,9 +1875,9 @@ func TestToEqualMaps(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two maps m1: map[bool]string{true: "true"},
+	t.Run(`it should return an error if we compare two maps m1: map[bool]string{true: "true"},
 	m1: map[bool]string{false: "false"}.`, func(t *testing.T) {
 		map1 := map[bool]string{true: "true"}
 		map2 := map[bool]string{true: "false"}
@@ -1902,9 +1901,9 @@ func TestToEqualMaps(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 
-	Test(`it should return an error if we compare two maps m1: map[string][]int{"k": {2}},
+	t.Run(`it should return an error if we compare two maps m1: map[string][]int{"k": {2}},
 	m1: map[string][]int{"k": {3}.`, func(t *testing.T) {
 		map1 := map[string][]int{"k": {2}}
 		map2 := map[string][]int{"k": {3}}
@@ -1929,27 +1928,27 @@ func TestToEqualMaps(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 }
 
 func TestNil(t *testing.T) {
-	Test("it should not return an error if compare two nils.", func(t *testing.T) {
+	t.Run("it should not return an error if compare two nils.", func(t *testing.T) {
 		err := assertions.ToEqual(nil, nil)
 		if err != nil {
 			t.Error("nil is equal to nil, but ToEqual() assertion says it is not.")
 		}
-	}, t)
+	})
 
-	Test("it should not return an error if we compare two int pointers set to nil.", func(t *testing.T) {
+	t.Run("it should not return an error if we compare two int pointers set to nil.", func(t *testing.T) {
 		var ptr1 *int = nil
 		var ptr2 *int = nil
 		err := assertions.ToEqual(ptr1, ptr2)
 		if err != nil {
 			t.Error("nil is equal to nil, but ToEqual() assertion says it is not.")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare two pointers of different types set to nil.", func(t *testing.T) {
+	t.Run("it should return an error if we compare two pointers of different types set to nil.", func(t *testing.T) {
 		var ptr1 *int32 = nil
 		var ptr2 *int64 = nil
 		err := assertions.ToEqual(ptr1, ptr2)
@@ -1964,56 +1963,56 @@ func TestNil(t *testing.T) {
 				"The error message does not have the expected format.\n\nShould be:\n%s\n\nIs:\n%s",
 				expectedErrorMsg, err.Error())
 		}
-	}, t)
+	})
 }
 
 func TestFunction(t *testing.T) {
-	Test("it should return an error if we compare a function to an integer.", func(t *testing.T) {
+	t.Run("it should return an error if we compare a function to an integer.", func(t *testing.T) {
 		f := func() {}
 		err := assertions.ToEqual(f, 5)
 		if err == nil {
 			t.Error("A function cannot be compared to an integer.")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare a function to an integer.", func(t *testing.T) {
+	t.Run("it should return an error if we compare a function to an integer.", func(t *testing.T) {
 		f := func() {}
 		err := assertions.ToEqual(6, f)
 		if err == nil {
 			t.Error("A function cannot be compared to an integer.")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare a function to an integer (#2).", func(t *testing.T) {
+	t.Run("it should return an error if we compare a function to an integer (#2).", func(t *testing.T) {
 		f1 := func() {}
 		f2 := func() {}
 		err := assertions.ToEqual(f1, f2)
 		if err == nil {
 			t.Error("A function cannot be compared to a another function.")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare a defined function to nil.", func(t *testing.T) {
+	t.Run("it should return an error if we compare a defined function to nil.", func(t *testing.T) {
 		f := func() {}
 		err := assertions.ToEqual(f, nil)
 		if err == nil {
 			t.Error("A defined function is not nil.")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare an undefined function to nil.", func(t *testing.T) {
+	t.Run("it should return an error if we compare an undefined function to nil.", func(t *testing.T) {
 		var f func()
 		err := assertions.ToEqual(nil, f)
 		if err == nil {
 			t.Error("A function cannot be compared with ToEqual().")
 		}
-	}, t)
+	})
 
-	Test("it should return an error if we compare an undefined function to nil (#2).", func(t *testing.T) {
+	t.Run("it should return an error if we compare an undefined function to nil (#2).", func(t *testing.T) {
 		var f func()
 		err := assertions.ToEqual(f, nil)
 		if err == nil {
 			t.Error("A function cannot be compared with ToEqual().")
 		}
-	}, t)
+	})
 }

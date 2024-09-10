@@ -9,6 +9,7 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
+	"github.com/redjolr/goherent/expect"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	"github.com/stretchr/testify/assert"
@@ -34,7 +35,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestRanEvent occurs with test name "testName" from "packageName"
 	Then the user should be informed that the testing of a new package started and
-	that the first test of that package started running.`, func(t *testing.T) {
+	that the first test of that package started running.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -48,8 +49,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏳ testName",
 		)
 	}, t)
@@ -60,7 +60,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	When a CtestRanEvent occurs with test name "Multiline\ntest name" from "packageName"
 	Then the user should be informed that the testing of a new package started and
 	that the first test of that package started running
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -74,8 +74,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏳ Multiline...",
 		)
 	}, t)
@@ -85,7 +84,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 20
 	When 2 CtestRanEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
 	Then the second CtestRanEvent should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(20)
 
@@ -121,7 +120,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
 	And we have a bounded terminal with height 1
 	When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
-	Then the user should be informed only once that the given test from the given package is running.`, func(t *testing.T) {
+	Then the user should be informed only once that the given test from the given package is running.`, func(Expect expect.F) {
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
 		// Given
@@ -139,8 +138,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏳ testName",
 		)
 	}, t)
@@ -153,7 +151,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of the same test/package occurs
-	Then the user should be informed that the test has passed.`, func(t *testing.T) {
+	Then the user should be informed that the test has passed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -179,8 +177,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ testName",
 		)
 	}, t)
@@ -190,7 +187,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -216,8 +213,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ The multiline   \ntest name",
 		)
 	}, t)
@@ -227,7 +223,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -253,8 +249,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ multiline   \ntest name longer",
 		)
 	}, t)
@@ -264,7 +259,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
@@ -290,8 +285,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ The multiline\ntest name",
 		)
 	}, t)
@@ -301,7 +295,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
@@ -327,8 +321,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ multiline\ntest name longer",
 		)
 	}, t)
@@ -339,7 +332,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And a CtestRanEvent with name "testName 2" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of with name "testName 2" of package "somePackage" occurs
-	Then the user should be informed that the test has passed.`, func(t *testing.T) {
+	Then the user should be informed that the test has passed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -384,8 +377,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ testName 1\n✅ testName 2",
 		)
 	}, t)
@@ -397,7 +389,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -442,8 +434,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ The 1st multiline   \ntest name\n✅ The second multiline   \ntest name",
 		)
 	}, t)
@@ -455,7 +446,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -500,8 +491,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ multiline 1   \ntest name longer\n✅ multiline 2   \ntest name longer",
 		)
 	}, t)
@@ -513,7 +503,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestPassedEvent with test name "The multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
@@ -558,8 +548,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ The multiline 1\ntest name\n✅ The multiline 2\ntest name",
 		)
 	}, t)
@@ -571,7 +560,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestPassedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		testPassedElapsedTime := 2.3
@@ -616,8 +605,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ multiline 1\ntest name longer\n✅ multiline 2\ntest name longer",
 		)
 	}, t)
@@ -626,7 +614,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName Line1\nLine2\nLine3" of package "somePackage" has occurred
 	And we have a bounded terminal with height 3
 	When a CtestPassedEvent of the same test/package occurs
-	Then the user should be informed that the test has passed.`, func(t *testing.T) {
+	Then the user should be informed that the test has passed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
@@ -652,8 +640,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ testName Line1\nLine2\nLine3",
 		)
 	}, t)
@@ -663,7 +650,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
@@ -689,8 +676,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n✅ testName Line1\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -702,7 +688,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestPassedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test has passed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		testPassedElapsedTime := 2.3
@@ -747,10 +733,9 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestPassedEvt(ctestPassedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n\n📦 somePackage\n\n"+
-				"✅ The 1st multiline\nLine2\nLine3   \nLine4\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📦 somePackage\n\n" +
+				"✅ The 1st multiline\nLine2\nLine3   \nLine4\n" +
 				"✅ The second multiline\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -760,7 +745,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestPassedEvent occurs with test name "testName" from "packageName"
 	Then the HandleCtestPassedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -789,7 +774,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestPassedEvent of a different package "somePackage 2" occurs
 	Then the HandleCtestPassedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		testPassedElapsedTime := 2.3
@@ -829,7 +814,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of the same test/package occurs
-	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+	Then the user should be informed that the test has failed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		testPassedElapsedTime := 2.3
@@ -855,8 +840,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName",
 		)
 	}, t)
@@ -866,7 +850,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -892,8 +876,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ The multiline   \ntest name",
 		)
 	}, t)
@@ -903,7 +886,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -929,8 +912,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ multiline   \ntest name longer",
 		)
 	}, t)
@@ -940,7 +922,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -966,8 +948,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ The multiline\ntest name",
 		)
 	}, t)
@@ -977,7 +958,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -1003,8 +984,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ multiline\ntest name longer",
 		)
 	}, t)
@@ -1015,7 +995,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And a CtestRanEvent with name "testName 2" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of with name "testName 2" of package "somePackage" occurs
-	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+	Then the user should be informed that the test has failed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -1060,8 +1040,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName 1\n❌ testName 2",
 		)
 	}, t)
@@ -1073,7 +1052,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -1118,8 +1097,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ The 1st multiline   \ntest name\n❌ The second multiline   \ntest name",
 		)
 	}, t)
@@ -1131,7 +1109,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -1176,8 +1154,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ multiline 1   \ntest name longer\n❌ multiline 2   \ntest name longer",
 		)
 	}, t)
@@ -1189,7 +1166,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestFailedEvent with test name "The multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -1234,8 +1211,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ The multiline 1\ntest name\n❌ The multiline 2\ntest name",
 		)
 	}, t)
@@ -1247,7 +1223,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestFailedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -1292,8 +1268,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ multiline 1\ntest name longer\n❌ multiline 2\ntest name longer",
 		)
 	}, t)
@@ -1302,7 +1277,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName Line1\nLine2\nLine3" of package "somePackage" has occurred
 	And we have a bounded terminal with height 3
 	When a CtestFailedEvent of the same test/package occurs
-	Then the user should be informed that the test has failed.`, func(t *testing.T) {
+	Then the user should be informed that the test has failed.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
@@ -1328,8 +1303,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName Line1\nLine2\nLine3",
 		)
 	}, t)
@@ -1339,7 +1313,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
@@ -1365,8 +1339,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName Line1\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -1378,7 +1351,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestFailedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test has failed
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 		elapsedTime := 2.3
@@ -1423,10 +1396,9 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n\n📦 somePackage\n\n"+
-				"❌ The 1st multiline\nLine2\nLine3   \nLine4\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📦 somePackage\n\n" +
+				"❌ The 1st multiline\nLine2\nLine3   \nLine4\n" +
 				"❌ The second multiline\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -1436,7 +1408,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent occurs with test name "testName" from "packageName"
 	Then the HandleCtestFailedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1465,7 +1437,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of a different package "somePackage 2" occurs
 	Then the HandleCtestFailedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1502,7 +1474,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1553,7 +1525,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 1.2
@@ -1590,8 +1562,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName\nThis is some output.",
 		)
 	}, t)
@@ -1602,7 +1573,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 5
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(5)
 		elapsedTime := 2.3
@@ -1650,8 +1621,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ testName\nSome output 1._Some output 2.",
 		)
 	}, t)
@@ -1662,7 +1632,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
-	And the output from the CtestOutputEvents should be presented.`, func(t *testing.T) {
+	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 		elapsedTime := 2.3
@@ -1710,8 +1680,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n❌ NameLine1\nNameLine2   \nNameLine3\nSome output 1._Some output 2.",
 		)
 	}, t)
@@ -1724,7 +1693,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of the same test/package occurs
-	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+	Then the user should be informed that the test was skipped.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -1748,8 +1717,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ testName",
 		)
 	}, t)
@@ -1759,7 +1727,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -1783,8 +1751,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ The multiline   \ntest name",
 		)
 	}, t)
@@ -1794,7 +1761,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -1818,8 +1785,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ multiline   \ntest name longer",
 		)
 	}, t)
@@ -1829,7 +1795,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
@@ -1853,8 +1819,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ The multiline\ntest name",
 		)
 	}, t)
@@ -1864,7 +1829,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
@@ -1888,8 +1853,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ multiline\ntest name longer",
 		)
 	}, t)
@@ -1900,7 +1864,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And a CtestRanEvent with name "testName 2" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of with name "testName 2" of package "somePackage" occurs
-	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+	Then the user should be informed that the test was skipped.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -1942,8 +1906,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ testName 1\n⏩ testName 2",
 		)
 	}, t)
@@ -1955,7 +1918,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -1997,8 +1960,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ The 1st multiline   \ntest name\n⏩ The second multiline   \ntest name",
 		)
 	}, t)
@@ -2010,7 +1972,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -2052,8 +2014,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ multiline 1   \ntest name longer\n⏩ multiline 2   \ntest name longer",
 		)
 	}, t)
@@ -2065,7 +2026,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestSkippedEvent with test name "The multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
@@ -2107,8 +2068,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ The multiline 1\ntest name\n⏩ The multiline 2\ntest name",
 		)
 	}, t)
@@ -2120,7 +2080,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 2
 	When a CtestSkippedEvent with test name "multiline 2\ntest name longer" from "packageName" occurrs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(2)
 
@@ -2162,8 +2122,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ multiline 1\ntest name longer\n⏩ multiline 2\ntest name longer",
 		)
 	}, t)
@@ -2172,7 +2131,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName Line1\nLine2\nLine3" of package "somePackage" has occurred
 	And we have a bounded terminal with height 3
 	When a CtestSkippedEvent of the same test/package occurs
-	Then the user should be informed that the test was skipped.`, func(t *testing.T) {
+	Then the user should be informed that the test was skipped.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
@@ -2196,8 +2155,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ testName Line1\nLine2\nLine3",
 		)
 	}, t)
@@ -2207,7 +2165,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
@@ -2231,8 +2189,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n⏩ testName Line1\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -2244,7 +2201,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	And we have a bounded terminal with height 1
 	When a CtestSkippedEvent with test name "The second multiline\ntest name" from packag "packageName" has occurred
 	Then the user should be informed that the test was skipped
-	And the printed test name should be truncated so that it can fit in the terminal.`, func(t *testing.T) {
+	And the printed test name should be truncated so that it can fit in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(3)
 
@@ -2286,10 +2243,9 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt2)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n\n📦 somePackage\n\n"+
-				"⏩ The 1st multiline\nLine2\nLine3   \nLine4\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📦 somePackage\n\n" +
+				"⏩ The 1st multiline\nLine2\nLine3   \nLine4\n" +
 				"⏩ The second multiline\nLine2\nLine3   \nLine4",
 		)
 	}, t)
@@ -2298,7 +2254,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Given that no events have happened
 	When a CtestSkippedEvent occurs with test name "testName" from "packageName"
 	Then the HandleCtestSkippedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		elapsedTime := 2.3
@@ -2326,7 +2282,7 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestSkippedEvent of a different package "somePackage 2" occurs
 	Then the HandleCtestSkippedEvt should produce an error
-	And an error should be displayed in the terminal.`, func(t *testing.T) {
+	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 
@@ -2358,15 +2314,13 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 }
 
 func TestHandleTestingStartedWithBoundedTerminal(t *testing.T) {
-	assert := assert.New(t)
-	Test("User should be informed, that the testing has started", func(t *testing.T) {
+	Test("User should be informed, that the testing has started", func(Expect expect.F) {
 		eventsHandler, terminal, _ := setupInteractorWithBoundedTerminal(1)
 		now := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(now)
 		eventsHandler.HandleTestingStarted(testingStartedEvt)
 
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"\n🚀 Starting...",
 		)
 	}, t)

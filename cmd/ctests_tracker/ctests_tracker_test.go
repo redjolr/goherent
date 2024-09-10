@@ -77,13 +77,12 @@ func makeCtestSkippedEvent(packageName, testName string) events.CtestSkippedEven
 }
 
 func TestHandleCtestRanEvent(t *testing.T) {
-	Expect := expect.New(t)
 	Test(`
 	Given an empty CtestsTracker
 	When a CtestRanEvent for a test named "someTest" in package "somePackage"
 	Then the CtestsTracker should contain that PackageUnderTest
 	And a running Ctest with that name should be added. 
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		tracker := ctests_tracker.NewCtestsTracker()
 
 		ctestRanEvent := makeCtestRanEvent("somePackage", "someTest")
@@ -100,11 +99,10 @@ func TestHandleCtestRanEvent(t *testing.T) {
 }
 
 func TestHandleCtestPassedEvent(t *testing.T) {
-	Expect := expect.New(t)
 	Test(`
 	Given that there is an empty CtestsTracker
 	When a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
@@ -124,7 +122,7 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 	Given that there is a CtestsTracker
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	When a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -147,7 +145,7 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	And a CtestPassedEvent for test "someTest" from package "somePackage" occurrs
 	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestPassedEvt1 := makeCtestPassedEvent("somePackage", "someTest")
@@ -170,11 +168,10 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 }
 
 func TestHandleCtestFailedEvent(t *testing.T) {
-	Expect := expect.New(t)
 	Test(`
 	Given that there is an empty CtestsTracker
 	When a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
-	Then a failed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a failed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
@@ -194,7 +191,7 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 	Given that there is a CtestsTracker
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	When a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -217,7 +214,7 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	And a CtestFailedEvent for test "someTest" from package "somePackage" occurrs
 	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestFailedEvt1 := makeCtestFailedEvent("somePackage", "someTest")
@@ -240,11 +237,10 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 }
 
 func TestHandleCtestSkippedEvent(t *testing.T) {
-	Expect := expect.New(t)
 	Test(`
 	Given that there is an empty CtestsTracker
 	When a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
-	Then a failed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a failed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
@@ -264,7 +260,7 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 	Given that there is a CtestsTracker
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	When a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -287,7 +283,7 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 	And an CtestOutputEvent has occurred for test "someTest" in package "somePackage"
 	And a CtestSkippedEvent for test "someTest" from package "somePackage" occurrs
 	When a second CtestPassedEvent for test "someTest" from package "somePackage" occurrs
-	Then a passed Ctest will be stored in the CtestsTracker`, func(t *testing.T) {
+	Then a passed Ctest will be stored in the CtestsTracker`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctestSkippedEvt1 := makeCtestSkippedEvent("somePackage", "someTest")
@@ -310,13 +306,11 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 }
 
 func TestNewCtestOutput(t *testing.T) {
-	Expect := expect.New(t)
-
 	Test(`
 	Given that there is a Ctest with name "someTest" of package "somePackage"
 	And a CtestOutputEvent has occurred with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertCtest(ctests_tracker.NewCtest("someTest", "somePackage"))
@@ -336,7 +330,7 @@ func TestNewCtestOutput(t *testing.T) {
 	Given that there is a running Ctest with name "someTest" of package "somePackage"
 	And a CtestOutputEvent has occurred with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		ctestRanEvt := makeCtestRanEvent("somePackage", "someTest")
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -357,7 +351,7 @@ func TestNewCtestOutput(t *testing.T) {
 	Given that there is a passed Ctest with name "someTest" of package "somePackage"
 	And a CtestOutputEvent has occurred with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -378,7 +372,7 @@ func TestNewCtestOutput(t *testing.T) {
 	Given that there is a failed Ctest with name "someTest" of package "somePackage"
 	And a CtestOutputEvent has occurred with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		ctestPassedEvt := makeCtestFailedEvent("somePackage", "someTest")
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
@@ -399,7 +393,7 @@ func TestNewCtestOutput(t *testing.T) {
 	Given that there is a package "somePackage"
 	And a CtestOutputEvent has occurred for "someTest" of "somePackage" with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "some output")
 
@@ -418,7 +412,7 @@ func TestNewCtestOutput(t *testing.T) {
 	Test(`
 	Given a CtestOutputEvent has occurred for "someTest" of "somePackage" with output "some output"
 	When we call the Output() method on the given ctest
-	Then the method will return "some output"`, func(t *testing.T) {
+	Then the method will return "some output"`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 
@@ -441,7 +435,7 @@ func TestInsertCtest(t *testing.T) {
 	When we call the InsertCtest() method with a Ctest as an argument
 	The Ctest will be added and returned from the method
 	And a package with the name of the Ctest's packageName will be added to the tracker
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		// When
@@ -449,7 +443,7 @@ func TestInsertCtest(t *testing.T) {
 		ctestReturned := tracker.InsertCtest(ctest)
 
 		// Then
-		assert.Equal(ctestReturned, ctest)
+		Expect(ctestReturned).ToEqual(ctest)
 		assert.True(tracker.ContainsPackageUtWithName("packageName"))
 		testInPackage := tracker.FindCtestWithNameInPackage("testName", "packageName")
 		assert.NotNil(testInPackage)
@@ -462,19 +456,19 @@ func TestInsertCtest(t *testing.T) {
 	When we call the InsertCtest() method with a Ctest { name: "ctestName2", packageName: "packageName" }
 	Then the Ctest will be added to the existing PackageUnderTest
 	And no existing packageUnderTest will be added to the tracker
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewCtest("ctestName1", "packageName")
 		tracker.InsertCtest(ctest1)
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.PackagesCount()).ToEqual(1)
 
 		// When
 		ctest2 := ctests_tracker.NewCtest("ctestName2", "packageName")
 		tracker.InsertCtest(ctest2)
 
 		// Then
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.PackagesCount()).ToEqual(1)
 		testInPackage := tracker.FindCtestWithNameInPackage("ctestName2", "packageName")
 		assert.NotNil(testInPackage)
 	}, t)
@@ -486,12 +480,12 @@ func TestInsertCtest(t *testing.T) {
 	When we call the InsertCtest() method with a Ctest { name: "ctestName2", packageName: "packageName2" }
 	Then a new PackageUnderTest will be created
 	And the ctestName2 Ctest will be added to that new package
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewCtest("ctestName1", "packageName1")
 		tracker.InsertCtest(ctest1)
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.PackagesCount()).ToEqual(1)
 
 		// When
 		ctest2 := ctests_tracker.NewCtest("ctestName2", "packageName2")
@@ -500,7 +494,7 @@ func TestInsertCtest(t *testing.T) {
 		// Then
 		testInPackage := tracker.FindCtestWithNameInPackage("ctestName2", "packageName2")
 		assert.NotNil(testInPackage)
-		assert.Equal(tracker.PackagesCount(), 2)
+		Expect(tracker.PackagesCount()).ToEqual(2)
 	}, t)
 }
 
@@ -513,7 +507,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the given PackageUnderTest has only one Ctest with name "ctestName"
 	When we check if that ctest is the first in the package with the IsCtestFirstOfItsPackage() method
 	Then the method should return true
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest := ctests_tracker.NewCtest("testName", "packageUtName")
@@ -532,7 +526,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the given PackageUnderTest has two Ctests with names: "ctestName1" and "ctestName2"
 	When we check if "ctestName1" Ctest is the first in the package with the IsCtestFirstOfItsPackage() method
 	Then the method should return true
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewCtest("ctestName1", "packageUtName")
@@ -554,7 +548,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the given PackageUnderTest has two Ctests with names: "ctestName1" and "ctestName2"
 	When we check if "ctestName2" Ctest is the first in the package with the IsCtestFirstOfItsPackage() method
 	Then the method should return false
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewCtest("ctestName1", "packageUtName")
@@ -576,7 +570,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the given PackageUnderTest has 3 Ctests with names: "ctestName1", "ctestName2", "ctestName3"
 	When we check if "ctestName2" Ctest is the first in the package with the IsCtestFirstOfItsPackage() method
 	Then the method should return false
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewCtest("ctestName1", "packageUtName")
@@ -598,7 +592,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	Given that we have an empty CtestTracker
 	When we check if "ctestName" Ctest is the first in the package with the IsCtestFirstOfItsPackage() method
 	Then the method should return false
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 
@@ -618,7 +612,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the "packageUtName2" has q Ctests: ctest1InPackage2 ("ctest1InPackage2")
 	When we check if a Ctest {name: "someTestName", packageName: "packageUtName2" } is the first of its package
 	Then the method should return false
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1InPackage1 := ctests_tracker.NewCtest("someTestName", "packageUtName1")
@@ -643,7 +637,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the "packageUtName2" has 2 Ctests: ctest1InPackage2 ("ctest1InPackage2"), ctest2InPackage2 ("someTestName")
 	When we check if ctest2InPackage2 is the first of its package
 	Then the method should return false
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1InPackage1 := ctests_tracker.NewCtest("someTestName", "packageUtName1")
@@ -669,7 +663,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 	And the "packageUtName2" has 2 Ctests: ctest1InPackage2 ("ctest1InPackage2"), ctest2InPackage2 ("someTestName")
 	When we check if ctest1InPackage1 is the first of its package
 	Then the method should return true
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1InPackage1 := ctests_tracker.NewCtest("someTestName", "packageUtName1")
@@ -689,13 +683,10 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 }
 
 func TestRunningTestsCount(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that the CtestTracker does not have any Ctests in it
 	When we execute the RunningCtestsCount()
-	Then the return value should be 0
-	`, func(t *testing.T) {
+	Then the return value should be 0.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 
@@ -703,14 +694,13 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 0)
+		Expect(runningCtestsCnt).ToEqual(0)
 	}, t)
 
 	Test(`
 	Given that the CtestTracker has a passed Ctests in it
 	When we execute the RunningCtestsCount()
-	Then the return value should be 0
-	`, func(t *testing.T) {
+	Then the return value should be 0.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest := ctests_tracker.NewPassedCtest(makeCtestPassedEvent("somePackage", "testName"))
@@ -720,14 +710,13 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 0)
+		Expect(runningCtestsCnt).ToEqual(0)
 	}, t)
 
 	Test(`
 	Given that the CtestTracker has a failed Ctests in it
 	When we execute the RunningCtestsCount()
-	Then the return value should be 0
-	`, func(t *testing.T) {
+	Then the return value should be 0.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest := ctests_tracker.NewFailedCtest(makeCtestFailedEvent("somePackage", "testName"))
@@ -737,14 +726,14 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 0)
+		Expect(runningCtestsCnt).ToEqual(0)
 	}, t)
 
 	Test(`
 	Given that the CtestTracker has a running Ctest in it
 	When we execute the RunningCtestsCount()
 	Then the return value should be 1
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
@@ -754,14 +743,14 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 1)
+		Expect(runningCtestsCnt).ToEqual(1)
 	}, t)
 
 	Test(`
 	Given that the CtestTracker has two running Ctests in the same package named "somePackage"
 	When we execute the RunningCtestsCount()
 	Then the return value should be 2
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
@@ -774,14 +763,14 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 2)
+		Expect(runningCtestsCnt).ToEqual(2)
 	}, t)
 
 	Test(`
 	Given that the CtestTracker has two running Ctests in different packages
 	When we execute the RunningCtestsCount()
 	Then the return value should be 2
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		ctest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName"))
@@ -794,7 +783,7 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 2)
+		Expect(runningCtestsCnt).ToEqual(2)
 	}, t)
 
 	Test(`
@@ -802,7 +791,7 @@ func TestRunningTestsCount(t *testing.T) {
 	And 1 running test in package "somePackage2"
 	When we execute the RunningCtestsCount()
 	Then the return value should be 2
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		runningCtest1 := ctests_tracker.NewRunningCtest(makeCtestRanEvent("somePackage", "testName1"))
@@ -818,17 +807,15 @@ func TestRunningTestsCount(t *testing.T) {
 		runningCtestsCnt := tracker.RunningCtestsCount()
 
 		// Then
-		assert.Equal(runningCtestsCnt, 2)
+		Expect(runningCtestsCnt).ToEqual(2)
 	}, t)
 }
 
 func TestDeletePackage(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that there is a CtestTracker with no packages,
 	When we try to delete a random package
-	Then nothing will happen and the CtestsTracker will still have no packages.`, func(t *testing.T) {
+	Then nothing will happen and the CtestsTracker will still have no packages.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 
@@ -837,13 +824,13 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(&randomPackage)
 
 		// Then
-		assert.Equal(tracker.PackagesCount(), 0)
+		Expect(tracker.PackagesCount()).ToEqual(0)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 1 package named "somePackage",
 	When we try to delete that package
-	Then the package will be deleted and the tracker will have 0 packages.`, func(t *testing.T) {
+	Then the package will be deleted and the tracker will have 0 packages.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage")
@@ -853,13 +840,13 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage)
 
 		// Then
-		assert.Equal(tracker.PackagesCount(), 0)
+		Expect(tracker.PackagesCount()).ToEqual(0)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 1 package,
 	When we try to delete another package 
-	Then nothing will happen and the CtestsTracker will have 1 package.`, func(t *testing.T) {
+	Then nothing will happen and the CtestsTracker will have 1 package.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage")
@@ -869,13 +856,13 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(&someOtherPackage)
 
 		// Then
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.PackagesCount()).ToEqual(1)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 1 package with name "somePackage",
 	When we try to delete another package which also has that name (but it is a different instance)
-	Then nothing will happen and the CtestsTracker will have 1 packages.`, func(t *testing.T) {
+	Then nothing will happen and the CtestsTracker will have 1 packages.`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage")
@@ -885,13 +872,13 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(&someOtherPackage)
 
 		// Then
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.PackagesCount()).ToEqual(1)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 2 package with names "somePackage 1" and "somePackage 2",
 	When we try to delete the "somePackage 1" package
-	Then the "somePackage 1" package will be deleted`, func(t *testing.T) {
+	Then the "somePackage 1" package will be deleted`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage 1")
@@ -902,17 +889,14 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage1)
 
 		// Then
-		assert.Equal(
-			tracker.Packages()[0].Name(),
-			"somePackage 2",
-		)
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.Packages()[0].Name()).ToEqual("somePackage 2")
+		Expect(tracker.PackagesCount()).ToEqual(1)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 2 package with names "somePackage 1" and "somePackage 2",
 	When we try to delete the "somePackage 2" package
-	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+	Then the "somePackage 2" package will be deleted`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage 1")
@@ -923,17 +907,14 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage2)
 
 		// Then
-		assert.Equal(
-			tracker.Packages()[0].Name(),
-			"somePackage 1",
-		)
-		assert.Equal(tracker.PackagesCount(), 1)
+		Expect(tracker.Packages()[0].Name()).ToEqual("somePackage 1")
+		Expect(tracker.PackagesCount()).ToEqual(1)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
 	When we try to delete the "somePackage 1" package
-	Then the "somePackage 1" package will be deleted`, func(t *testing.T) {
+	Then the "somePackage 1" package will be deleted`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage 1")
@@ -945,21 +926,15 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage1)
 
 		// Then
-		assert.Equal(
-			tracker.Packages()[0].Name(),
-			"somePackage 2",
-		)
-		assert.Equal(
-			tracker.Packages()[1].Name(),
-			"somePackage 3",
-		)
-		assert.Equal(tracker.PackagesCount(), 2)
+		Expect(tracker.Packages()[0].Name()).ToEqual("somePackage 2")
+		Expect(tracker.Packages()[1].Name()).ToEqual("somePackage 3")
+		Expect(tracker.PackagesCount()).ToEqual(2)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
 	When we try to delete the "somePackage 2" package
-	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+	Then the "somePackage 2" package will be deleted`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage 1")
@@ -971,21 +946,15 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage2)
 
 		// Then
-		assert.Equal(
-			tracker.Packages()[0].Name(),
-			"somePackage 1",
-		)
-		assert.Equal(
-			tracker.Packages()[1].Name(),
-			"somePackage 3",
-		)
-		assert.Equal(tracker.PackagesCount(), 2)
+		Expect(tracker.Packages()[0].Name()).ToEqual("somePackage 1")
+		Expect(tracker.Packages()[1].Name()).ToEqual("somePackage 3")
+		Expect(tracker.PackagesCount()).ToEqual(2)
 	}, t)
 
 	Test(`
 	Given that there is a CtestTracker with 3 packages with names "somePackage 1", "somePackage 2", "somePackage 3",
 	When we try to delete the "somePackage 3" package
-	Then the "somePackage 2" package will be deleted`, func(t *testing.T) {
+	Then the "somePackage 2" package will be deleted`, func(Expect expect.F) {
 		// Given
 		tracker := ctests_tracker.NewCtestsTracker()
 		tracker.InsertPackageUt("somePackage 1")
@@ -997,14 +966,8 @@ func TestDeletePackage(t *testing.T) {
 		tracker.DeletePackage(somePackage3)
 
 		// Then
-		assert.Equal(
-			tracker.Packages()[0].Name(),
-			"somePackage 1",
-		)
-		assert.Equal(
-			tracker.Packages()[1].Name(),
-			"somePackage 2",
-		)
-		assert.Equal(tracker.PackagesCount(), 2)
+		Expect(tracker.Packages()[0].Name()).ToEqual("somePackage 1")
+		Expect(tracker.Packages()[1].Name()).ToEqual("somePackage 2")
+		Expect(tracker.PackagesCount()).ToEqual(2)
 	}, t)
 }

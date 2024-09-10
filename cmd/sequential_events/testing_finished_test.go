@@ -8,10 +8,11 @@ import (
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
+	"github.com/redjolr/goherent/expect"
+
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
-	"github.com/stretchr/testify/assert"
 )
 
 func setupForTestingFinished() (
@@ -27,14 +28,13 @@ func setupForTestingFinished() (
 }
 
 func TestHandleTestingFinished(t *testing.T) {
-	assert := assert.New(t)
 
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	When a TestingFinishedEvent with a timestamp t1+1200ms occurs
 	Then a test summary should be presented
 	And that summary should present that 0 packages have been tested, 0 tests have been run
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, _ := setupForTestingFinished()
 		t1 := time.Now()
@@ -46,12 +46,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" 0 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " 0 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    0 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -63,7 +62,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has passed
 	And 1 test was run in total and 1 has passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		elapsedTime := 1.2
@@ -87,12 +86,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -105,7 +103,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has passed
 	And 2 tests were run in total and 2 have passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -142,12 +140,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -161,7 +158,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested packages in total, 2 have passed
 	And 2 tests were run in total and 2 have passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -196,12 +193,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -213,7 +209,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has failed
 	And 1 test was run in total and 1 has failed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -238,12 +234,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -256,7 +251,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has failed
 	And 2 tests were run in total and 2 have failed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -291,12 +286,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -310,7 +304,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested packages in total, 2 have passed
 	And 2 tests were run in total and 2 have passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -347,12 +341,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -365,7 +358,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 has failed
 	And 2 tests were run in total, 1 has passed and 1 has failed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -401,12 +394,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -419,7 +411,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested package in total, 1 has failed, 1 has passed
 	And 2 tests were run in total, 1 has passed and 1 has failed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -456,12 +448,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -473,7 +464,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 was skipped
 	And 1 test was run in total and 1 was skipped
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -495,12 +486,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -513,7 +503,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there was 1 tested package in total, 1 was skipped
 	And 2 tests were run in total and 2 were skipped
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -543,12 +533,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -562,7 +551,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested packages in total, 2 were skipped
 	And 2 tests were run in total and 2 were skipped
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -593,12 +582,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -611,7 +599,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested packages in total, 1 was skipped and 1 has passed
 	And 2 tests were run in total, of which 1 was skipped and 1 has passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -644,12 +632,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -663,7 +650,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 3 tested packages in total, 1 failed, 1 skipped, and 1 passed
 	And 3 tests were run in total, of which 1 failed, 1 was skipped, and 1 passed
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -705,12 +692,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 3 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 3 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 3 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -723,7 +709,7 @@ func TestHandleTestingFinished(t *testing.T) {
 	Then a test summary should be presented
 	And that summary should present that there were 2 tested packages in total, 1 failed and 1 was skipped
 	And 2 tests were run in total, of which 1 failed and 1 was skipped
-	And the tests execution time was 1.2 seconds`, func(t *testing.T) {
+	And the tests execution time was 1.2 seconds`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, ctestsTracker := setupForTestingFinished()
 		t1 := time.Now()
@@ -756,12 +742,11 @@ func TestHandleTestingFinished(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvent)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"\n🚀 Starting..."+
-				ansi_escape.BOLD+"\nPackages:"+ansi_escape.RESET_BOLD+" "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 2 total\n"+
-				ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n🚀 Starting..." +
+				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
+				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)

@@ -12,6 +12,8 @@ func expect(t *testing.T) func(val any) *expectation {
 	}
 }
 
+type F func(val any) *expectation
+
 func New(t *testing.T) func(value any) *expectation {
 	return expect(t)
 }

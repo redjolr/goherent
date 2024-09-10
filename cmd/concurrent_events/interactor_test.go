@@ -8,6 +8,7 @@ import (
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
+	"github.com/redjolr/goherent/expect"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
@@ -115,13 +116,12 @@ func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent 
 }
 
 func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
-	assert := assert.New(t)
 
 	Test(`
 	 Given that no events have occurred
 	 And we have a bounded terminal with height 1
 	 When a HandlePackageStartedEvent occurs for package "somePackage"
-	 Then the user should be informed that the tests for that package are running`, func(t *testing.T) {
+	 Then the user should be informed that the tests for that package are running`, func(Expect expect.F) {
 		// Given
 		interactor, terminal, _ := setup(1)
 
@@ -136,17 +136,14 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		interactor.HandlePackageStartedEvent(packStartedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ somePackage",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ somePackage")
 	}, t)
 
 	Test(`
 	 Given that a HandlePackageStartedEvent for package "somePackage" has occurred
 	 And we have a bounded terminal with height 1
 	 When a HandlePackageStartedEvent occurs for package "somePackage"
-	 Then the user should be informed only once that the tests for the "somePackage" package are running`, func(t *testing.T) {
+	 Then the user should be informed only once that the tests for the "somePackage" package are running`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(1)
 		packStartedEvt := events.NewPackageStartedEvent(
@@ -162,17 +159,14 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ somePackage",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ somePackage")
 	}, t)
 
 	Test(`
 	 Given that a HandlePackageStartedEvent for package "somePackage 1" has occured
 	 And we have a bounded terminal with height 1
 	 When a HandlePackageStartedEvent for package "somePackage 2" occurs
-	 And the printed text in the viewport should be "⏳ somePackage 1"`, func(t *testing.T) {
+	 And the printed text in the viewport should be "⏳ somePackage 1"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("somePackage 1", "somePackage 2")
 
 		// Given
@@ -183,10 +177,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["somePackage 2"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ somePackage 1",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ somePackage 1")
 	}, t)
 
 	Test(`
@@ -194,11 +185,11 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 	And a CtestFailedEvent has occurred for "package 1"
 	And there is a terminal with height 7
 	When a PackageStartedEvent occurrs for package "package 2"
-	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(t *testing.T) {
+	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
 
@@ -206,10 +197,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ package 1\n⏳ package 2",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ package 1\n⏳ package 2")
 	}, t)
 
 	Test(`
@@ -217,11 +205,11 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 	And a CtestPassedEvent has occurred for "package 1"
 	And there is a terminal with height 7
 	When a PackageStartedEvent occurrs for package "package 2"
-	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(t *testing.T) {
+	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
 
@@ -229,17 +217,15 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ package 1\n⏳ package 2",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ package 1\n⏳ package 2")
 	}, t)
 
 	Test(`
 	Given that no events have occurred
 	And we have a bounded terminal with height 7
 	When 3 HandlePackageStartedEvent for packages "package 1", ..., "package 5" occur
-	And the printed text should be "⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5"`, func(t *testing.T) {
+	And the printed text should be:
+	"⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("package 1", "package 2", "package 3", "package 4", "package 5")
 
 		// Given
@@ -253,17 +239,14 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["package 5"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5",
-		)
+		Expect(terminal.Text()).ToEqual("⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5")
 	}, t)
 
 	Test(`
 	Given that no events have occurred
 	And we have a bounded terminal with height 7
 	When 6 HandlePackageStartedEvent for packages "package 1", ..., "package 8" occur
-	And the printed text should be "⏳ package 1\n...⏳ package 7"`, func(t *testing.T) {
+	And the printed text should be "⏳ package 1\n...⏳ package 7"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents(
 			"package 1",
 			"package 2",
@@ -289,8 +272,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["package 8"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏳ package 1\n⏳ package 2\n⏳ package 3\n⏳ package 4\n⏳ package 5\n⏳ package 6\n⏳ package 7",
 		)
 	}, t)
@@ -305,7 +287,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 	And we have a bounded terminal with height 7
 	When 5 HandlePackageStartedEvents for packages "pk 4",..., "pk 8" occur
 	And the printed text should be:
-	"❌ pk 2\n✅ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8"`, func(t *testing.T) {
+	"❌ pk 2\n✅ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packPassedEvents := makePackagePassedEvents("pk 1", "pk 3")
 		packFailedEvents := makePackageFailedEvents("pk 2")
@@ -334,8 +316,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pk 8"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 2\n✅ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -351,7 +332,7 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 	And we have a bounded terminal with height 7
 	When 4 HandlePackageStartedEvents for packages "pk 4", ..., "pk 7" occur
 	And the printed text should be:
-	"✅ pk 1\n⏩ pk 2\n❌ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7"`, func(t *testing.T) {
+	"✅ pk 1\n⏩ pk 2\n❌ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packPassedEvents := makePackagePassedEvents("pk 1", "pk 2")
 		packFailedEvents := makePackageFailedEvents("pk 3")
@@ -378,22 +359,19 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pk 6"])
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pk 7"])
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 1\n⏩ pk 2\n❌ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7",
 		)
 	}, t)
 }
 
 func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that no events have occurred
 	And we have a bounded terminal with height 8
 	When 1 HandlePackageStartedEvent for package "package 1" occur
 	And the printed text should be "⏳ package 1" and the summary of tests:
-	"Packages: 1 running\nTests: 0 running\nTime: 0.000s"`, func(t *testing.T) {
+	"Packages: 1 running\nTests: 0 running\nTime: 0.000s"`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(8)
 
@@ -408,12 +386,11 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvt1)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ package 1"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ package 1" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -422,7 +399,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And we have a bounded terminal with height 9
 	When 2 HandlePackageStartedEvent for packages "package 1", and "package 2" occur
 	And the printed text should be"⏳ package 1\n⏳ package 2" and the summary of tests:
-	"Packages: 2 running\nTests: \nTime: 0.000s"`, func(t *testing.T) {
+	"Packages: 2 running\nTests: \nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("package 1", "package 2")
 		// Given
 		eventsHandler, terminal, _ := setup(9)
@@ -432,12 +409,11 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["package 2"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ package 1\n⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ package 1\n⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 2 running" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -446,7 +422,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And we have a bounded terminal with height 9
 	When 2 HandlePackageStartedEvent for packages "pack 1", ... "pack 5" occur
 	And the printed text should be "⏳ pack 1\n⏳ package 2" and the summary of tests:
-	"Packages: 3 running\nTests: \nTime: 0.000s"`, func(t *testing.T) {
+	"Packages: 3 running\nTests: \nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
 		// Given
 		eventsHandler, terminal, _ := setup(9)
@@ -457,12 +433,11 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 3"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"⏳ pack 1\n⏳ pack 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 3 running"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ pack 1\n⏳ pack 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 3 running" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -476,7 +451,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And we have a bounded terminal with height 10
 	When a HandlePackageStartedEvent for "pack 4" ocurrs
 	And the printed text should be "✅ pack 2\n❌ pack 3\n⏳ pack 4" and the summary of tests:
-	"Packages: 1 running, 1 failed, 2 passed\nTests: 1 failed, 2 passed\nTime: 0.000s`, func(t *testing.T) {
+	"Packages: 1 running, 1 failed, 2 passed\nTests: 1 failed, 2 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5", "pack 6")
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
@@ -501,16 +476,15 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 4"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"✅ pack 2\n❌ pack 3\n⏳ pack 4"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ pack 2\n❌ pack 3\n⏳ pack 4" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -525,7 +499,7 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And we have a bounded terminal with height 12
 	When 3 HandlePackageStartedEvents for packages "pack 4", "pack 5" occur
 	And the printed text should be "✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5" and the summary of tests:
-	"Packages: 2 running, 1 failed, 1 skipped, 1 passed\nTests: 1 failed, 1 skipped, 1 passed\nTime: 0.000s`, func(t *testing.T) {
+	"Packages: 2 running, 1 failed, 1 skipped, 1 passed\nTests: 1 failed, 1 skipped, 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvents := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4", "pack 5")
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
@@ -551,18 +525,17 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		eventsHandler.HandlePackageStartedEvent(packStartedEvents["pack 5"])
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
-			"✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ pack 1\n⏩ pack 2\n❌ pack 3\n⏳ pack 4\n⏳ pack 5" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 2 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 }
@@ -574,10 +547,10 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Given that no events have occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 Then an error will be presented to the user.`, func(t *testing.T) {
+	 Then an error will be presented to the user.`, func(Expect expect.F) {
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(7)
+		eventsHandler, terminal, _ := setup(7)
 
 		// When
 		err := eventsHandler.HandlePackagePassed(packagePassedEvts["package 1"])
@@ -585,7 +558,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -594,12 +567,12 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 And the user will be informed that an error has occurred.`, func(t *testing.T) {
+	 And the user will be informed that an error has occurred.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packPassedEvts := makePackagePassedEvents("somePackage")
 
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(7)
+		eventsHandler, terminal, _ := setup(7)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 
 		// When
@@ -608,7 +581,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -618,12 +591,12 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 Then this text will be on the terminal "✅ somePackage".`, func(t *testing.T) {
+	 Then this text will be on the terminal "✅ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
 
@@ -631,10 +604,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ somePackage",
-		)
+		Expect(terminal.Text()).ToEqual("✅ somePackage")
 	}, t)
 
 	Test(`
@@ -642,12 +612,12 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a CtestPassedEvent has occurred for "package 1"
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "package 1"
-	 Then this text will be on the terminal "✅ package 1\n⏳ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "✅ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -657,10 +627,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 1\n⏳ package 2",
-		)
+		Expect(terminal.Text()).ToEqual("✅ package 1\n⏳ package 2")
 	}, t)
 
 	Test(`
@@ -669,14 +636,14 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a PackagePassedEvent for package "package 1" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "package 2"
-	 Then this text will be on the terminal "✅ package 1\n✅ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "✅ package 1\n✅ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
@@ -687,10 +654,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 1\n✅ package 2",
-		)
+		Expect(terminal.Text()).ToEqual("✅ package 1\n✅ package 2")
 	}, t)
 
 	Test(`
@@ -700,7 +664,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "pk 6"
 	 Then the printed text will be:
-	 	"✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+	 	"✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
@@ -711,7 +675,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -737,8 +701,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 6"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -750,7 +713,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "pk 7"
 	 Then the printed text will be:
-	 "✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7".`, func(t *testing.T) {
+	 "✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
@@ -762,7 +725,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest7PassedEvt := makeCtestPassedEvent("pk 7", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -790,8 +753,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 7"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7",
 		)
 	}, t)
@@ -803,7 +765,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "pk 8"
 	Then the printed text will be: 
-	"✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7\n✅ pk 8".`, func(t *testing.T) {
+	"✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7\n✅ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
@@ -816,7 +778,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest8PassedEvt := makeCtestPassedEvent("pk 8", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -847,8 +809,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 8"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7\n✅ pk 8",
 		)
 	}, t)
@@ -860,13 +821,13 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "pk 1"
 	Then the printed text will be:
-		"✅ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+		"✅ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -881,8 +842,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -894,14 +854,14 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "pk 2"
 	Then the printed text will be:
-		"✅ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(t *testing.T) {
+		"✅ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -920,8 +880,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -931,13 +890,13 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And a CtestPassedEvent has occurred for packages "pk 1"
 	And there is a terminal with height 7
 	And a PackagePassedEvent for packages "pk 1"
-	Then the printed text will be: "⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6".`, func(t *testing.T) {
+	Then the printed text will be: "⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
 		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -953,8 +912,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -967,7 +925,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	- 1 PackageFailedEvent has ocurred for "package 1"
 	And there is a terminal with height 5
 	When a PackagePassedEvent for package "package 2" occurrs
-	Then this text will be on the terminal "❌ package 1\n✅ package 2".`, func(t *testing.T) {
+	Then this text will be on the terminal "❌ package 1\n✅ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
@@ -976,7 +934,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		packagePassedEvts := makePackagePassedEvents("package 2")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(5)
+		interactor, terminal, _ := setup(5)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -987,8 +945,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ package 1\n✅ package 2",
 		)
 	}, t)
@@ -1001,10 +958,10 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Given that no events have occurred
 	 And there is a terminal with height 8
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 Then an error will be presented to the user.`, func(t *testing.T) {
+	 Then an error will be presented to the user.`, func(Expect expect.F) {
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(8)
+		eventsHandler, terminal, _ := setup(8)
 
 		// When
 		err := eventsHandler.HandlePackagePassed(packagePassedEvts["package 1"])
@@ -1012,7 +969,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1021,12 +978,12 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 8
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
+	 And the user will be informed that the package tests have passed.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packPassedEvts := makePackagePassedEvents("somePackage")
 
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(8)
+		eventsHandler, terminal, _ := setup(8)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 
 		// When
@@ -1035,7 +992,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1046,12 +1003,12 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 8
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	 "\n\nPackages: 0 running, 1 passed\nTests: 1 passed\nTime: 0.000s"`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 1 passed\nTests: 1 passed\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(8)
+		interactor, terminal, _ := setup(8)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
 
@@ -1059,14 +1016,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1076,12 +1032,12 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 9
 	 When a PackagePassedEvent for package "pack 1"
 	 Then this text will be on the terminal "✅ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 passed\nTests: 1 passed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 passed\nTests: 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -1091,14 +1047,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 1\n⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ package 1\n⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1109,14 +1064,14 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 9
 	 When a PackagePassedEvent for package "package 2"
 	 Then this text will be on the terminal "✅ package 1\n✅ package 2" and the summary of tests
-	 "\n\nPackages: 0 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 0 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
@@ -1127,14 +1082,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 1\n✅ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ package 1\n✅ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1145,14 +1099,14 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 9
 	 When a PackagePassedEvent for package "package 2"
 	 Then the printed text will be: "✅ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
@@ -1166,14 +1120,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 2\n⏳ package 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"2 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ package 2\n⏳ package 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1184,7 +1137,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	When a PackagePassedEvent for package "pack 6"
 	Then the printed text will be: "✅ pack 2\n✅ pack 3" and the summary of tests
-	"\n\nPackages: 0 running, 3 passed\nTests: 3 passed\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 3 passed\nTests: 3 passed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
@@ -1192,7 +1145,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		ctest3PassedEvt := makeCtestPassedEvent("pack 3", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -1208,14 +1161,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pack 3"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ pack 2\n✅ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.GREEN+"3 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"3 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ pack 2\n✅ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.GREEN + "3 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "3 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1225,13 +1177,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	And a PackagePassedEvent for packages "pack 1"
 	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running, 1 passed\nTests: 1 passed\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 2 running, 1 passed\nTests: 1 passed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -1242,14 +1194,13 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ pack 2\n⏳ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ pack 2\n⏳ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 2 running, " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1262,7 +1213,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	When a PackagePassedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "❌ package 1\n✅ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
@@ -1271,7 +1222,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		packagePassedEvts := makePackagePassedEvents("package 2")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -1282,16 +1233,15 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ package 1\n✅ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ package 1\n✅ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 }
@@ -1301,7 +1251,7 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 	Test(`
 	Given that no events have occurred
 	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		//Given
 		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
@@ -1313,7 +1263,7 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 	Test(`
 	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
 	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
@@ -1329,7 +1279,7 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 	Test(`
 	Given that no events have occurred
 	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		//Given
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
@@ -1341,7 +1291,7 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 	Test(`
 	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
 	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
@@ -1357,7 +1307,7 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 	Test(`
 	Given that no events have occurred
 	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		//Given
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
@@ -1369,7 +1319,7 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 	Test(`
 	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
 	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
-	Then the operation will be successful.`, func(t *testing.T) {
+	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
 		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
@@ -1387,10 +1337,10 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Given that no events have occurred
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "somePackage" occurs
-	 Then an error will be presented to the user.`, func(t *testing.T) {
+	 Then an error will be presented to the user.`, func(Expect expect.F) {
 		packagePassedEvts := makePackageFailedEvents("package 1")
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(7)
+		eventsHandler, terminal, _ := setup(7)
 
 		// When
 		err := eventsHandler.HandlePackageFailed(packagePassedEvts["package 1"])
@@ -1398,7 +1348,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1407,12 +1357,12 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "somePackage" occurs
-	 And the user will be informed that the package tests have passed.`, func(t *testing.T) {
+	 And the user will be informed that the package tests have passed.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packFailedEvts := makePackageFailedEvents("somePackage")
 
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(7)
+		eventsHandler, terminal, _ := setup(7)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 
 		// When
@@ -1421,7 +1371,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1431,12 +1381,12 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "somePackage" occurs
-	 Then this text will be on the terminal "❌ somePackage".`, func(t *testing.T) {
+	 Then this text will be on the terminal "❌ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestFailedEvent(ctestFailedEvt)
 
@@ -1444,8 +1394,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ somePackage",
 		)
 	}, t)
@@ -1455,12 +1404,12 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a CtestFailedEvent has occurred for "package 1"
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "package 1"
-	 Then this text will be on the terminal "❌ package 1\n⏳ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "❌ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -1470,8 +1419,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ package 1\n⏳ package 2",
 		)
 	}, t)
@@ -1482,14 +1430,14 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And a PackageFailedEvent for package "package 1" has occurred
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "package 2"
-	 Then this text will be on the terminal "❌ package 1\n❌ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "❌ package 1\n❌ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -1500,8 +1448,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ package 1\n❌ package 2",
 		)
 	}, t)
@@ -1513,7 +1460,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackageFailedEvent for pk "pk 6"
 	Then the printed text will be:
-	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
@@ -1524,7 +1471,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1550,8 +1497,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 6"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -1563,7 +1509,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 And there is a terminal with height 5
 	 When a PackageFailedEvent for package "pk 7"
 	 Then the printed text will be:
-	 	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7".`, func(t *testing.T) {
+	 	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
@@ -1575,7 +1521,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest7FailedEvt := makeCtestFailedEvent("pk 7", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1603,8 +1549,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 7"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7",
 		)
 	}, t)
@@ -1616,7 +1561,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackageFailedEvent for package "pack 8"
 	Then the printed text will be: 
-	"❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7\n❌ pk 8".`, func(t *testing.T) {
+	"❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7\n❌ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
@@ -1629,7 +1574,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest8FailedEvt := makeCtestFailedEvent("pk 8", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1660,8 +1605,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 8"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7\n❌ pk 8",
 		)
 	}, t)
@@ -1673,13 +1617,13 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackageFailedEvent for package "pk 1"
 	Then the printed text will be:
-	"❌ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+	"❌ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1694,8 +1638,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -1707,14 +1650,14 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 7
 	When a PackageFailedEvent for package "pk 2"
 	Then the printed text will be:
-	"❌ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(t *testing.T) {
+	"❌ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
 		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1732,8 +1675,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -1744,13 +1686,13 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	And there is a terminal with height 5
 	And a PackageFailedEvent for packages "pk 1"
 	Then the printed text will be: 
-	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(t *testing.T) {
+	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2")
 		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -1766,8 +1708,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -1780,7 +1721,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	- 1 PackagePassedEvent has ocurred for "package 1"
 	And there is a terminal with height 7
 	When a PackageFailedEvent for package "package 2" occurrs
-	Then this text will be on the terminal "✅ package 1\n❌ package 2".`, func(t *testing.T) {
+	Then this text will be on the terminal "✅ package 1\n❌ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		packageFailedEvts := makePackageFailedEvents("package 2")
@@ -1788,7 +1729,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
@@ -1799,8 +1740,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"✅ package 1\n❌ package 2",
 		)
 	}, t)
@@ -1813,10 +1753,10 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Given that no events have occurred
 	 And there is a terminal with height 6
 	 When a PackageFailedEvent for package "somePackage" occurs
-	 Then an error will be presented to the user.`, func(t *testing.T) {
+	 Then an error will be presented to the user.`, func(Expect expect.F) {
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(8)
+		eventsHandler, terminal, _ := setup(8)
 
 		// When
 		err := eventsHandler.HandlePackageFailed(packageFailedEvts["package 1"])
@@ -1824,7 +1764,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1833,12 +1773,12 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 6
 	 When a PackageFailedEvent for package "somePackage" occurs
-	 And the user will be informed that an error has occurred.`, func(t *testing.T) {
+	 And the user will be informed that an error has occurred.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packPassedEvts := makePackagePassedEvents("somePackage")
 
 		// Given
-		eventsHandler, fakeTerminal, _ := setup(8)
+		eventsHandler, terminal, _ := setup(8)
 		eventsHandler.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 
 		// When
@@ -1847,7 +1787,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		// Then
 		assert.Error(err)
 		assert.Contains(
-			fakeTerminal.Text(),
+			terminal.Text(),
 			"❗ Error.",
 		)
 	}, t)
@@ -1858,12 +1798,12 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 8
 	When a PackageFailedEvent for package "somePackage" occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed\nTests: 1 failed\nTime: 0.000s"`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed\nTests: 1 failed\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(8)
+		interactor, terminal, _ := setup(8)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestFailedEvent(ctestFailedEvt)
 
@@ -1871,14 +1811,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1888,12 +1827,12 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 8
 	 When a PackageFailedEvent for package "pack 1"
 	 Then this text will be on the terminal "⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(8)
+		interactor, terminal, _ := setup(8)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -1903,14 +1842,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1920,12 +1858,12 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 9
 	 When a PackageFailedEvent for package "pack 1"
 	 Then this text will be on the terminal "❌ package 1\n⏳ package 2" and the summary of tests
-	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -1935,14 +1873,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ package 1\n⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ package 1\n⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1953,14 +1890,14 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	When a PackageFailedEvent for package "package 2"
 	Then this text will be on the terminal "❌ package 1\n❌ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -1971,14 +1908,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ package 1\n❌ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ package 1\n❌ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -1989,14 +1925,14 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 And there is a terminal with height 9
 	 When a PackageFailedEvent for package "package 2"
 	 Then the printed text will be: "❌ package 2\n⏳ package 3" and the summary of tests
-	 "\n\nPackages: 1 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(t *testing.T) {
+	 "\n\nPackages: 1 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
@@ -2010,14 +1946,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ package 2\n⏳ package 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ package 2\n⏳ package 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2028,7 +1963,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	When a PackageFailedEvent for package "pack 6"
 	Then the printed text will be: "❌ pack 2\n❌ pack 3" and the summary of tests
-	"\n\nPackages: 0 running, 3 failed\nTests: 0 running\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 3 failed\nTests: 0 running\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2", "pack 3")
 		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
@@ -2036,7 +1971,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -2052,14 +1987,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["pack 3"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ pack 2\n❌ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ pack 2\n❌ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "3 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "3 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2069,13 +2003,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	And a PackageFailedEvent for packages "pack 1"
 	Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-	"\n\nPackages: 2 running, 1 failedd\nTests: 1 failed\nTime: 0.000s.`, func(t *testing.T) {
+	"\n\nPackages: 2 running, 1 failedd\nTests: 1 failed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packageFailedEvts := makePackageFailedEvents("pack 1")
 		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -2086,14 +2020,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["pack 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ pack 2\n⏳ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ pack 2\n⏳ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 2 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2106,7 +2039,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	And there is a terminal with height 9
 	When a PackageFailedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "✅ package 1\n❌ package 2" and the summary of tests
-	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		packageFailedEvts := makePackageFailedEvents("package 2")
@@ -2114,7 +2047,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestPassedEvent(ctest1PassedEvt)
@@ -2125,34 +2058,31 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		interactor.HandlePackageFailed(packageFailedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"✅ package 1\n❌ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"✅ package 1\n❌ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 }
 
 func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
-	 Then this text will be on the terminal "⏩ somePackage".`, func(t *testing.T) {
+	 Then this text will be on the terminal "⏩ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
 
@@ -2160,8 +2090,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ somePackage",
 		)
 	}, t)
@@ -2171,12 +2100,12 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 And a CtestSkippedEvent has occurred for "package 1"
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "package 1"
-	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -2186,8 +2115,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ package 1\n⏳ package 2",
 		)
 	}, t)
@@ -2198,7 +2126,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 And a PackagePassedEvent for package "package 1" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "package 2"
-	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2".`, func(t *testing.T) {
+	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName 1")
@@ -2207,7 +2135,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		pack2Ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName 2")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestSkippedEvent(pack1Ctest1SkippedEvt)
@@ -2220,8 +2148,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ package 1\n⏩ package 2",
 		)
 	}, t)
@@ -2233,7 +2160,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	And there is a terminal with height 7
 	When a PackagePassedEvent for pk "pk 6" occurrs
 	Then the printed text will be:
-		"⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+		"⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
@@ -2244,7 +2171,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2270,8 +2197,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 6"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -2283,7 +2209,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 And there is a terminal with height 5
 	 When a PackagePassedEvent for package "pk 7"
 	 Then the printed text will be:
-	 "⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏩ pk 7".`, func(t *testing.T) {
+	 "⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏩ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
@@ -2295,7 +2221,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		ctest7SkippedEvt := makeCtestSkippedEvent("pk 7", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2323,8 +2249,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 7"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏩ pk 7",
 		)
 	}, t)
@@ -2335,7 +2260,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	And a PackagePassedEvent for packages "pk 1", ..., "pk 7"
 	And there is a terminal with height 5
 	When a PackagePassedEvent for package "pk 8"
-	Then the printed text will be: "⏩ pack 2\n⏩ pack 3\n⏩ pack 4\n⏩ pack 5\n⏩ pack 6".`, func(t *testing.T) {
+	Then the printed text will be: "⏩ pack 2\n⏩ pack 3\n⏩ pack 4\n⏩ pack 5\n⏩ pack 6".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
@@ -2348,7 +2273,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		ctest8SkippedEvt := makeCtestSkippedEvent("pk 8", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2379,8 +2304,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 8"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏩ pk 7\n⏩ pk 8",
 		)
 	}, t)
@@ -2392,13 +2316,13 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "pk 1"
 	Then the printed text will be:
-	"⏩ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(t *testing.T) {
+	"⏩ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2412,8 +2336,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7",
 		)
 	}, t)
@@ -2425,14 +2348,14 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "pack 2"
 	Then the printed text will be:
-	"⏩ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(t *testing.T) {
+	"⏩ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2451,8 +2374,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏩ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -2463,13 +2385,13 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	And there is a terminal with height 7
 	And a PackagePassedEvent for packages "pk 1"
 	Then the printed text will be: 
-	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(t *testing.T) {
+	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pk 3"])
@@ -2485,8 +2407,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pk 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8",
 		)
 	}, t)
@@ -2499,7 +2420,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	- 1 PackageFailedEvent has ocurred for "package 1"
 	And there is a terminal with height 7
 	When a PackagePassedEvent for package "package 2" occurrs
-	Then this text will be on the terminal "❌ package 1\n⏩ package 2".`, func(t *testing.T) {
+	Then this text will be on the terminal "❌ package 1\n⏩ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
@@ -2508,7 +2429,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		packagePassedEvts := makePackagePassedEvents("package 2")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(7)
+		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -2519,28 +2440,25 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"❌ package 1\n⏩ package 2",
 		)
 	}, t)
 }
 
 func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 		 Given that a PackageStartedEvent has occurred for "somePackage"
 		 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
 		 And there is a terminal with height 8
 		 When a PackagePassedEvent for package "somePackage" occurs
 		 Then this text will be on the terminal "⏩ somePackage" and the summary of tests
-		 "\n\nPackages: 0 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s"`, func(t *testing.T) {
+		 "\n\nPackages: 0 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
-		interactor, fakeTerminal, _ := setup(8)
+		interactor, terminal, _ := setup(8)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
 
@@ -2548,14 +2466,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏩ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏩ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2565,12 +2482,12 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 	And there is a terminal with height 8
 	When a PackagePassedEvent for package "pack 1"
 	Then this text will be on the terminal "⏳ package 2" and the summary of tests
-	"\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(t *testing.T) {
+	"\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(8)
+		interactor, terminal, _ := setup(8)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -2580,14 +2497,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2597,12 +2513,12 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 And there is a terminal with height 9
 		 When a PackagePassedEvent for package "pack 1"
 		 Then this text will be on the terminal "⏩ package 1\n⏳ package 2" and the summary of tests
-		 "\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(t *testing.T) {
+		 "\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 
@@ -2612,14 +2528,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏩ package 1\n⏳ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏩ package 1\n⏳ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2630,14 +2545,14 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 And there is a terminal with height 9
 		 When a PackagePassedEvent for package "package 2"
 		 Then this text will be on the terminal "⏩ package 1\n⏩ package 2" and the summary of tests
-		 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestSkippedEvent(ctest1SkippedEvt)
@@ -2648,14 +2563,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏩ package 1\n⏩ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏩ package 1\n⏩ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2666,14 +2580,14 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 And there is a terminal with height 9
 		 When a PackagePassedEvent for package "package 2"
 		 Then the printed text will be: "⏩ package 2\n⏳ package 3" and the summary of tests
-		 "\n\nPackages: 1 running, 2 skipped\nTests: 2 skipped\nTime: 0.000s`, func(t *testing.T) {
+		 "\n\nPackages: 1 running, 2 skipped\nTests: 2 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
 		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 3"])
@@ -2687,14 +2601,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏩ package 2\n⏳ package 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 1 running, "+
-				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"2 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏩ package 2\n⏳ package 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 1 running, " +
+				ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "2 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2705,7 +2618,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		And there is a terminal with height 9
 		When a PackagePassedEvent for package "pack 6"
 		Then the printed text will be: "⏩ pack 2\n⏩ pack 3" and the summary of tests
-		"\n\nPackages: 0 running, 3 skipped\nTests: 3 skipped\nTime: 0.000s.`, func(t *testing.T) {
+		"\n\nPackages: 0 running, 3 skipped\nTests: 3 skipped\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
@@ -2713,7 +2626,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		ctest3SkippedEvt := makeCtestSkippedEvent("pack 3", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -2729,14 +2642,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pack 3"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏩ pack 2\n⏩ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.YELLOW+"3 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"3 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏩ pack 2\n⏩ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.YELLOW + "3 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "3 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2746,13 +2658,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		And there is a terminal with height 9
 		And a PackagePassedEvent for packages "pack 1"
 		Then the printed text will be: "⏳ pack 2\n⏳ pack 3\n" and the summary of tests
-		"\n\nPackages: 2 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s.`, func(t *testing.T) {
+		"\n\nPackages: 2 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
 		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 3"])
@@ -2763,14 +2675,13 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["pack 1"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"⏳ pack 2\n⏳ pack 3"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 2 running, "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"⏳ pack 2\n⏳ pack 3" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 2 running, " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 
@@ -2783,7 +2694,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		And there is a terminal with height 9
 		When a PackagePassedEvent for package "package 2" occurrs
 		Then this text will be on the terminal "❌ package 1\n⏩ package 2" and the summary of tests
-		"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(t *testing.T) {
+		"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
 		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
@@ -2792,7 +2703,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		packagePassedEvts := makePackagePassedEvents("package 2")
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 2"])
 		interactor.HandleCtestFailedEvent(ctest1FailedEvt)
@@ -2803,16 +2714,15 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		interactor.HandlePackagePassed(packagePassedEvts["package 2"])
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"❌ package 1\n⏩ package 2"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" 0 running, "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     0.000s",
+		Expect(terminal.Text()).ToEqual(
+			"❌ package 1\n⏩ package 2" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " 0 running, " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s",
 		)
 	}, t)
 }
@@ -2825,7 +2735,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for package "somePackage" occurs
 	Then the user should see an error in the terminal.
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 
@@ -2851,7 +2761,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
 	Then the user should not see anything on the terminal.
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		packStartedEvt := events.NewPackageStartedEvent(
@@ -2873,8 +2783,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
 
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"",
 		)
 	}, t)
@@ -2885,7 +2794,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for packag "somePackage 1" occurs
 	Then the user should only see that the the tests for "somePackage 2" are running.
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		packStartedEvt1 := events.NewPackageStartedEvent(
@@ -2915,8 +2824,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		)
 		eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt1)
 		// Then
-		assert.Equal(
-			terminal.Text(),
+		Expect(terminal.Text()).ToEqual(
 			"⏳ somePackage 2\n",
 		)
 	}, t)
@@ -2927,7 +2835,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
 	Then the user should see an error in the terminal
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		timeElapsed := 1.2
@@ -2974,7 +2882,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
 	Then the user should see an error in the terminal
-	`, func(t *testing.T) {
+	`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		timeElapsed := 1.2
@@ -3017,8 +2925,6 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 }
 
 func TestTestingFinishedSummary(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
@@ -3029,7 +2935,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
 	"\n\nPackages: 1 passed, 1 total\nTests: 1 passed, 1 totalt1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
-		testingStartedEvt := events.NewTestingSt\nTime: 1.200s"`, func(t *testing.T) {
+		testingStartedEvt := events.NewTestingSt\nTime: 1.200s"`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3038,7 +2944,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
@@ -3048,15 +2954,14 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"✅ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"✅ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.\n",
 		)
 	}, t)
@@ -3069,7 +2974,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.372s occurs
 	Then this text will be on the terminal "⏩ somePackage" and the summary of tests
-	"\n\nPackages: 1 skipped, 1 total\nTests: 1 skipped, 1 total\nTime: 1.372s"`, func(t *testing.T) {
+	"\n\nPackages: 1 skipped, 1 total\nTests: 1 skipped, 1 total\nTime: 1.372s"`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3078,7 +2983,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestSkippedEvent(ctestSkippedEvt)
@@ -3088,15 +2993,14 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"⏩ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.372s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"⏩ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
 				"Ran all tests.\n",
 		)
 	}, t)
@@ -3109,7 +3013,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
-	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3118,7 +3022,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestFailedEvent(ctestFailedEvt)
@@ -3128,16 +3032,15 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"❌ somePackage\n\n"+
-				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"❌ somePackage\n\n" +
+				"  " + ansi_escape.RED + "● testName" + ansi_escape.COLOR_RESET + "\n" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -3151,7 +3054,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
-	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(t *testing.T) {
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3161,7 +3064,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestFailedEvent(ctestFailedEvt)
@@ -3172,17 +3075,16 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"❌ somePackage\n\n"+
-				"  "+ansi_escape.RED+"● testName"+ansi_escape.COLOR_RESET+"\n\n"+
-				"  Some output\n"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"1 failed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"❌ somePackage\n\n" +
+				"  " + ansi_escape.RED + "● testName" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  Some output\n" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)
@@ -3196,7 +3098,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3206,7 +3108,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandleCtestPassedEvent(ctestPassedEvt)
@@ -3217,16 +3119,15 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"✅ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 2 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"✅ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.\n",
 		)
 	}, t)
@@ -3238,7 +3139,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
 	Then this text will be on the terminal "✅ somePackage" and the summary of tests
-	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(t *testing.T) {
+	"\n\nPackages: 1 passed, 1 total\nTests: 1 skipped, 1 passed, 2 total\nTime: 1.200s`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
@@ -3246,7 +3147,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
 		interactor.HandlePackagePassed(packagePassedEvts["somePackage"])
@@ -3255,14 +3156,13 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"⏩ somePackage"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", 1 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    0 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.200s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"⏩ somePackage" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    0 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.\n",
 		)
 	}, t)
@@ -3279,7 +3179,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.372s occurs
 	Then this text will be on the terminal "✅ pack 1\n❌pack 2\n❌ pack 3\n⏩ pack 4" and the summary of tests
-	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(t *testing.T) {
+	"\n\nPackages: 1 skipped\nTests: 1 skipped\nTime: 1.372s"`, func(Expect expect.F) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4")
@@ -3303,7 +3203,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
 		// Given
-		interactor, fakeTerminal, _ := setup(9)
+		interactor, terminal, _ := setup(9)
 		interactor.HandleTestingStarted(testingStartedEvt)
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 1"])
 		interactor.HandlePackageStartedEvent(packStartedEvts["pack 2"])
@@ -3332,25 +3232,24 @@ func TestTestingFinishedSummary(t *testing.T) {
 		interactor.HandleTestingFinished(testingFinishedEvt)
 
 		// Then
-		assert.Equal(
-			fakeTerminal.Text(),
-			"\n\n📋 Tests summary:\n\n"+
-				"✅ pack 1\n"+
-				"❌ pack 2\n\n"+
-				"  "+ansi_escape.RED+"● testName 12"+ansi_escape.COLOR_RESET+"\n\n"+
-				"  "+ansi_escape.RED+"● testName 13"+ansi_escape.COLOR_RESET+"\n\n"+
-				"❌ pack 3\n\n"+
-				"  "+ansi_escape.RED+"● testName 14"+ansi_escape.COLOR_RESET+"\n\n"+
-				"⏩ pack 4"+
-				"\n\n"+ansi_escape.BOLD+"Packages:"+ansi_escape.RESET_BOLD+" "+
-				ansi_escape.RED+"2 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"1 skipped"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"1 passed"+ansi_escape.COLOR_RESET+", 4 total"+
-				"\n"+ansi_escape.BOLD+"Tests:"+ansi_escape.RESET_BOLD+"    "+
-				ansi_escape.RED+"3 failed"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.YELLOW+"7 skipped"+ansi_escape.COLOR_RESET+", "+
-				ansi_escape.GREEN+"4 passed"+ansi_escape.COLOR_RESET+", 14 total"+
-				"\n"+ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     1.372s\n"+
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"✅ pack 1\n" +
+				"❌ pack 2\n\n" +
+				"  " + ansi_escape.RED + "● testName 12" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  " + ansi_escape.RED + "● testName 13" + ansi_escape.COLOR_RESET + "\n\n" +
+				"❌ pack 3\n\n" +
+				"  " + ansi_escape.RED + "● testName 14" + ansi_escape.COLOR_RESET + "\n\n" +
+				"⏩ pack 4" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 4 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "3 failed" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.YELLOW + "7 skipped" + ansi_escape.COLOR_RESET + ", " +
+				ansi_escape.GREEN + "4 passed" + ansi_escape.COLOR_RESET + ", 14 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
 				"Ran all tests.",
 		)
 	}, t)
