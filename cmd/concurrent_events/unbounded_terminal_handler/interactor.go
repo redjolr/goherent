@@ -46,6 +46,10 @@ func (i *Interactor) HandlePackagePassed(evt events.PackagePassedEvent) error {
 	return nil
 }
 
+func (i *Interactor) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
+	i.ctestsTracker.HandleCtestOutputEvent(evt)
+}
+
 func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 	existingPackageUt := i.ctestsTracker.FindPackageWithName(evt.PackageName)
 	if existingPackageUt == nil {
@@ -63,18 +67,15 @@ func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 }
 
 func (i *Interactor) HandleCtestFailedEvent(evt events.CtestFailedEvent) {
-	ctest := ctests_tracker.NewFailedCtest(evt)
-	i.ctestsTracker.InsertCtest(ctest)
+	i.ctestsTracker.HandleCtestFailedEvent(evt)
 }
 
 func (i Interactor) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
-	ctest := ctests_tracker.NewPassedCtest(evt)
-	i.ctestsTracker.InsertCtest(ctest)
+	i.ctestsTracker.HandleCtestPassedEvent(evt)
 }
 
-func (i *Interactor) HandleCtestSkippedEvt(evt events.CtestSkippedEvent) {
-	ctest := ctests_tracker.NewSkippedCtest(evt)
-	i.ctestsTracker.InsertCtest(ctest)
+func (i *Interactor) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
+	i.ctestsTracker.HandleCtestSkippedEvent(evt)
 }
 
 func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFoundEvent) error {

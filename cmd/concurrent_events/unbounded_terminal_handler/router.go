@@ -23,11 +23,13 @@ func (router *Router) Route(unknownEvt any) {
 	case events.CtestFailedEvent:
 		router.interactor.HandleCtestFailedEvent(evt)
 	case events.CtestSkippedEvent:
-		router.interactor.HandleCtestSkippedEvt(evt)
+		router.interactor.HandleCtestSkippedEvent(evt)
 	case events.PackagePassedEvent:
 		router.interactor.HandlePackagePassed(evt)
 	case events.PackageFailedEvent:
 		router.interactor.HandlePackageFailed(evt)
+	case events.CtestOutputEvent:
+		router.interactor.HandleCtestOutputEvent(evt)
 	case events.PackageStartedEvent:
 		router.interactor.HandlePackageStartedEvent(evt)
 	case events.NoPackageTestsFoundEvent:

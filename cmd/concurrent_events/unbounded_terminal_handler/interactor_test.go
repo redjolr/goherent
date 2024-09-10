@@ -22,6 +22,98 @@ func setup() (*unbounded_terminal_handler.Interactor, *fake_ansi_terminal.FakeAn
 	return &interactor, &fakeAnsiTerminal, &ctestTracker
 }
 
+func makePackageStartedEvents(packageNames ...string) map[string]events.PackageStartedEvent {
+	evts := make(map[string]events.PackageStartedEvent)
+	for _, packName := range packageNames {
+		evts[packName] = events.NewPackageStartedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Action:  "start",
+				Package: packName,
+			})
+	}
+	return evts
+}
+
+func makePackagePassedEvents(packageNames ...string) map[string]events.PackagePassedEvent {
+	evts := make(map[string]events.PackagePassedEvent)
+	timeElapsed := 1.2
+	for _, packName := range packageNames {
+		evts[packName] = events.NewPackagePassedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: packName,
+				Elapsed: &timeElapsed,
+			})
+	}
+	return evts
+}
+
+func makePackageFailedEvents(packageNames ...string) map[string]events.PackageFailedEvent {
+	evts := make(map[string]events.PackageFailedEvent)
+	timeElapsed := 1.2
+	for _, packName := range packageNames {
+		evts[packName] = events.NewPackageFailedEvent(
+			events.JsonTestEvent{
+				Time:    time.Now(),
+				Package: packName,
+				Elapsed: &timeElapsed,
+			})
+	}
+	return evts
+}
+
+func makeCtestFailedEvent(packageName, testName string) events.CtestFailedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestFailedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
+func makeCtestOutputEvent(packageName, testName, output string) events.CtestOutputEvent {
+	return events.NewCtestOutputEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "output",
+			Test:    testName,
+			Package: packageName,
+			Output:  output,
+		},
+	)
+}
+
+func makeCtestSkippedEvent(packageName, testName string) events.CtestSkippedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestSkippedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "skip",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
+func makeCtestPassedEvent(packageName, testName string) events.CtestPassedEvent {
+	timeElapsed := 1.2
+	return events.NewCtestPassedEvent(
+		events.JsonTestEvent{
+			Time:    time.Now(),
+			Action:  "pass",
+			Test:    testName,
+			Package: packageName,
+			Elapsed: &timeElapsed,
+		},
+	)
+}
+
 func TestHandlePackageStartedEvent(t *testing.T) {
 	assert := assert.New(t)
 	Test(`
@@ -297,7 +389,7 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 				Package: "somePackage",
 			},
 		)
-		eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
+		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
 
 		// When
 		packagePassedEvt := events.NewPackagePassedEvent(
@@ -424,6 +516,90 @@ func TestHandlePackagePassedEvent(t *testing.T) {
 			terminal.Text(),
 			"\n✅ somePackage 1\n⏳ somePackage 2",
 		)
+	}, t)
+}
+
+func TestHandleCtestPassedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		//Given
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
+	}, t)
+}
+
+func TestHandleCtestFailedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		//Given
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
+	}, t)
+}
+
+func TestHandleCtestSkippedEvent(t *testing.T) {
+
+	Test(`
+	Given that no events have occurred
+	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		//Given
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+
+		// When
+		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
+	}, t)
+
+	Test(`
+	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
+	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	Then the operation will be successful.`, func(t *testing.T) {
+		eventsHandler, _, _ := setup()
+		// Given
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
+		// When
+		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
 	}, t)
 }
 

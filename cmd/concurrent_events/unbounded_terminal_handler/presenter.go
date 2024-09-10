@@ -52,6 +52,10 @@ func (p *Presenter) Packages(packages []*ctests_tracker.PackageUnderTest) {
 	}
 }
 
+func (p *Presenter) TestingFinishedSummaryLabel() {
+	p.terminal.Print("\n\n\n\n\n📋 Tests summary.\n\n")
+}
+
 func (p Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
 
 	packagesSummary := ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " "
