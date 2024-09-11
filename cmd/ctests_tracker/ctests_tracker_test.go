@@ -444,7 +444,7 @@ func TestInsertCtest(t *testing.T) {
 
 		// Then
 		Expect(ctestReturned).ToEqual(ctest)
-		assert.True(tracker.ContainsPackageUtWithName("packageName"))
+		Expect(tracker.ContainsPackageUtWithName("packageName")).ToBeTrue()
 		testInPackage := tracker.FindCtestWithNameInPackage("testName", "packageName")
 		assert.NotNil(testInPackage)
 	}, t)
@@ -517,7 +517,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isFirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest)
 
 		//Then
-		assert.True(isFirstInPackage)
+		Expect(isFirstInPackage).ToBeTrue()
 	}, t)
 
 	Test(`
@@ -539,7 +539,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtest1FirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest1)
 
 		//Then
-		assert.True(isCtest1FirstInPackage)
+		Expect(isCtest1FirstInPackage).ToBeTrue()
 	}, t)
 
 	Test(`
@@ -678,7 +678,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtest1FirstInPackage1 := tracker.IsCtestFirstOfItsPackage(ctest1InPackage1)
 
 		//Then
-		assert.True(isCtest1FirstInPackage1)
+		Expect(isCtest1FirstInPackage1).ToBeTrue()
 	}, t)
 }
 

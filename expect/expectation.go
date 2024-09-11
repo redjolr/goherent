@@ -28,3 +28,9 @@ func (e *expectation) ToBeError() {
 		e.t.Errorf(err.Error())
 	}
 }
+
+func (e *expectation) ToBeTrue() {
+	if err := assertions.ToBeTrue(e.checkExpectationAgainst); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}
