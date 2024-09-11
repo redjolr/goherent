@@ -8,15 +8,12 @@ import (
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewFakeAnsiTerminal(t *testing.T) {
-	assert := assert.New(t)
 	Test("it should return an instance of type FakeAnsiTerminal", func(Expect expect.F) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(10, 10)
-		assert.IsType(fake_ansi_terminal.FakeAnsiTerminal{}, fakeTerminal)
+		Expect(fakeTerminal).ToBeOfSameTypeAs(fake_ansi_terminal.FakeAnsiTerminal{})
 	}, t)
 }
 

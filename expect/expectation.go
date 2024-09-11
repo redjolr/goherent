@@ -58,3 +58,9 @@ func (e *expectation) NotToBeNil() {
 		e.t.Errorf(err.Error())
 	}
 }
+
+func (e *expectation) ToBeOfSameTypeAs(compareVal any) {
+	if err := assertions.ToBeOfSameTypeAs(e.checkExpectationAgainst, compareVal); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}
