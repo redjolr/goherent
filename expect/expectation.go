@@ -40,3 +40,15 @@ func (e *expectation) ToBeFalse() {
 		e.t.Errorf(err.Error())
 	}
 }
+
+func (e *expectation) ToBeNil() {
+	if err := assertions.ToBeNil(e.checkExpectationAgainst); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}
+
+func (e *expectation) NotToBeNil() {
+	if err := assertions.NotToBeNil(e.checkExpectationAgainst); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}

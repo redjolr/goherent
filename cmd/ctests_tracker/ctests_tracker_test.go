@@ -9,7 +9,6 @@ import (
 	"github.com/redjolr/goherent/expect"
 
 	. "github.com/redjolr/goherent/pkg"
-	"github.com/stretchr/testify/assert"
 )
 
 func makeCtestRanEvent(packageName, testName string) events.CtestRanEvent {
@@ -429,7 +428,6 @@ func TestNewCtestOutput(t *testing.T) {
 }
 
 func TestInsertCtest(t *testing.T) {
-	assert := assert.New(t)
 	Test(`
 	Given that we have an empty TestsTracker
 	When we call the InsertCtest() method with a Ctest as an argument
@@ -446,7 +444,7 @@ func TestInsertCtest(t *testing.T) {
 		Expect(ctestReturned).ToEqual(ctest)
 		Expect(tracker.ContainsPackageUtWithName("packageName")).ToBeTrue()
 		testInPackage := tracker.FindCtestWithNameInPackage("testName", "packageName")
-		assert.NotNil(testInPackage)
+		Expect(testInPackage).NotToBeNil()
 	}, t)
 
 	Test(`
@@ -470,7 +468,7 @@ func TestInsertCtest(t *testing.T) {
 		// Then
 		Expect(tracker.PackagesCount()).ToEqual(1)
 		testInPackage := tracker.FindCtestWithNameInPackage("ctestName2", "packageName")
-		assert.NotNil(testInPackage)
+		Expect(testInPackage).NotToBeNil()
 	}, t)
 
 	Test(`
@@ -493,7 +491,7 @@ func TestInsertCtest(t *testing.T) {
 
 		// Then
 		testInPackage := tracker.FindCtestWithNameInPackage("ctestName2", "packageName2")
-		assert.NotNil(testInPackage)
+		Expect(testInPackage).NotToBeNil()
 		Expect(tracker.PackagesCount()).ToEqual(2)
 	}, t)
 }

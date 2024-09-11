@@ -1639,8 +1639,6 @@ func TestCtestSkippedEvent(t *testing.T) {
 }
 
 func TestCtestOutputEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that there are no events
 	When a CtestOutputEvent occurs for the test "testName" of package "somePackage" with output "Some output"
@@ -1663,7 +1661,7 @@ func TestCtestOutputEvent(t *testing.T) {
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 		//Then
 		ctest := ctestsTracker.FindCtestWithNameInPackage("testName", "somePackage")
-		assert.NotNil(ctest)
+		Expect(ctest).NotToBeNil()
 		Expect(ctest.Output()).ToEqual("Some output")
 	}, t)
 }
