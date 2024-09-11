@@ -557,10 +557,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -580,10 +577,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -968,10 +962,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -991,10 +982,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1347,10 +1335,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1370,10 +1355,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1763,10 +1745,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1786,10 +1765,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -2750,10 +2726,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -2870,10 +2843,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -2917,10 +2887,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 
 		// Then
 		assert.Error(err)
-		assert.Contains(
-			terminal.Text(),
-			"❗ Error.",
-		)
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 }
 

@@ -7,12 +7,18 @@ import (
 )
 
 type expectation struct {
-	t        *testing.T
-	expected any
+	t                       *testing.T
+	checkExpectationAgainst any
 }
 
 func (e *expectation) ToEqual(actual any) {
-	if err := assertions.ToEqual(e.expected, actual); err != nil {
+	if err := assertions.ToEqual(e.checkExpectationAgainst, actual); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}
+
+func (e *expectation) ToContain(containee any) {
+	if err := assertions.ToContain(e.checkExpectationAgainst, containee); err != nil {
 		e.t.Errorf(err.Error())
 	}
 }
