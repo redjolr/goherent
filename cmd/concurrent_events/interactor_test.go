@@ -12,7 +12,6 @@ import (
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
-	"github.com/stretchr/testify/assert"
 )
 
 func setup(terminalHeight int) (*concurrent_events.Interactor, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {
@@ -541,8 +540,6 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 }
 
 func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	 Given that no events have occurred
 	 And there is a terminal with height 7
@@ -556,7 +553,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		err := eventsHandler.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -576,7 +573,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		err := eventsHandler.HandlePackagePassed(packPassedEvts["somePackage"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -946,8 +943,6 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 }
 
 func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	 Given that no events have occurred
 	 And there is a terminal with height 8
@@ -961,7 +956,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		err := eventsHandler.HandlePackagePassed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -981,7 +976,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		err := eventsHandler.HandlePackagePassed(packPassedEvts["somePackage"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -1319,8 +1314,6 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 }
 
 func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	 Given that no events have occurred
 	 And there is a terminal with height 7
@@ -1334,7 +1327,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		err := eventsHandler.HandlePackageFailed(packagePassedEvts["package 1"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -1354,7 +1347,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		err := eventsHandler.HandlePackageFailed(packFailedEvts["somePackage"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -1729,8 +1722,6 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 }
 
 func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	 Given that no events have occurred
 	 And there is a terminal with height 6
@@ -1744,7 +1735,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		err := eventsHandler.HandlePackageFailed(packageFailedEvts["package 1"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -1764,7 +1755,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		err := eventsHandler.HandlePackagePassed(packPassedEvts["somePackage"])
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -2704,14 +2695,11 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 }
 
 func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that no events have occurred
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for package "somePackage" occurs
-	Then the user should see an error in the terminal.
-	`, func(Expect expect.F) {
+	Then the user should see an error in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 
@@ -2725,7 +2713,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -2733,8 +2721,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	Given that a PackageStartedEvent for package "somePackage" has occured
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
-	Then the user should not see anything on the terminal.
-	`, func(Expect expect.F) {
+	Then the user should not see anything on the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		packStartedEvt := events.NewPackageStartedEvent(
@@ -2766,8 +2753,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And a PackageStartedEvent for package "somePackage 2" has occured
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for packag "somePackage 1" occurs
-	Then the user should only see that the the tests for "somePackage 2" are running.
-	`, func(Expect expect.F) {
+	Then the user should only see that the the tests for "somePackage 2" are running.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		packStartedEvt1 := events.NewPackageStartedEvent(
@@ -2807,8 +2793,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
-	Then the user should see an error in the terminal
-	`, func(Expect expect.F) {
+	Then the user should see an error in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		timeElapsed := 1.2
@@ -2842,7 +2827,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
@@ -2851,8 +2836,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
 	And there is a terminal with height 5
 	When a NoPackageTestsFoundEvent for the same package occurs
-	Then the user should see an error in the terminal
-	`, func(Expect expect.F) {
+	Then the user should see an error in the terminal.`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup(5)
 		timeElapsed := 1.2
@@ -2886,7 +2870,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 		err := eventsHandler.HandleNoPackageTestsFoundEvent(noPackTestsFoundEvt)
 
 		// Then
-		assert.Error(err)
+		Expect(err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 }

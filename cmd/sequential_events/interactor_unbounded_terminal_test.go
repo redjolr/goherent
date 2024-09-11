@@ -3,7 +3,6 @@ package sequential_events_test
 import (
 	"fmt"
 	"math"
-	"strings"
 	"testing"
 	"time"
 
@@ -82,10 +81,8 @@ func TestCtestRanEvent(t *testing.T) {
 
 		// Then
 		assert.NoError(ctestRanEvt1Err)
-		assert.Error(ctestRanEvt2Err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(ctestRanEvt2Err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -116,8 +113,6 @@ func TestCtestRanEvent(t *testing.T) {
 }
 
 func TestCtestPassedEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestPassedEvent of the same test/package occurs
@@ -174,10 +169,8 @@ func TestCtestPassedEvent(t *testing.T) {
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -246,16 +239,12 @@ func TestCtestPassedEvent(t *testing.T) {
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 }
 
 func TestCtestFailedEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestFailedEvent of the same test/package occurs
@@ -314,10 +303,8 @@ func TestCtestFailedEvent(t *testing.T) {
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -408,11 +395,10 @@ func TestCtestFailedEvent(t *testing.T) {
 			},
 		)
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-		assert.Error(err)
+		Expect(err).ToBeError()
 
 		// Then
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."))
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1450,8 +1436,6 @@ func TestCtestFailedEvent(t *testing.T) {
 }
 
 func TestCtestSkippedEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	When a CtestSkippedEvent of the same test/package occurs
@@ -1509,10 +1493,8 @@ func TestCtestSkippedEvent(t *testing.T) {
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1650,10 +1632,8 @@ func TestCtestSkippedEvent(t *testing.T) {
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 }

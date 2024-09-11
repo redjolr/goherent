@@ -2,7 +2,6 @@ package sequential_events_test
 
 import (
 	"math"
-	"strings"
 	"testing"
 	"time"
 
@@ -110,10 +109,8 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		assert.NoError(ctestRanEvt1Err)
-		assert.Error(ctestRanEvt2Err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(ctestRanEvt2Err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -145,8 +142,6 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 }
 
 func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
@@ -763,10 +758,8 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -800,16 +793,12 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestPassedEvt(ctestPassedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 }
 
 func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
@@ -1426,10 +1415,8 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1463,10 +1450,8 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1512,11 +1497,10 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 			},
 		)
 		err := eventsHandler.HandleCtestFailedEvt(ctestFailedEvt)
-		assert.Error(err)
+		Expect(err).ToBeError()
 
 		// Then
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."))
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -1687,8 +1671,6 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 }
 
 func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
 	And we have a bounded terminal with height 1
@@ -2272,10 +2254,8 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 
 	Test(`
@@ -2306,10 +2286,8 @@ func TestCtestSkippedEventWithBoundedTerminal(t *testing.T) {
 		err := eventsHandler.HandleCtestSkippedEvt(ctestSkippedEvt)
 
 		// Then
-		assert.Error(err)
-		assert.True(
-			strings.Contains(terminal.Text(), "❗ Error."),
-		)
+		Expect(err).ToBeError()
+		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)
 }
 
