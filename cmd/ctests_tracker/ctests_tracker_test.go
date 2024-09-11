@@ -499,8 +499,6 @@ func TestInsertCtest(t *testing.T) {
 }
 
 func TestIsCtestFirstOfItsPackage(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that we have a CtestTracker
 	And that CtestTracker has a PackageUnderTest with name "packageUtName"
@@ -561,7 +559,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtest2FirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest2)
 
 		//Then
-		assert.False(isCtest2FirstInPackage)
+		Expect(isCtest2FirstInPackage).ToBeFalse()
 	}, t)
 
 	Test(`
@@ -585,7 +583,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtest2FirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest2)
 
 		//Then
-		assert.False(isCtest2FirstInPackage)
+		Expect(isCtest2FirstInPackage).ToBeFalse()
 	}, t)
 
 	Test(`
@@ -601,7 +599,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtestFirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest)
 
 		//Then
-		assert.False(isCtestFirstInPackage)
+		Expect(isCtestFirstInPackage).ToBeFalse()
 	}, t)
 
 	Test(`
@@ -626,7 +624,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isSomeTestNameFirstOfPackage2 := tracker.IsCtestFirstOfItsPackage(someTestNamePackage2)
 
 		//Then
-		assert.False(isSomeTestNameFirstOfPackage2)
+		Expect(isSomeTestNameFirstOfPackage2).ToBeFalse()
 	}, t)
 
 	Test(`
@@ -652,7 +650,7 @@ func TestIsCtestFirstOfItsPackage(t *testing.T) {
 		isCtest2FirstInPackage := tracker.IsCtestFirstOfItsPackage(ctest2InPackage2)
 
 		//Then
-		assert.False(isCtest2FirstInPackage)
+		Expect(isCtest2FirstInPackage).ToBeFalse()
 	}, t)
 
 	Test(`
