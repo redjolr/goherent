@@ -420,6 +420,13 @@ func TestIntegerArrays(t *testing.T) {
 		}
 	})
 
+	t.Run("it should return nil, if we check if [3]int{4, 9, 10} contains 129.", func(t *testing.T) {
+		err := assertions.ToContain([3]int{4, 9, 10}, 129)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
 	t.Run("it should return an error, if we check if [1]int{77} contains \"77\".", func(t *testing.T) {
 		err := assertions.ToContain([1]int{77}, "77")
 		if err == nil {
@@ -478,6 +485,13 @@ func TestFloatArrays(t *testing.T) {
 		}
 	})
 
+	t.Run("it should return nil, if we check if [3]float64{4.1, 9.2, 10.3} contains 3.14.", func(t *testing.T) {
+		err := assertions.ToContain([3]float64{4.1, 9.2, 10.3}, 3.14)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
 	t.Run("it should return an error, if we check if [1]float64{7.4} contains \"7.4\".", func(t *testing.T) {
 		err := assertions.ToContain([1]float64{7.4}, "7.4")
 		if err == nil {
@@ -487,6 +501,414 @@ func TestFloatArrays(t *testing.T) {
 
 	t.Run("it should return an error, if we check if [0]float64{} contains nil.", func(t *testing.T) {
 		err := assertions.ToContain([0]float64{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestBooleanArrays(t *testing.T) {
+	t.Run("it should return nil, if we check if [1]bool{true} contains true.", func(t *testing.T) {
+		err := assertions.ToContain([1]bool{true}, true)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if []bool{} contains false.", func(t *testing.T) {
+		err := assertions.ToContain([0]bool{}, false)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [1]bool{false} contains false.", func(t *testing.T) {
+		err := assertions.ToContain([1]bool{false}, false)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]bool{true, false} contains true.", func(t *testing.T) {
+		err := assertions.ToContain([2]bool{true, false}, true)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]bool{true, false} contains false.", func(t *testing.T) {
+		err := assertions.ToContain([2]bool{true, false}, false)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [3]bool{false, true, false} contains true.", func(t *testing.T) {
+		err := assertions.ToContain([3]bool{false, true, false}, true)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]bool{false, false, false} contains true.", func(t *testing.T) {
+		err := assertions.ToContain([3]bool{false, false, false}, true)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [1]bool{true} contains \"true\".", func(t *testing.T) {
+		err := assertions.ToContain([1]bool{true}, false)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]bool{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([0]bool{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestNilArrays(t *testing.T) {
+	t.Run("it should not return an error, if we check if [1]any{nil} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([1]any{nil}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if []any{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([0]any{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should not return an error, if we check if [2]any{nil, 78} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([2]any{nil, 78}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should not return an error, if we check if [2]any{23.2, nil} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([2]any{23.2, nil}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should not return an error, if we check if [3]any{\"str\", nil, 12} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain([3]any{"str", nil, 12}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]any{\"str\", nil, 12} contains 372.", func(t *testing.T) {
+		err := assertions.ToContain([3]any{"str", nil, 12}, 372)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [1]any{nil} contains \"nil\".", func(t *testing.T) {
+		err := assertions.ToContain([1]any{nil}, "nil")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestStructArrays(t *testing.T) {
+	t.Run("it should return nil, if we check if [1]S{{f: 7}} contains S{f: 7}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain([1]S{{f: 7}}, S{f: 7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]S{} contains S{f: 0}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain([0]S{}, S{f: 0})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]S{{f: 7}, {f: 12}} contains S{f: 7}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain([2]S{{f: 7}, {f: 12}}, S{f: 7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]S{{f: 7}, {f: 12}} contains S{f: 12}.", func(t *testing.T) {
+		type S struct{ f int }
+
+		err := assertions.ToContain([2]S{{f: 7}, {f: 12}}, S{f: 12})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [3]S{{f: 4}, {f: 9}, {f: 10}} contains S{f: 9}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain([3]S{{f: 4}, {f: 9}, {f: 10}}, S{f: 9})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]S{{f: 4}, {f: 9}, {f: 10}} contains S{f:639}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain([3]S{{f: 4}, {f: 9}, {f: 10}}, S{f: 639})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if  [1]S{{f: 77}} contains S{f: \"77\"}.", func(t *testing.T) {
+		type S struct{ f any }
+
+		err := assertions.ToContain([1]S{{f: 77}}, S{f: "77"})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if  [1]S1{{f: 77}} contains S2{f: 77}.", func(t *testing.T) {
+		type S1 struct{ f int }
+		type S2 struct{ f int }
+
+		err := assertions.ToContain([1]S1{{f: 77}}, S2{f: 77})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]S{} contains nil.", func(t *testing.T) {
+		type S struct{ f int }
+
+		err := assertions.ToContain([0]S{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestArraysOfMaps(t *testing.T) {
+	t.Run("it should return nil, if we check if [1]M{{\"f\": 7}} contains M{{\"f\": 7}}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([1]M{{"f": 7}}, M{"f": 7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]M{} contains M{{\"f\": 0}}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([0]M{}, M{"f": 0})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]M{{\"f\": 7}, {\"f\": 12}} contains M{\"f\": 7}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([2]M{{"f": 7}, {"f": 12}}, M{"f": 7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]M{{\"f\": 7}, {\"f\": 12}} contains M{\"f\": 12}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([2]M{{"f": 7}, {"f": 12}}, M{"f": 12})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [3]M{{\"f\": 4}, {\"f\": 9}, {\"f\": 10}} contains M{\"f\": 9}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([3]M{{"f": 4}, {"f": 9}, {"f": 10}}, M{"f": 9})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]M{{\"f\": 4}, {\"f\": 9}, {\"f\": 10}} contains M{\"f\": 129}.", func(t *testing.T) {
+		type M map[string]int
+		err := assertions.ToContain([3]M{{"f": 4}, {"f": 9}, {"f": 10}}, M{"f": 129})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [1]M1{{\"f\": 7}} contains M2{{\"f\": 7}}.", func(t *testing.T) {
+		type M1 map[string]int
+		type M2 map[string]int
+
+		err := assertions.ToContain([1]M1{{"f": 7}}, M2{"f": 7})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]M{} contains nil.", func(t *testing.T) {
+		type M map[string]int
+
+		err := assertions.ToContain([0]M{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestArraysOfArrays(t *testing.T) {
+	t.Run("it should return nil, if we check if [1]IntArr{{7}} contains IntArr{7}.", func(t *testing.T) {
+		type IntArr [1]int
+		err := assertions.ToContain([1]IntArr{{7}}, IntArr{7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]IntArr{} containsIntArr{7}.", func(t *testing.T) {
+		type IntArr [1]int
+		err := assertions.ToContain([0]IntArr{}, IntArr{7})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]IntArr{{7, 3}, {12, 4}} contains IntArr{7, 3}.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain([2]IntArr{{7, 3}, {12, 4}}, IntArr{7, 3})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]IntArr{{7, 3}, {12, 4}} contains IntArr{12, 4}.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain([2]IntArr{{7, 3}, {12, 4}}, IntArr{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [3]IntArr{{7, 3}, {12, 4}, {5, 6}} contains IntArr{12, 4}.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain([3]IntArr{{7, 3}, {12, 4}, {5, 6}}, IntArr{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]IntArr{{7, 3}, {12, 4}, {5, 6}} contains IntArr{12, 100}.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain([3]IntArr{{7, 3}, {12, 4}, {5, 6}}, IntArr{12, 100})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [1]IntArr1{{7, 3}} contains IntArr2{7, 3}.", func(t *testing.T) {
+		type IntArr1 [2]int
+		type IntArr2 [2]int
+
+		err := assertions.ToContain([1]IntArr1{{7, 3}}, IntArr2{7, 3})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]IntArr{} contains nil.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain([0]IntArr{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestArraysOfSlices(t *testing.T) {
+	t.Run("it should return nil, if we check if [1]IntSlice{{7}} contains IntSlice{7}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([1]IntSlice{{7}}, IntSlice{7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]IntSlice{} contains IntSlice{7}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([0]IntSlice{}, IntSlice{7})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]IntSlice{{7, 3, 9}, {12, 4}} contains IntSlice{7, 3, 9}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([2]IntSlice{{7, 3, 9}, {12, 4}}, IntSlice{7, 3, 9})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [2]IntSlice{{7, 3, 9}, {12, 4}} contains IntSlice{12, 4}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([2]IntSlice{{7, 3, 9}, {12, 4}}, IntSlice{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if [3]IntSlice{{7, 3}, {12, 4}, {5, 6}} contains IntSlice{12, 4}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([3]IntSlice{{7, 3}, {12, 4}, {5, 6, 12, 9}}, IntSlice{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]IntSlice{{7, 3}, {12, 4, 9}, {5, 6}} contains IntSlice{12, 4}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([3]IntSlice{{7, 3}, {12, 4, 9}, {5, 6}}, IntSlice{12, 4})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [3]IntArr{{7, 3}, {12, 4}, {5, 6}} contains IntArr{12, 100}.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([3]IntSlice{{7, 3}, {12, 4}, {5, 6}}, IntSlice{12, 100})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [1]IntSlice1{{7, 3}} contains IntSlice2{7, 3}.", func(t *testing.T) {
+		type IntSlice1 []int
+		type IntSlice2 []int
+
+		err := assertions.ToContain([1]IntSlice1{{7, 3}}, IntSlice2{7, 3})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if [0]IntSlice{} contains nil.", func(t *testing.T) {
+		type IntSlice []int
+		err := assertions.ToContain([0]IntSlice{}, nil)
 		if err == nil {
 			t.Errorf("Error: %v", err)
 		}
