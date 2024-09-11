@@ -485,7 +485,7 @@ func TestFloatArrays(t *testing.T) {
 		}
 	})
 
-	t.Run("it should return nil, if we check if [3]float64{4.1, 9.2, 10.3} contains 3.14.", func(t *testing.T) {
+	t.Run("it should return an error, if we check if [3]float64{4.1, 9.2, 10.3} contains 3.14.", func(t *testing.T) {
 		err := assertions.ToContain([3]float64{4.1, 9.2, 10.3}, 3.14)
 		if err == nil {
 			t.Errorf("Error: %v", err)
@@ -780,7 +780,7 @@ func TestArraysOfArrays(t *testing.T) {
 		}
 	})
 
-	t.Run("it should return an error, if we check if [0]IntArr{} containsIntArr{7}.", func(t *testing.T) {
+	t.Run("it should return an error, if we check if [0]IntArr{} contains IntArr{7}.", func(t *testing.T) {
 		type IntArr [1]int
 		err := assertions.ToContain([0]IntArr{}, IntArr{7})
 		if err == nil {
@@ -1316,7 +1316,7 @@ func TestSlicesOfArrays(t *testing.T) {
 		}
 	})
 
-	t.Run("it should return an error, if we check if []IntArr{} containsIntArr{7}.", func(t *testing.T) {
+	t.Run("it should return an error, if we check if []IntArr{} contains IntArr{7}.", func(t *testing.T) {
 		type IntArr [1]int
 		err := assertions.ToContain([]IntArr{}, IntArr{7})
 		if err == nil {
@@ -1445,6 +1445,518 @@ func TestSlicesOfSlices(t *testing.T) {
 	t.Run("it should return an error, if we check if []IntSlice{} contains nil.", func(t *testing.T) {
 		type IntSlice []int
 		err := assertions.ToContain([]IntSlice{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithStringKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[string]int{\"\": 2} contains \"\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"": 2}, "")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]string{\"Key\": \"\"} contains \"\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]string{"Key": ""}, "")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]int{} contains \"\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{}, "")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[string]int{\"A\": 2} contains \"A\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"A": 2}, "A")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]string{\"A\": 2} contains \"A\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]string{"Key": "A"}, "A")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[string]int{\"A\": 2, \"B\": 3} contains \"A\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"A": 2, "B": 2}, "A")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[string]int{\"A\": 2, \"B\": 3} contains \"B\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"A": 2, "B": 2}, "B")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]int{\"ABCD\": 2, \"EF\": 3} contains \"BC\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"ABCD": 2, "EF": 2}, "BC")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[string]int{\"A\": 2, \"B\": 3, \"C\": 7} contains \"B\".", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"A": 2, "B": 2, "C": 7}, "B")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return nil, 
+	if we check if map[string]int{\"A\": 2, \"Beeee\": 3, \"C\": 7} contains \"Beeee\".`, func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"A": 2, "Beeee": 2, "C": 7}, "Beeee")
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]int{\"13\": 13} contains 13.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]int{"13": 13}, 13)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]float64{\"3.14\": 3.14} contains 3.14.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]float64{"3.14": 3.14}, 3.14)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]bool{\"true\": true} contains true.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]bool{"true": true}, true)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]any{\"nil\": nil} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]any{"nil": nil}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]any{\"\": nil} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]any{"": nil}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]any{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[string]any{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithIntegerKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[int]string{0: \"\"} contains 0.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{0: ""}, 0)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[int]int{2: 0} contains 0.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]int{2: 0}, 0)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[int]string{} contains 0.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{}, 0)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[int]string{7: \"val\"} contains 7.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val"}, 7)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[int]string{7: \"val\", 12: \"val2\"} contains 7.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val", 12: "val2"}, 7)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[int]string{7: \"val\", 12: \"val2\"} contains 12.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val", 12: "val2"}, 12)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[int]string{7: \"val\", 12: \"val2\", 9: \"val\"} contains 12.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val", 12: "val2", 9: "val"}, 12)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[int]string{7: \"val\", 12: \"val2\", 9: \"val\"} contains 129.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val", 12: "val2", 9: "val"}, 129)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[int]string{7: \"val\"} contains \"7\".", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{7: "val"}, "7")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+	t.Run("it should return an error, if we check if map[int]string{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]string{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithFloatKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[float64]int{0.0: 2} contains 0.0.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{0.0: 2}, 0.0)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[float64]float64{2: 0} contains 0.0.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]float64{2: 0.0}, 0.0)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[float64]float64{} contains 0.0.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]float64{}, 0.0)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[float64]int{7.2: 2} contains 7.2.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.2: 2}, 7.2)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[float64]int{7.2: 2, 12.3: 1} contains 7.2.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.2: 2, 12.3: 1}, 7.2)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[float64]int{7.2: 2, 12.3: 1} contains 12.3.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.2: 2, 12.3: 1}, 12.3)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[float64]int{7.2: 2, 12.3: 1, 17.27: 3} contains 12.3.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.2: 2, 12.3: 1, 17.27: 3}, 12.3)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[float64]int{7.2: 2, 12.3: 1, 17.27: 3} contains 3.14.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.2: 2, 12.3: 1, 17.27: 3}, 3.14)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[float64]int{7.4: 2} contains \"7.4\".", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{7.4: 2}, "7.4")
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[float64]int{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[float64]int{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapWithBooleanKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[bool]int{true: 2} contains true.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{true: 2}, true)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[int]bool{2: true} contains true.", func(t *testing.T) {
+		err := assertions.ToContain(map[int]bool{2: true}, true)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[bool]int{} contains false.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{}, false)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[bool]int{false: 2} contains false.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{false: 2}, false)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[bool]int{true: 1, false: 2} contains true.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{true: 1, false: 2}, true)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[bool]int{true: 1, false: 2} contains false.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{true: 1, false: 2}, false)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[bool]int{fase: 1} contains true.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{false: 1}, true)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[bool]int{true: 1} contains false.", func(t *testing.T) {
+		err := assertions.ToContain(map[bool]int{true: 1}, false)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithNilKeys(t *testing.T) {
+	t.Run("it should not return an error, if we check if map[any]int{nil: 2} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[any]int{nil: 2}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[any]int{} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[any]int{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should not return an error, if we check if map[any]int{nil: 2, \"k\": 3} contains nil.", func(t *testing.T) {
+		err := assertions.ToContain(map[any]int{nil: 2, "k": 3}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should not return an error,
+	if we check if map[any]int{nil: 2, \"k1\": 3, \"k2\": 4} contains nil.`, func(t *testing.T) {
+		err := assertions.ToContain(map[any]int{nil: 2, "k1": 3, "k2": 4}, nil)
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithStructKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[S]string{{f: 2}: \"val\"} contains S{f: 2}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{{f: 2}: "val"}, S{f: 2})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]S{\"val\": {f: 2}} contains S{f: 2}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[string]S{"val": {f: 2}}, S{f: 2})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[S]string{} contains S{f: 0}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{}, S{f: 0})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[S]string{{f: 7}: \"v1\", {f: 12}: \"v2\"} contains S{f: 7}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{{f: 7}: "v1", {f: 12}: "v2"}, S{f: 7})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[S]string{{f: 7}: \"v1\", {f: 12}: \"v2\"} contains S{f: 12}.", func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{{f: 7}: "v1", {f: 12}: "v2"}, S{f: 12})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return nil,
+	if we check if map[S]string{{f: 7}: \"v1\", {f: 12}: \"v2\", {f: 22}: \"v3\"} contains S{f: 12}.`, func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{{f: 7}: "v1", {f: 12}: "v2", {f: 22}: "v3"}, S{f: 12})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return an error,
+	if we check if map[S]string{{f: 7}: \"v1\", {f: 12}: \"v2\", {f: 22}: \"v3\"} contains S{f: 64}.`, func(t *testing.T) {
+		type S struct{ f int }
+		err := assertions.ToContain(map[S]string{{f: 7}: "v1", {f: 12}: "v2", {f: 22}: "v3"}, S{f: 64})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[S]string{{f: 77}: \"v1\"} contains S{f: \"77\"}.", func(t *testing.T) {
+		type S struct{ f any }
+		err := assertions.ToContain(map[S]string{{f: 77}: "v1"}, S{f: "77"})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if  map[S1]string{{f: 77}: \"v1\"} contains S2{f: 77}.", func(t *testing.T) {
+		type S1 struct{ f int }
+		type S2 struct{ f int }
+		err := assertions.ToContain(map[S1]string{{f: 77}: "v1"}, S2{f: 77})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[S]string{} contains nil.", func(t *testing.T) {
+		type S struct{ f int }
+
+		err := assertions.ToContain(map[S]string{}, nil)
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+}
+
+func TestMapsWithArraysAsKeys(t *testing.T) {
+	t.Run("it should return nil, if we check if map[IntArr]string{{2}: \"v\"} contains IntArr{2}.", func(t *testing.T) {
+		type IntArr [1]int
+		err := assertions.ToContain(map[IntArr]string{{2}: "v"}, IntArr{2})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]IntArr{\"v\": {2}} contains IntArr{2}.", func(t *testing.T) {
+		type IntArr [1]int
+		err := assertions.ToContain(map[string]IntArr{"v": {2}}, IntArr{2})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[string]IntArr{} contains IntArr{7}.", func(t *testing.T) {
+		type IntArr [1]int
+		err := assertions.ToContain(map[string]IntArr{}, IntArr{7})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return nil, if we check if map[IntArr]string{{7, 3}: \"v\", {12, 4}: \"v2\"} contains IntArr{7, 3}.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain(map[IntArr]string{{7, 3}: "v", {12, 4}: "v2"}, IntArr{7, 3})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return nil,
+	if we check if map[IntArr]string{{7, 3}: \"v\", {12, 4}: \"v2\"} contains IntArr{12, 4}.`, func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain(map[IntArr]string{{7, 3}: "v", {12, 4}: "v2"}, IntArr{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return nil, 
+	if we check if map[IntArr]string{{7, 3}: \"v\", {12, 4}: \"v2\", {3, 3}: \"v3\"} contains IntArr{12, 4}.`, func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain(map[IntArr]string{{7, 3}: "v", {12, 4}: "v2", {3, 3}: "v3"}, IntArr{12, 4})
+		if err != nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run(`it should return nil, 
+	if we check if map[IntArr]string{{7, 3}: \"v\", {12, 4}: \"v2\", {3, 3}: \"v3\"} contains IntArr{12, 100}.`, func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain(map[IntArr]string{{7, 3}: "v", {12, 4}: "v2", {3, 3}: "v3"}, IntArr{12, 100})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[IntArr1]string{{7, 3}: \"v\"} contains IntArr2{7, 3}.", func(t *testing.T) {
+		type IntArr1 [2]int
+		type IntArr2 [2]int
+
+		err := assertions.ToContain(map[IntArr1]string{{7, 3}: "v"}, IntArr2{7, 3})
+		if err == nil {
+			t.Errorf("Error: %v", err)
+		}
+	})
+
+	t.Run("it should return an error, if we check if map[IntArr]string{} contains nil.", func(t *testing.T) {
+		type IntArr [2]int
+		err := assertions.ToContain(map[IntArr]string{}, nil)
 		if err == nil {
 			t.Errorf("Error: %v", err)
 		}
