@@ -114,14 +114,14 @@ func TestToBeError(t *testing.T) {
 		}
 	})
 
-	t.Run("it should passs the assertion, if we pass a struct ErrTypeForTest1{} with a method Error() string.", func(t *testing.T) {
+	t.Run("it should pass the assertion, if we pass a struct ErrTypeForTest1{} with a method Error() string.", func(t *testing.T) {
 		assertionErr := assertions.ToBeError(ErrTypeForTest1{})
 		if assertionErr != nil {
 			t.Errorf("%v", assertionErr)
 		}
 	})
 
-	t.Run("it should passs the assertion, if we pass a struct ErrTypeForTest2{} with a method Error() string.", func(t *testing.T) {
+	t.Run("it should pass the assertion, if we pass a struct ErrTypeForTest2{} with a method Error() string.", func(t *testing.T) {
 		assertionErr := assertions.ToBeError(ErrTypeForTest2{f: 2})
 		if assertionErr != nil {
 			t.Errorf("%v", assertionErr)

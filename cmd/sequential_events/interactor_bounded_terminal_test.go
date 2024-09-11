@@ -11,7 +11,6 @@ import (
 	"github.com/redjolr/goherent/expect"
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
-	"github.com/stretchr/testify/assert"
 )
 
 func setupInteractorWithBoundedTerminal(height int) (
@@ -27,8 +26,6 @@ func setupInteractorWithBoundedTerminal(height int) (
 }
 
 func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that no events have happened
 	And we have a bounded terminal with height 1
@@ -108,7 +105,7 @@ func TestCtestRanEventWithBoundedTerminal(t *testing.T) {
 		ctestRanEvt2Err := eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
 		// Then
-		assert.NoError(ctestRanEvt1Err)
+		Expect(ctestRanEvt1Err).NotToBeError()
 		Expect(ctestRanEvt2Err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)

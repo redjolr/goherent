@@ -11,7 +11,6 @@ import (
 	"github.com/redjolr/goherent/cmd/sequential_events"
 	"github.com/redjolr/goherent/expect"
 	"github.com/redjolr/goherent/internal"
-	"github.com/stretchr/testify/assert"
 
 	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
@@ -26,8 +25,6 @@ func setup() (*sequential_events.Interactor, *fake_ansi_terminal.FakeAnsiTermina
 }
 
 func TestCtestRanEvent(t *testing.T) {
-	assert := assert.New(t)
-
 	Test(`
 	Given that no events have happened
 	When a CtestRanEvent occurs with test name "testName" from "packageName"
@@ -80,7 +77,7 @@ func TestCtestRanEvent(t *testing.T) {
 		ctestRanEvt2Err := eventsHandler.HandleCtestRanEvt(ctestRanEvt2)
 
 		// Then
-		assert.NoError(ctestRanEvt1Err)
+		Expect(ctestRanEvt1Err).NotToBeError()
 		Expect(ctestRanEvt2Err).ToBeError()
 		Expect(terminal.Text()).ToContain("❗ Error.")
 	}, t)

@@ -29,6 +29,12 @@ func (e *expectation) ToBeError() {
 	}
 }
 
+func (e *expectation) NotToBeError() {
+	if err := assertions.NotToBeError(e.checkExpectationAgainst); err != nil {
+		e.t.Errorf(err.Error())
+	}
+}
+
 func (e *expectation) ToBeTrue() {
 	if err := assertions.ToBeTrue(e.checkExpectationAgainst); err != nil {
 		e.t.Errorf(err.Error())
