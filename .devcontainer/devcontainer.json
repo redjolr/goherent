@@ -1,0 +1,29 @@
+{
+	"name": "Goherent",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
+	"runArgs": [
+		"--network=host"
+	],
+	"remoteEnv": {
+    "DOCKER_TLS_CERTDIR": ""
+  },
+	"mounts": [
+		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh",
+		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"pkief.material-icon-theme",
+				"golang.go",
+				"hashicorp.hcl",
+				"task.vscode-task"
+			]
+		}
+	},
+	"workspaceMount": "source=${localWorkspaceFolder},target=/goherent,type=bind",
+	"workspaceFolder": "/goherent"
+}

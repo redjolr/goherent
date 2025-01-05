@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  goherent:
+    run: always
+    dir: ./src
+    cmds:
+      - go run github.com/redjolr/goherent {{.CLI_ARGS}} 
