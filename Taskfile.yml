@@ -1,8 +1,42 @@
 version: '3'
 
 tasks:
+  prerequisites:
+    run: always
+    dir: ./.
+    cmds:
+      - cp .githooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+  fmt:
+    run: always
+    deps: [prerequisites]
+    dir: ./.
+    cmds:
+      - go fmt ./...
+
+  vet:
+    run: always
+    deps: [prerequisites, fmt]
+    dir: ./.
+    cmds:
+      - go build
+
+  build:
+    run: always
+    deps: [prerequisites, fmt]
+    dir: ./.
+    cmds:
+      - go vet ./...
+  test:
+    run: always
+    deps: [prerequisites]
+    dir: ./.
+    cmds:
+      - go test ./...
+
   goherent:
     run: always
-    dir: ./src
+    deps: [prerequisites]
+    dir: ./.
     cmds:
       - go run github.com/redjolr/goherent {{.CLI_ARGS}} 
