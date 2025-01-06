@@ -27,7 +27,7 @@ func setup() (*sequential_events.Interactor, *fake_ansi_terminal.FakeAnsiTermina
 func TestCtestRanEvent(t *testing.T) {
 	Test(`
 	Given that no events have happened
-	When a CtestRanEvent occurs with test name "testName" from "packageName"
+	When a CtestRanEvent occurs with test name "ParentTest/testName" from "packageName"
 	Then the user should be informed that the testing of a new package started and
 	that the first test of that package started running.`, func(Expect expect.F) {
 		// Given
@@ -37,20 +37,21 @@ func TestCtestRanEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ⏳",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ⏳",
 		)
 	}, t)
 
 	Test(`
 	Given that no events have happened
-	When 2 CtestRanEvent of package "somePackage" occur with test names "testName1", "testName2" and elapsed time 2.3s, 1.2s
+	When 2 CtestRanEvent of package "somePackage" occur with test names "ParentTest/testName1", "ParentTest/testName2" 
+		and elapsed time 2.3s, 1.2s
 	Then the second CtestRanEvent should produce an error
 	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
@@ -62,7 +63,7 @@ func TestCtestRanEvent(t *testing.T) {
 				Time:    time.Now(),
 				Action:  "run",
 				Package: "somePackage",
-				Test:    "testName1",
+				Test:    "ParentTest/testName1",
 			},
 		)
 		ctestRanEvt2 := events.NewCtestRanEvent(
@@ -70,7 +71,7 @@ func TestCtestRanEvent(t *testing.T) {
 				Time:    time.Now(),
 				Action:  "run",
 				Package: "somePackage",
-				Test:    "testName2",
+				Test:    "ParentTest/testName2",
 			},
 		)
 		ctestRanEvt1Err := eventsHandler.HandleCtestRanEvt(ctestRanEvt1)
@@ -83,8 +84,8 @@ func TestCtestRanEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent has occurred with test name "testName" of package "somePackage"
-	When a CtestRanEvent occurs with the same test name "testName" of package "somePackage"
+	Given that a CtestRanEvent has occurred with test name "ParentTest/testName" of package "somePackage"
+	When a CtestRanEvent occurs with the same test name "ParentTest/testName" of package "somePackage"
 	Then the user should be informed only once that the given test from the given package is running.`, func(Expect expect.F) {
 		eventsHandler, terminal, _ := setup()
 
@@ -93,7 +94,7 @@ func TestCtestRanEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "run",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 			},
 		)
@@ -104,14 +105,14 @@ func TestCtestRanEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ⏳",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ⏳",
 		)
 	}, t)
 }
 
 func TestCtestPassedEvent(t *testing.T) {
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
 	When a CtestPassedEvent of the same test/package occurs
 	Then the user should be informed that the test has passed.`, func(Expect expect.F) {
 		// Given
@@ -121,7 +122,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -131,7 +132,7 @@ func TestCtestPassedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &testPassedElapsedTime,
 			},
@@ -140,13 +141,13 @@ func TestCtestPassedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ✅\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅\n",
 		)
 	}, t)
 
 	Test(`
 	Given that no events have happened
-	When a CtestPassedEvent occurs with test name "testName" from "packageName"
+	When a CtestPassedEvent occurs with test name "ParentTest/testName" from "packageName"
 	Then the HandleCtestPassedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
@@ -159,7 +160,7 @@ func TestCtestPassedEvent(t *testing.T) {
 				Time:    time.Now(),
 				Action:  "pass",
 				Package: "somePackage",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Elapsed: &elapsedTime,
 			},
 		)
@@ -171,8 +172,8 @@ func TestCtestPassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent and CtestPassedEvent have occurred with test name "testName" of package "somePackage"
-	When a CtestPassedEvent occurs with the same test name "testName" of package "somePackage"
+	Given that a CtestRanEvent and CtestPassedEvent have occurred with test name "ParentTest/testName" of package "somePackage"
+	When a CtestPassedEvent occurs with the same test name "ParentTest/testName" of package "somePackage"
 	Then the user should not be informed only once that the test has passed.`, func(Expect expect.F) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -181,7 +182,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 
@@ -189,7 +190,7 @@ func TestCtestPassedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -202,12 +203,12 @@ func TestCtestPassedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ✅\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅\n",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
 	When a CtestPassedEvent of a different package "somePackage 2" occurs
 	Then the HandleCtestPassedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(Expect expect.F) {
@@ -218,7 +219,7 @@ func TestCtestPassedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -228,7 +229,7 @@ func TestCtestPassedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage 2",
 				Elapsed: &testPassedElapsedTime,
 			},
@@ -243,11 +244,11 @@ func TestCtestPassedEvent(t *testing.T) {
 
 func TestCtestFailedEvent(t *testing.T) {
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then the user should be informed that the test for the "somePackage" package have started
-	And then that the Ctest with name "testName" has started running
-	And that the Ctest with name "testName" has failed`, func(Expect expect.F) {
+	And then that the Ctest with name "ParentTest/testName" has started running
+	And that the Ctest with name "ParentTest/testName" has failed`, func(Expect expect.F) {
 		// Given
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -255,7 +256,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -265,7 +266,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -274,13 +275,13 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n",
 		)
 	}, t)
 
 	Test(`
 	Given that no events have happened
-	When a CtestFailedEvent occurs with test name "testName" from "packageName"
+	When a CtestFailedEvent occurs with test name "ParentTest/testName" from "packageName"
 	Then the HandleCtestFailedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
@@ -293,7 +294,7 @@ func TestCtestFailedEvent(t *testing.T) {
 				Time:    time.Now(),
 				Action:  "fail",
 				Package: "somePackage",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Elapsed: &elapsedTime,
 			},
 		)
@@ -305,9 +306,9 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And later a CtestFailedEvent occurrs with test name "testName" of package "somePackage"
-	When a CtestFailedEvent occurs with the same test name "testName" of package "somePackage"
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And later a CtestFailedEvent occurrs with test name "ParentTest/testName" of package "somePackage"
+	When a CtestFailedEvent occurs with the same test name "ParentTest/testName" of package "somePackage"
 	Then the user should not be informed about the second failure, when the second event occurs.`, func(Expect expect.F) {
 		eventsHandler, terminal, _ := setup()
 		elapsedTime := 2.3
@@ -316,7 +317,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -325,7 +326,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -337,7 +338,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -346,12 +347,12 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n",
 		)
 	}, t)
 
 	Test(`
-	Given that 2 CtestOutputEvent for Ctest with name "testName" of package "somePackage" have occurred
+	Given that 2 CtestOutputEvent for Ctest with name "ParentTest/testName" of package "somePackage" have occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
@@ -363,7 +364,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "This is output 1.",
 			},
@@ -373,7 +374,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "This is output 2.",
 			},
@@ -386,7 +387,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -399,8 +400,8 @@ func TestCtestFailedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for Ctest with name "ParentTest/testName" of package "somePackage" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
@@ -411,7 +412,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -420,7 +421,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "This is some output.",
 			},
@@ -432,7 +433,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -441,13 +442,13 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ❌\n\nThis is some output.",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\nThis is some output.",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And two CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And two CtestOutputEvent for Ctest with name "ParentTest/testName" of package "somePackage" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvents should be presented.`, func(Expect expect.F) {
@@ -458,7 +459,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -467,7 +468,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "Some output 1.",
 			},
@@ -477,7 +478,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "_Some output 2.",
 			},
@@ -490,7 +491,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -499,13 +500,13 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ❌\n\nSome output 1._Some output 2.",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\nSome output 1._Some output 2.",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And a CtestOutputEvent events for same test with output "testName" has also occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And a CtestOutputEvent events for same test with output "ParentTest/testName" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
 	And the output from the CtestOutputEvent should not be presented.`, func(Expect expect.F) {
@@ -516,7 +517,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -525,9 +526,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
-				Output:  "testName",
+				Output:  "testName output",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
@@ -537,7 +538,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -546,12 +547,12 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\ntestName output",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And a CtestOutputEvent event for same test with output "Some tes" has also occurred
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
@@ -564,7 +565,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -573,9 +574,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentT",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -583,9 +584,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "t name",
+				Output:  "est/Some test name",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -595,7 +596,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -604,12 +605,12 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
 		- "Some tes", "t name", "output that should be printed"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
@@ -623,7 +624,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -632,9 +633,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "Paren",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -642,9 +643,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "t name",
+				Output:  "tTest/Some test name",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -653,7 +654,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -665,7 +666,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -674,14 +675,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "t name", "output that should be printed", "should be printed too"
+		- "Pare", "ntTest/Some test name", "output that should be printed", "should be printed too"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -693,7 +694,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -702,9 +703,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "Pare",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -712,9 +713,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "t name",
+				Output:  "ntTest/Some test name",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -723,7 +724,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -734,7 +735,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "_Should be printed too",
 			},
@@ -746,7 +747,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -755,14 +756,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "t name", "So", "me test name", "output that should be printed"
+		- "ParentTest/Some t", "est name", "Pa", "rentTest/Some test name", "output that should be printed"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -774,7 +775,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -783,9 +784,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some t",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -793,9 +794,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "t name",
+				Output:  "est name",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -804,9 +805,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "So",
+				Output:  "Pa",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt3)
@@ -815,9 +816,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "me test name",
+				Output:  "rentTest/Some test name",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt4)
@@ -826,7 +827,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -838,7 +839,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -847,14 +848,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "output that should be printed", "Some tes", "t name",
+		- "output that should be printed", "ParentTest/Some tes", "t name",
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -866,7 +867,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -875,7 +876,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -886,9 +887,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -897,7 +898,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -909,7 +910,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -918,14 +919,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "output that should be printed", "should be printed too" "Some tes", "t name",
+		- "output that should be printed", "should be printed too" "ParentTest/Some tes", "t name",
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -937,7 +938,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -946,7 +947,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -957,7 +958,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "_Should be printed too",
 			},
@@ -968,9 +969,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt3)
@@ -979,7 +980,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -991,7 +992,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1000,14 +1001,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "output that should be printed", "Some tes", "t name", "Som", "e test name"
+		- "output that should be printed", "ParentTest/Some tes", "t name", "ParentTest/Som", "e test name"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -1019,7 +1020,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1028,7 +1029,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -1039,9 +1040,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt2)
@@ -1050,7 +1051,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -1061,9 +1062,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Som",
+				Output:  "ParentTest/Som",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt4)
@@ -1072,7 +1073,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "e test name",
 			},
@@ -1084,7 +1085,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1093,14 +1094,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 5 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "t name", "output that should be printed", "Some", " test name"
+		- "ParentTest/Some tes", "t name", "output that should be printed", "ParentTest/Some", " test name"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -1112,7 +1113,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1121,9 +1122,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1131,7 +1132,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -1142,7 +1143,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -1153,9 +1154,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some",
+				Output:  "ParentTest/Some",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt4)
@@ -1163,7 +1164,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  " test name",
 			},
@@ -1175,7 +1176,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1184,14 +1185,15 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 5 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "t name", "output that should be printed", "Some", " test name", "should be printed too"
+	- "ParentTest/Some tes", "t name", "output that should be printed", "ParentTest/Some", " test name", 
+	  "should be printed too"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -1203,7 +1205,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1212,9 +1214,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1222,7 +1224,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -1233,7 +1235,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -1244,9 +1246,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some",
+				Output:  "ParentTest/Some",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt4)
@@ -1254,7 +1256,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  " test name",
 			},
@@ -1265,7 +1267,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "_Should be printed too",
 			},
@@ -1277,7 +1279,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1286,14 +1288,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "Some test name" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/Some test name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some tes", "_output that should be printed_", "t name",
+		- "ParentTest/Some tes", "_output that should be printed_", "t name",
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -1305,7 +1307,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some test name",
+			Test:    "ParentTest/Some test name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1314,9 +1316,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
-				Output:  "Some tes",
+				Output:  "ParentTest/Some tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1325,7 +1327,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "_output that should be printed_",
 			},
@@ -1336,7 +1338,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Output:  "t name",
 			},
@@ -1348,7 +1350,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some test name",
+				Test:    "ParentTest/Some test name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1357,14 +1359,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some test name    ❌\n\nSome tes_output that should be printed_t name",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\nParentTest/Some tes_output that should be printed_t name",
 		)
 	}, t)
 
 	Test(`
 	Given that a CtestRanEvent with name "Some \ntest name" of package "somePackage" has occurred
 	And 3 CtestOutputEvent events for the same test with these respective outputs occurr:
-		- "Some"+ENCODED_WHITESPACE+"tes", "t"+ENCODED_WHITESPACE+"name", "output that should be printed"
+		- "ParentTest/Some"+ENCODED_WHITESPACE+"tes", "t"+ENCODED_WHITESPACE+"name", "output that should be printed"
 	And another CtestOutputEvent event for same test with output "t name" has also occurred
 	When a CtestFailedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has failed
@@ -1376,7 +1378,7 @@ func TestCtestFailedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "Some \ntest name",
+			Test:    "ParentTest/Some \ntest name",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1385,9 +1387,9 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some \ntest name",
+				Test:    "ParentTest/Some \ntest name",
 				Package: "somePackage",
-				Output:  "Some" + internal.ENCODED_WHITESPACE + internal.ENCODED_NEWLINE + "tes",
+				Output:  "ParentTest/Some" + internal.ENCODED_WHITESPACE + internal.ENCODED_NEWLINE + "tes",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt1)
@@ -1395,7 +1397,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some \ntest name",
+				Test:    "ParentTest/Some \ntest name",
 				Package: "somePackage",
 				Output:  "t" + internal.ENCODED_WHITESPACE + "name",
 			},
@@ -1406,7 +1408,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "Some \ntest name",
+				Test:    "ParentTest/Some \ntest name",
 				Package: "somePackage",
 				Output:  "output that should be printed",
 			},
@@ -1418,7 +1420,7 @@ func TestCtestFailedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "fail",
-				Test:    "Some \ntest name",
+				Test:    "ParentTest/Some \ntest name",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1427,14 +1429,14 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • Some \ntest name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some \ntest name    ❌\n\noutput that should be printed",
 		)
 	}, t)
 }
 
 func TestCtestSkippedEvent(t *testing.T) {
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the user should be informed that the test for the "somePackage" package have started
 	And then that the Ctest with name "testName" is skipped.`, func(Expect expect.F) {
@@ -1445,7 +1447,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1455,7 +1457,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1464,13 +1466,13 @@ func TestCtestSkippedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ⏩\n",
 		)
 	}, t)
 
 	Test(`
 	Given that no events have happened
-	When a CtestSkippedEvent occurs with test name "testName" from "packageName"
+	When a CtestSkippedEvent occurs with test name "ParentTest/testName" from "packageName"
 	Then the HandleCtestSkippedEvt should produce an error
 	And an error should be displayed in the terminal.`, func(Expect expect.F) {
 		// Given
@@ -1483,7 +1485,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 				Time:    time.Now(),
 				Action:  "skip",
 				Package: "somePackage",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Elapsed: &elapsedTime,
 			},
 		)
@@ -1495,7 +1497,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
 	And later a CtestSkippedEvent occurrs with test name "testName" of package "somePackage"
 	When a CtestSkippedEvent occurs with the same test name "testName" of package "somePackage"
 	Then the user should not be informed about the second skip.`, func(Expect expect.F) {
@@ -1506,7 +1508,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1515,7 +1517,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1527,7 +1529,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1536,13 +1538,13 @@ func TestCtestSkippedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ⏩\n",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And a CtestOutputEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for Ctest with name "ParentTest/testName" of package "somePackage" has also occurred
 	When a CtestSkippedEvent of the same test/package occurs
 	Then a user should be informed that the Ctest has been skipped.`, func(Expect expect.F) {
 		// Given
@@ -1552,7 +1554,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1561,7 +1563,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "This is some output.",
 			},
@@ -1573,7 +1575,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1582,13 +1584,13 @@ func TestCtestSkippedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • testName    ⏩\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ⏩\n",
 		)
 	}, t)
 
 	Test(`
-	Given that a CtestRanEvent with name "testName" of package "somePackage" has occurred
-	And a CtestPassedEvent for Ctest with name "testName" of package "somePackage" has also occurred
+	Given that a CtestRanEvent with name "ParentTest/testName" of package "somePackage" has occurred
+	And a CtestPassedEvent for Ctest with name "ParentTest/testName" of package "somePackage" has also occurred
 	When a CtestSkippedEvent of the same test/package occurs
 	Then the HandleCtestSkippedEvt should produce an error
 	And an error should be displayed in the terminal.
@@ -1600,7 +1602,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 		ctestRanEvt := events.NewCtestRanEvent(events.JsonTestEvent{
 			Time:    time.Now(),
 			Action:  "run",
-			Test:    "testName",
+			Test:    "ParentTest/testName",
 			Package: "somePackage",
 		})
 		eventsHandler.HandleCtestRanEvt(ctestRanEvt)
@@ -1609,7 +1611,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &elapsedTime,
 			},
@@ -1621,7 +1623,7 @@ func TestCtestSkippedEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "skip",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 			},
 		)
@@ -1638,8 +1640,8 @@ func TestCtestSkippedEvent(t *testing.T) {
 func TestCtestOutputEvent(t *testing.T) {
 	Test(`
 	Given that there are no events
-	When a CtestOutputEvent occurs for the test "testName" of package "somePackage" with output "Some output"
-	Then a new package under test should be created with the the test testName
+	When a CtestOutputEvent occurs for the test "ParentTest/testName" of package "somePackage" with output "Some output"
+	Then a new package under test should be created with the the test ParentTest/testName
 	And a new Ctest with that name should exist
 	And that Ctest should have the output "Some output" stored`, func(Expect expect.F) {
 		// Given
@@ -1650,14 +1652,14 @@ func TestCtestOutputEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "output",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Output:  "Some output",
 			},
 		)
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 		//Then
-		ctest := ctestsTracker.FindCtestWithNameInPackage("testName", "somePackage")
+		ctest := ctestsTracker.FindCtestWithNameInPackage("ParentTest/testName", "somePackage")
 		Expect(ctest).NotToBeNil()
 		Expect(ctest.Output()).ToEqual("Some output")
 	}, t)

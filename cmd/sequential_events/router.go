@@ -31,6 +31,8 @@ func (router Router) Route(unknownEvt any) {
 		router.interactor.HandleCtestFailedEvt(evt)
 	case events.CtestSkippedEvent:
 		router.interactor.HandleCtestSkippedEvt(evt)
+	case events.PackageFailedEvent:
+		router.interactor.HandlePackageFailedEvt(evt)
 	case events.TestingStartedEvent:
 		router.interactor.HandleTestingStarted(evt)
 	case events.TestingFinishedEvent:

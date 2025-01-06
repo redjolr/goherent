@@ -2,19 +2,23 @@ package ctests_tracker
 
 import (
 	"slices"
+
+	"github.com/redjolr/goherent/cmd/events"
 )
 
 type PackageUnderTest struct {
-	name            string
-	ctests          []Ctest
-	testingFinished bool
+	name                    string
+	ctests                  []Ctest
+	outputEvtsOfParentTests []events.CtestOutputEvent
+	testingFinished         bool
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
 	newPack := PackageUnderTest{
-		name:            name,
-		ctests:          []Ctest{},
-		testingFinished: false,
+		name:                    name,
+		ctests:                  []Ctest{},
+		outputEvtsOfParentTests: []events.CtestOutputEvent{},
+		testingFinished:         false,
 	}
 	return newPack
 }
@@ -126,6 +130,22 @@ func (packageUt *PackageUnderTest) IsSkipped() bool {
 
 func (packageUt *PackageUnderTest) CtestsCount() int {
 	return len(packageUt.ctests)
+}
+
+func (p *PackageUnderTest) RecordOutputEvtOfParentTest(evt events.CtestOutputEvent) {
+	p.outputEvtsOfParentTests = append(p.outputEvtsOfParentTests, evt)
+}
+
+func (p *PackageUnderTest) ParentTestsOutput() string {
+	output := ""
+	for _, outputEvt := range p.outputEvtsOfParentTests {
+		output += outputEvt.Output
+	}
+	return output
+}
+
+func (p *PackageUnderTest) HasOutputOfParentTests() bool {
+	return p.ParentTestsOutput() != ""
 }
 
 func (packageUt *PackageUnderTest) isCtestTheFirstOne(ctest Ctest) bool {

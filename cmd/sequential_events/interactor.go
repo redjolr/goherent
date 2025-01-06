@@ -61,7 +61,9 @@ func (i *Interactor) HandleCtestPassedEvt(evt events.CtestPassedEvent) error {
 
 func (i *Interactor) HandleCtestFailedEvt(evt events.CtestFailedEvent) error {
 	existingCtest := i.ctestsTracker.FindCtestWithNameInPackage(evt.TestName, evt.PackageName)
-
+	if evt.IsEventOfAParentTest() {
+		return nil
+	}
 	if existingCtest == nil {
 		i.output.Error()
 		return errors.New("There is no existing test.")
@@ -104,15 +106,15 @@ func (i *Interactor) HandleCtestSkippedEvt(evt events.CtestSkippedEvent) error {
 }
 
 func (i *Interactor) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
-	existingCtest := i.ctestsTracker.FindCtestWithNameInPackage(evt.TestName, evt.PackageName)
-	if existingCtest != nil {
-		existingCtest.RecordOutputEvt(evt)
+	i.ctestsTracker.HandleCtestOutputEvent(evt)
+}
+
+func (i *Interactor) HandlePackageFailedEvt(evt events.PackageFailedEvent) {
+	packUt := i.ctestsTracker.PackageUnderTest(evt.PackageName)
+	if packUt == nil {
 		return
 	}
-
-	ctest := ctests_tracker.NewCtest(evt.TestName, evt.PackageName)
-	ctest.RecordOutputEvt(evt)
-	i.ctestsTracker.InsertCtest(ctest)
+	i.output.Print("\n\n" + packUt.ParentTestsOutput())
 }
 
 func (i *Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {

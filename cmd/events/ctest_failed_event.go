@@ -1,6 +1,7 @@
 package events
 
 import (
+	"strings"
 	"time"
 
 	"github.com/redjolr/goherent/internal"
@@ -20,4 +21,8 @@ func NewCtestFailedEvent(jsonEvt JsonTestEvent) CtestFailedEvent {
 		TestName:    internal.DecodeGoherentTestName(jsonEvt.Test),
 		Elapsed:     *jsonEvt.Elapsed,
 	}
+}
+
+func (e CtestFailedEvent) IsEventOfAParentTest() bool {
+	return !strings.Contains(e.TestName, "/")
 }

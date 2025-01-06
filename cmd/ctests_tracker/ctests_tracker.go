@@ -135,6 +135,9 @@ func (tracker *CtestsTracker) HandleCtestSkippedEvent(evt events.CtestSkippedEve
 }
 
 func (tracker *CtestsTracker) HandleCtestFailedEvent(evt events.CtestFailedEvent) {
+	if evt.IsEventOfAParentTest() {
+		return
+	}
 	if !tracker.ContainsPackageUtWithName(evt.PackageName) {
 		packUt := NewPackageUnderTest(evt.PackageName)
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
@@ -167,6 +170,14 @@ func (tracker *CtestsTracker) HandleCtestOutputEvent(evt events.CtestOutputEvent
 		tracker.packagesUnderTest = append(tracker.packagesUnderTest, &packUt)
 	}
 	packUt := tracker.FindPackageWithName(evt.PackageName)
+
+	if evt.IsEventOfAParentTest() && !evt.IsAGenericRunPassFailOutput() {
+		packUt.RecordOutputEvtOfParentTest(evt)
+		return
+	}
+	if evt.IsEventOfAParentTest() {
+		return
+	}
 
 	if !packUt.containsCtest(evt.TestName) {
 		packUt.insertCtest(NewCtest(evt.TestName, evt.PackageName))

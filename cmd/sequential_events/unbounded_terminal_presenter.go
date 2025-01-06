@@ -53,6 +53,10 @@ func (tp UnboundedTerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }
 
+func (tp UnboundedTerminalPresenter) Print(output string) {
+	tp.terminal.Print(output)
+}
+
 func (tp UnboundedTerminalPresenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
 
 	packagesSummary := ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " "

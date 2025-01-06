@@ -45,10 +45,10 @@ func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	if jsonEvt.Test != nil && jsonEvt.Action == "run" && strings.Contains(*jsonEvt.Test, "/") {
 		evt = eventsMapper.JsonTestEvt2CtestRanEvt(jsonEvt)
 	}
-	if jsonEvt.Test != nil && jsonEvt.Action == "output" && strings.Contains(*jsonEvt.Test, "/") {
+	if jsonEvt.Test != nil && jsonEvt.Action == "output" {
 		evt = eventsMapper.JsonTestEvt2CtestOutputEvt(jsonEvt)
 	}
-	if jsonEvt.Test != nil && jsonEvt.Action == "fail" && strings.Contains(*jsonEvt.Test, "/") {
+	if jsonEvt.Test != nil && jsonEvt.Action == "fail" {
 		evt = eventsMapper.JsonTestEvt2CtestFailedEvt(jsonEvt)
 	}
 	if jsonEvt.Test != nil && jsonEvt.Action == "skip" && strings.Contains(*jsonEvt.Test, "/") {

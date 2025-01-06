@@ -19,20 +19,21 @@ tasks:
     deps: [prerequisites, fmt]
     dir: ./.
     cmds:
-      - go build
+      - go vet ./...
 
   build:
     run: always
-    deps: [prerequisites, fmt]
+    deps: [prerequisites, vet]
     dir: ./.
     cmds:
-      - go vet ./...
+      - go build ./...
+
   test:
     run: always
     deps: [prerequisites]
     dir: ./.
     cmds:
-      - go test ./...
+      - go test ./... {{.CLI_ARGS}} 
 
   goherent:
     run: always

@@ -57,6 +57,11 @@ func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUn
 					p.terminal.Print("  " + ctest.Output())
 				}
 			}
+
+			if packageUt.HasOutputOfParentTests() {
+				p.terminal.Print("\n\n" + packageUt.ParentTestsOutput())
+			}
+
 			p.terminal.Print("\n")
 
 		} else if packageUt.IsSkipped() {

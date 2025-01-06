@@ -181,12 +181,12 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 
 	Test(`
 	Given that a PackageStartedEvent has occurred for "package 1"
-	And a CtestFailedEvent has occurred for "package 1"
+	And a CtestFailedEvent has occurred for "package 1" with test name "ParentTest/testName"
 	And there is a terminal with height 7
 	When a PackageStartedEvent occurrs for package "package 2"
 	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
 		// Given
 		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
@@ -201,12 +201,12 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 
 	Test(`
 	Given that a PackageStartedEvent has occurred for "package 1"
-	And a CtestPassedEvent has occurred for "package 1"
+	And a CtestPassedEvent has occurred for "package 1" with test name "ParentTest/testName"
 	And there is a terminal with height 7
 	When a PackageStartedEvent occurrs for package "package 2"
 	Then this text will be on the terminal "⏳ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
 		// Given
 		interactor, terminal, _ := setup(7)
 		interactor.HandlePackageStartedEvent(packStartedEvts["package 1"])
@@ -291,9 +291,9 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		packPassedEvents := makePackagePassedEvents("pk 1", "pk 3")
 		packFailedEvents := makePackageFailedEvents("pk 2")
 
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "ParentTest/testName")
 
 		// Given
 		eventsHandler, terminal, _ := setup(7)
@@ -336,9 +336,9 @@ func TestHandlePackageStartedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T
 		packPassedEvents := makePackagePassedEvents("pk 1", "pk 2")
 		packFailedEvents := makePackageFailedEvents("pk 3")
 
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "ParentTest/testName")
 
 		// Given
 		eventsHandler, terminal, _ := setup(7)
@@ -455,9 +455,9 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
 
-		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pack 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pack 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "ParentTest/testName")
 
 		// Given
 		eventsHandler, terminal, _ := setup(10)
@@ -503,9 +503,9 @@ func TestHandlePackageStartedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		packPassedEvents := makePackagePassedEvents("pack 1", "pack 2")
 		packFailedEvents := makePackageFailedEvents("pack 3")
 
-		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "ParentTest/testName")
 
 		// Given
 		eventsHandler, terminal, _ := setup(12)
@@ -579,12 +579,12 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
-	 And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
+	 And a CtestPassedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "✅ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -605,7 +605,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 When a PackagePassedEvent for package "package 1"
 	 Then this text will be on the terminal "✅ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -630,8 +630,8 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Then this text will be on the terminal "✅ package 1\n✅ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -658,12 +658,12 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 	"✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "testName")
-		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "testName")
-		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "testName")
-		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "testName")
-		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "ParentTest/testName")
+		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "ParentTest/testName")
+		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "ParentTest/testName")
+		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "ParentTest/testName")
+		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -707,13 +707,13 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 "✅ pk 1\n✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "testName")
-		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "testName")
-		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "testName")
-		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "testName")
-		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "testName")
-		ctest7PassedEvt := makeCtestPassedEvent("pk 7", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "ParentTest/testName")
+		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "ParentTest/testName")
+		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "ParentTest/testName")
+		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "ParentTest/testName")
+		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "ParentTest/testName")
+		ctest7PassedEvt := makeCtestPassedEvent("pk 7", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -759,14 +759,14 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"✅ pk 2\n✅ pk 3\n✅ pk 4\n✅ pk 5\n✅ pk 6\n✅ pk 7\n✅ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "testName")
-		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "testName")
-		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "testName")
-		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "testName")
-		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "testName")
-		ctest7PassedEvt := makeCtestPassedEvent("pk 7", "testName")
-		ctest8PassedEvt := makeCtestPassedEvent("pk 8", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "ParentTest/testName")
+		ctest3PassedEvt := makeCtestPassedEvent("pk 3", "ParentTest/testName")
+		ctest4PassedEvt := makeCtestPassedEvent("pk 4", "ParentTest/testName")
+		ctest5PassedEvt := makeCtestPassedEvent("pk 5", "ParentTest/testName")
+		ctest6PassedEvt := makeCtestPassedEvent("pk 6", "ParentTest/testName")
+		ctest7PassedEvt := makeCtestPassedEvent("pk 7", "ParentTest/testName")
+		ctest8PassedEvt := makeCtestPassedEvent("pk 8", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -815,7 +815,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		"✅ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -848,8 +848,8 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		"✅ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pk 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -884,7 +884,7 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	Then the printed text will be: "⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
-		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -918,8 +918,8 @@ func TestHandlePackagePassedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	When a PackagePassedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "❌ package 1\n✅ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("package 2", "ParentTest/testName")
 
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		packagePassedEvts := makePackagePassedEvents("package 2")
@@ -988,7 +988,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Then this text will be on the terminal "✅ somePackage" and the summary of tests
 	 "\n\nPackages: 0 running, 1 passed\nTests: 1 passed\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(8)
@@ -1017,7 +1017,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Then this text will be on the terminal "✅ package 1\n⏳ package 2" and the summary of tests
 	 "\n\nPackages: 1 running, 1 passed\nTests: 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1050,8 +1050,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 "\n\nPackages: 0 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1085,8 +1085,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 "\n\nPackages: 1 running, 2 passed\nTests: 2 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1123,9 +1123,9 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	"\n\nPackages: 0 running, 3 passed\nTests: 3 passed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
-		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("pack 2", "testName")
-		ctest3PassedEvt := makeCtestPassedEvent("pack 3", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("pack 2", "ParentTest/testName")
+		ctest3PassedEvt := makeCtestPassedEvent("pack 3", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1163,7 +1163,7 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	"\n\nPackages: 2 running, 1 passed\nTests: 1 passed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
-		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1198,8 +1198,8 @@ func TestHandlePackagePassedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	Then this text will be on the terminal "❌ package 1\n✅ package 2" and the summary of tests
 	"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 1 failed, 1 passed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2PassedEvt := makeCtestPassedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2PassedEvt := makeCtestPassedEvent("package 2", "ParentTest/testName")
 
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		packagePassedEvts := makePackagePassedEvents("package 2")
@@ -1244,13 +1244,13 @@ func TestHandleCtestPassedEvent(t *testing.T) {
 	}, t)
 
 	Test(`
-	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
-	When a CtestPassedEvent for test "someTest" in "somePackage" occurs
+	Given that a CtestOutputEvent for "ParentTest/someTest" in "somePackage" has occurred
+	When a CtestPassedEvent for test "ParentTest/someTest" in "somePackage" occurs
 	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
-		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
-		ctestPassedEvt := makeCtestPassedEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "ParentTest/someTest", "someOutput")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "ParentTest/someTest")
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 		// When
 		eventsHandler.HandleCtestPassedEvent(ctestPassedEvt)
@@ -1261,24 +1261,24 @@ func TestHandleCtestFailedEvent(t *testing.T) {
 
 	Test(`
 	Given that no events have occurred
-	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	When a CtestFailedEvent for test "ParentTest/someTest" in "somePackage" occurs
 	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		//Given
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/someTest")
 
 		// When
 		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
 	}, t)
 
 	Test(`
-	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
-	When a CtestFailedEvent for test "someTest" in "somePackage" occurs
+	Given that a CtestOutputEvent for "ParentTest/someTest" in "somePackage" has occurred
+	When a CtestFailedEvent for test "ParentTest/someTest" in "somePackage" occurs
 	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
-		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "ParentTest/someTest", "someOutput")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/someTest")
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 		// When
 		eventsHandler.HandleCtestFailedEvent(ctestFailedEvt)
@@ -1289,24 +1289,24 @@ func TestHandleCtestSkippedEvent(t *testing.T) {
 
 	Test(`
 	Given that no events have occurred
-	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	When a CtestSkippedEvent for test "ParentTest/someTest" in "somePackage" occurs
 	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		//Given
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/someTest")
 
 		// When
 		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
 	}, t)
 
 	Test(`
-	Given that a CtestOutputEvent for "someTest" in "somePackage" has occurred
-	When a CtestSkippedEvent for test "someTest" in "somePackage" occurs
+	Given that a CtestOutputEvent for "ParentTest/someTest" in "somePackage" has occurred
+	When a CtestSkippedEvent for test "ParentTest/someTest" in "somePackage" occurs
 	Then the operation will be successful.`, func(Expect expect.F) {
 		eventsHandler, _, _ := setup(6)
 		// Given
-		ctestOutputEvt := makeCtestOutputEvent("somePackage", "someTest", "someOutput")
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "someTest")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "ParentTest/someTest", "someOutput")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/someTest")
 		eventsHandler.HandleCtestOutputEvent(ctestOutputEvt)
 		// When
 		eventsHandler.HandleCtestSkippedEvent(ctestSkippedEvt)
@@ -1353,12 +1353,12 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
-	 And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	 And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackageFailedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "❌ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1381,7 +1381,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 When a PackageFailedEvent for package "package 1"
 	 Then this text will be on the terminal "❌ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1408,8 +1408,8 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 Then this text will be on the terminal "❌ package 1\n❌ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1438,12 +1438,12 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "testName")
-		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "testName")
-		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "testName")
-		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "ParentTest/testName")
+		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "ParentTest/testName")
+		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "ParentTest/testName")
+		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1487,13 +1487,13 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	 	"❌ pk 1\n❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "testName")
-		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "testName")
-		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "testName")
-		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "testName")
-		ctest7FailedEvt := makeCtestFailedEvent("pk 7", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "ParentTest/testName")
+		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "ParentTest/testName")
+		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "ParentTest/testName")
+		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "ParentTest/testName")
+		ctest7FailedEvt := makeCtestFailedEvent("pk 7", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1539,14 +1539,14 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"❌ pk 2\n❌ pk 3\n❌ pk 4\n❌ pk 5\n❌ pk 6\n❌ pk 7\n❌ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "testName")
-		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "testName")
-		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "testName")
-		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "testName")
-		ctest7FailedEvt := makeCtestFailedEvent("pk 7", "testName")
-		ctest8FailedEvt := makeCtestFailedEvent("pk 8", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pk 3", "ParentTest/testName")
+		ctest4FailedEvt := makeCtestFailedEvent("pk 4", "ParentTest/testName")
+		ctest5FailedEvt := makeCtestFailedEvent("pk 5", "ParentTest/testName")
+		ctest6FailedEvt := makeCtestFailedEvent("pk 6", "ParentTest/testName")
+		ctest7FailedEvt := makeCtestFailedEvent("pk 7", "ParentTest/testName")
+		ctest8FailedEvt := makeCtestFailedEvent("pk 8", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1595,7 +1595,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"❌ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packageFailedEvts := makePackageFailedEvents("pk 1")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1628,8 +1628,8 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"❌ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pk 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1664,7 +1664,7 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packageFailedEvts := makePackageFailedEvents("pk 1", "pk 2")
-		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1700,8 +1700,8 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		packageFailedEvts := makePackageFailedEvents("package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -1761,13 +1761,13 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 
 	Test(`
 	Given that a PackageStartedEvent has occurred for "somePackage"
-	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	And there is a terminal with height 8
 	When a PackageFailedEvent for package "somePackage" occurs
 	Then this text will be on the terminal "❌ somePackage" and the summary of tests
 	"\n\nPackages: 0 running, 1 failed\nTests: 1 failed\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(8)
@@ -1796,7 +1796,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Then this text will be on the terminal "⏳ package 2" and the summary of tests
 	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(8)
@@ -1827,7 +1827,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 Then this text will be on the terminal "❌ package 1\n⏳ package 2" and the summary of tests
 	 "\n\nPackages: 1 running, 1 failed\nTests: 1 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1860,8 +1860,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	"\n\nPackages: 0 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1895,8 +1895,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	 "\n\nPackages: 1 running, 2 failed\nTests: 2 failed\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packageFailedEvts := makePackageFailedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1933,9 +1933,9 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	"\n\nPackages: 0 running, 3 failed\nTests: 0 running\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packageFailedEvts := makePackageFailedEvents("pack 1", "pack 2", "pack 3")
-		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName")
-		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("pack 2", "ParentTest/testName")
+		ctest3FailedEvt := makeCtestFailedEvent("pack 3", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -1973,7 +1973,7 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 	"\n\nPackages: 2 running, 1 failedd\nTests: 1 failed\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packageFailedEvts := makePackageFailedEvents("pack 1")
-		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("pack 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2010,8 +2010,8 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		packageFailedEvts := makePackageFailedEvents("package 2")
-		ctest1PassedEvt := makeCtestPassedEvent("package 1", "testName")
-		ctest2FailedEvt := makeCtestFailedEvent("package 2", "testName")
+		ctest1PassedEvt := makeCtestPassedEvent("package 1", "ParentTest/testName")
+		ctest2FailedEvt := makeCtestFailedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2041,12 +2041,12 @@ func TestHandlePackageFailedEvent_TerminalHeightGreaterThan7(t *testing.T) {
 func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
-	 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	 And a CtestSkippedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	 And there is a terminal with height 7
 	 When a PackagePassedEvent for package "somePackage" occurs
 	 Then this text will be on the terminal "⏩ somePackage".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2069,7 +2069,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 When a PackagePassedEvent for package "package 1"
 	 Then this text will be on the terminal "⏩ package 1\n⏳ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2096,10 +2096,10 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 Then this text will be on the terminal "⏩ package 1\n⏩ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName 1")
-		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("package 1", "testName 2")
-		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("package 2", "testName 1")
-		pack2Ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName 2")
+		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName 1")
+		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName 2")
+		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName 1")
+		pack2Ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName 2")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2130,12 +2130,12 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 		"⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
-		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "testName")
-		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "testName")
-		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "testName")
-		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "ParentTest/testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "ParentTest/testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "ParentTest/testName")
+		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "ParentTest/testName")
+		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2179,13 +2179,13 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	 "⏩ pk 1\n⏩ pk 2\n⏩ pk 3\n⏩ pk 4\n⏩ pk 5\n⏩ pk 6\n⏩ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
-		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "testName")
-		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "testName")
-		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "testName")
-		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "testName")
-		ctest7SkippedEvt := makeCtestSkippedEvent("pk 7", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "ParentTest/testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "ParentTest/testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "ParentTest/testName")
+		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "ParentTest/testName")
+		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "ParentTest/testName")
+		ctest7SkippedEvt := makeCtestSkippedEvent("pk 7", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2230,14 +2230,14 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	Then the printed text will be: "⏩ pack 2\n⏩ pack 3\n⏩ pack 4\n⏩ pack 5\n⏩ pack 6".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
-		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "testName")
-		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "testName")
-		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "testName")
-		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "testName")
-		ctest7SkippedEvt := makeCtestSkippedEvent("pk 7", "testName")
-		ctest8SkippedEvt := makeCtestSkippedEvent("pk 8", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "ParentTest/testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pk 3", "ParentTest/testName")
+		ctest4SkippedEvt := makeCtestSkippedEvent("pk 4", "ParentTest/testName")
+		ctest5SkippedEvt := makeCtestSkippedEvent("pk 5", "ParentTest/testName")
+		ctest6SkippedEvt := makeCtestSkippedEvent("pk 6", "ParentTest/testName")
+		ctest7SkippedEvt := makeCtestSkippedEvent("pk 7", "ParentTest/testName")
+		ctest8SkippedEvt := makeCtestSkippedEvent("pk 8", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2286,7 +2286,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	"⏩ pk 1\n⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7")
 		packagePassedEvts := makePackagePassedEvents("pk 1")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2318,8 +2318,8 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	"⏩ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pk 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2355,7 +2355,7 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	"⏳ pk 2\n⏳ pk 3\n⏳ pk 4\n⏳ pk 5\n⏳ pk 6\n⏳ pk 7\n⏳ pk 8".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pk 1", "pk 2", "pk 3", "pk 4", "pk 5", "pk 6", "pk 7", "pk 8")
 		packagePassedEvts := makePackagePassedEvents("pk 1", "pk 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pk 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(7)
@@ -2389,8 +2389,8 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 	When a PackagePassedEvent for package "package 2" occurrs
 	Then this text will be on the terminal "❌ package 1\n⏩ package 2".`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName")
 
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		packagePassedEvts := makePackagePassedEvents("package 2")
@@ -2416,13 +2416,13 @@ func TestSkippedPackages_TerminalHeightLessThanOrEqualTo7(t *testing.T) {
 func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 	Test(`
 		 Given that a PackageStartedEvent has occurred for "somePackage"
-		 And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+		 And a CtestSkippedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 		 And there is a terminal with height 8
 		 When a PackagePassedEvent for package "somePackage" occurs
 		 Then this text will be on the terminal "⏩ somePackage" and the summary of tests
 		 "\n\nPackages: 0 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s"`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		// Given
 		interactor, terminal, _ := setup(8)
@@ -2451,7 +2451,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 	Then this text will be on the terminal "⏳ package 2" and the summary of tests
 	"\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(8)
@@ -2482,7 +2482,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 Then this text will be on the terminal "⏩ package 1\n⏳ package 2" and the summary of tests
 		 "\n\nPackages: 1 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("package 1")
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2515,8 +2515,8 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 "\n\nPackages: 0 running, 2 passed\nTests: 0 running\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2550,8 +2550,8 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		 "\n\nPackages: 1 running, 2 skipped\nTests: 2 skipped\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2", "package 3")
 		packagePassedEvts := makePackagePassedEvents("package 1", "package 2")
-		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("package 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2588,9 +2588,9 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		"\n\nPackages: 0 running, 3 skipped\nTests: 3 skipped\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1", "pack 2", "pack 3")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "testName")
-		ctest3SkippedEvt := makeCtestSkippedEvent("pack 3", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("pack 2", "ParentTest/testName")
+		ctest3SkippedEvt := makeCtestSkippedEvent("pack 3", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2628,7 +2628,7 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		"\n\nPackages: 2 running, 1 skipped\nTests: 1 skipped\nTime: 0.000s.`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3")
 		packagePassedEvts := makePackagePassedEvents("pack 1")
-		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName")
+		ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "ParentTest/testName")
 
 		// Given
 		interactor, terminal, _ := setup(9)
@@ -2663,8 +2663,8 @@ func TestSkippedPackages_TerminalHeightGreaterThan5(t *testing.T) {
 		Then this text will be on the terminal "❌ package 1\n⏩ package 2" and the summary of tests
 		"\n\nPackages: 0 running, 1 failed, 1 passed\nTests: 0 running\nTime: 0.000s`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("package 1", "package 2")
-		ctest1FailedEvt := makeCtestFailedEvent("package 1", "testName")
-		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "testName")
+		ctest1FailedEvt := makeCtestFailedEvent("package 1", "ParentTest/testName")
+		ctest2SkippedEvt := makeCtestSkippedEvent("package 2", "ParentTest/testName")
 
 		packageFailedEvts := makePackageFailedEvents("package 1")
 		packagePassedEvts := makePackagePassedEvents("package 2")
@@ -2810,7 +2810,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &timeElapsed,
 			},
@@ -2853,7 +2853,7 @@ func TestHandleNoPackageTestsFoundEvent(t *testing.T) {
 			events.JsonTestEvent{
 				Time:    time.Now(),
 				Action:  "pass",
-				Test:    "testName",
+				Test:    "ParentTest/testName",
 				Package: "somePackage",
 				Elapsed: &timeElapsed,
 			},
@@ -2879,7 +2879,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
-	And a CtestPassedEvent for test with name "testName" in package "somePackage" has occurred
+	And a CtestPassedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
@@ -2890,7 +2890,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestPassedEvt := makeCtestPassedEvent("somePackage", "testName")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
@@ -2920,7 +2920,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
-	And a CtestSkippedEvent for test with name "testName" in package "somePackage" has occurred
+	And a CtestSkippedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.372s occurs
@@ -2929,7 +2929,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "testName")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/testName")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
@@ -2959,7 +2959,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
-	And a CtestFailedEvent for test with name "testName" in package "somePackage" has occurred
+	And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
 	And a PackageFailedEvent for package "somePackage" occurs
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
@@ -2968,7 +2968,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
@@ -2986,7 +2986,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"❌ somePackage\n\n" +
-				"  " + ansi_escape.RED + "● testName" + ansi_escape.COLOR_RESET + "\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET + "\n" +
 				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
@@ -2999,8 +2999,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
-	And a CtestOutputEvent for test "testName" of package "somePackage" with out "Some output" has occurred
-	And a CtestFailedEvent for test with name "testName" of package "somePackage" has occurred
+	And a CtestOutputEvent for test "ParentTest/testName" of package "somePackage" with out "Some output" has occurred
+	And a CtestFailedEvent for test with name "ParentTest/testName" of package "somePackage" has occurred
 	And a PackageFailedEvent for package "somePackage" occurs
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
@@ -3009,8 +3009,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestFailedEvt := makeCtestFailedEvent("somePackage", "testName")
-		ctestOutputEvt := makeCtestOutputEvent("somePackage", "testName", "Some output")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
+		ctestOutputEvt := makeCtestOutputEvent("somePackage", "ParentTest/testName", "Some output")
 		packageFailedEvts := makePackageFailedEvents("somePackage")
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
@@ -3029,7 +3029,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"❌ somePackage\n\n" +
-				"  " + ansi_escape.RED + "● testName" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET + "\n\n" +
 				"  Some output\n" +
 				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
@@ -3043,8 +3043,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 	Test(`
 	Given that a TestingStartedEvent occured with timestamp t1
 	And a PackageStartedEvent has occurred for "somePackage"
-	And a CtestPassedEvent for "test 1" in "somePackage" has occurred
-	And a CtestSkippedEvent for "test 2" in "somePackage" has occurred
+	And a CtestPassedEvent for "ParentTest/test 1" in "somePackage" has occurred
+	And a CtestSkippedEvent for "ParentTest/test 2" in "somePackage" has occurred
 	And a PackagePassedEvent for package "somePackage" occurs
 	And there is a terminal with height 9
 	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
@@ -3053,8 +3053,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 		t1 := time.Now()
 		testingStartedEvt := events.NewTestingStartedEvent(t1)
 		packStartedEvts := makePackageStartedEvents("somePackage")
-		ctestPassedEvt := makeCtestPassedEvent("somePackage", "test 1")
-		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "test 2")
+		ctestPassedEvt := makeCtestPassedEvent("somePackage", "ParentTest/test 1")
+		ctestSkippedEvt := makeCtestSkippedEvent("somePackage", "ParentTest/test 2")
 		packagePassedEvts := makePackagePassedEvents("somePackage")
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
 
@@ -3136,20 +3136,20 @@ func TestTestingFinishedSummary(t *testing.T) {
 		packStartedEvts := makePackageStartedEvents("pack 1", "pack 2", "pack 3", "pack 4")
 		packPassedEvts := makePackagePassedEvents("pack 1", "pack 4")
 		packFailedEvts := makePackageFailedEvents("pack 2", "pack 3")
-		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "testName 1")
-		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("pack 1", "testName 2")
-		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("pack 2", "testName 3")
-		pack3Ctest1SkippedEvt := makeCtestSkippedEvent("pack 3", "testName 4")
-		pack4Ctest1SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 5")
-		pack4Ctest2SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 6")
-		pack4Ctest3SkippedEvt := makeCtestSkippedEvent("pack 4", "testName 7")
-		pack1Ctest1PassedEvt := makeCtestPassedEvent("pack 1", "testName 8")
-		pack1Ctest2PassedEvt := makeCtestPassedEvent("pack 1", "testName 9")
-		pack3Ctest1PassedEvt := makeCtestPassedEvent("pack 3", "testName 10")
-		pack3Ctest2PassedEvt := makeCtestPassedEvent("pack 3", "testName 11")
-		pack2Ctest1FailedEvt := makeCtestFailedEvent("pack 2", "testName 12")
-		pack2Ctest2FailedEvt := makeCtestFailedEvent("pack 2", "testName 13")
-		pack3Ctest1FailedEvt := makeCtestFailedEvent("pack 3", "testName 14")
+		pack1Ctest1SkippedEvt := makeCtestSkippedEvent("pack 1", "ParentTest/testName 1")
+		pack1Ctest2SkippedEvt := makeCtestSkippedEvent("pack 1", "ParentTest/testName 2")
+		pack2Ctest1SkippedEvt := makeCtestSkippedEvent("pack 2", "ParentTest/testName 3")
+		pack3Ctest1SkippedEvt := makeCtestSkippedEvent("pack 3", "ParentTest/testName 4")
+		pack4Ctest1SkippedEvt := makeCtestSkippedEvent("pack 4", "ParentTest/testName 5")
+		pack4Ctest2SkippedEvt := makeCtestSkippedEvent("pack 4", "ParentTest/testName 6")
+		pack4Ctest3SkippedEvt := makeCtestSkippedEvent("pack 4", "ParentTest/testName 7")
+		pack1Ctest1PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName 8")
+		pack1Ctest2PassedEvt := makeCtestPassedEvent("pack 1", "ParentTest/testName 9")
+		pack3Ctest1PassedEvt := makeCtestPassedEvent("pack 3", "ParentTest/testName 10")
+		pack3Ctest2PassedEvt := makeCtestPassedEvent("pack 3", "ParentTest/testName 11")
+		pack2Ctest1FailedEvt := makeCtestFailedEvent("pack 2", "ParentTest/testName 12")
+		pack2Ctest2FailedEvt := makeCtestFailedEvent("pack 2", "ParentTest/testName 13")
+		pack3Ctest1FailedEvt := makeCtestFailedEvent("pack 3", "ParentTest/testName 14")
 
 		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1372))
 
@@ -3187,10 +3187,10 @@ func TestTestingFinishedSummary(t *testing.T) {
 			"\n\n📋 Tests summary:\n\n" +
 				"✅ pack 1\n" +
 				"❌ pack 2\n\n" +
-				"  " + ansi_escape.RED + "● testName 12" + ansi_escape.COLOR_RESET + "\n\n" +
-				"  " + ansi_escape.RED + "● testName 13" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName 12" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName 13" + ansi_escape.COLOR_RESET + "\n\n" +
 				"❌ pack 3\n\n" +
-				"  " + ansi_escape.RED + "● testName 14" + ansi_escape.COLOR_RESET + "\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName 14" + ansi_escape.COLOR_RESET + "\n\n" +
 				"⏩ pack 4" +
 				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", " +
@@ -3201,6 +3201,156 @@ func TestTestingFinishedSummary(t *testing.T) {
 				ansi_escape.YELLOW + "7 skipped" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.GREEN + "4 passed" + ansi_escape.COLOR_RESET + ", 14 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
+				"Ran all tests.",
+		)
+	}, t)
+
+	//
+	//
+	Test(`
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
+	And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
+	And a PackageFailedEvent for package "somePackage" occurs
+	And a CtestOutputEvent for test "TestFunc" in package "somePackage" with output "Some package output" has occurred
+	And there is a terminal with height 9
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
+	Then the failing package, failing test, package output will be displayed
+	And this summary will be displayed:
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(Expect expect.F) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		testFuncOutputEvt := makeCtestOutputEvent("somePackage", "TestFunc", "Some package output")
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
+
+		// Given
+		interactor, terminal, _ := setup(9)
+		interactor.HandleTestingStarted(testingStartedEvt)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+		interactor.HandleCtestOutputEvent(testFuncOutputEvt)
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"❌ somePackage\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
+				"\n\nSome package output\n" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
+	And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
+	And a PackageFailedEvent for package "somePackage" occurs
+	And a CtestOutputEvent for test "TestFunc" in package "somePackage" with output "Some package output 1" has occurred
+	And a CtestOutputEvent for test "TestFunc" in package "somePackage" with output "Some package output 2" has occurred
+	And another PackageOutputEvent for package "somePackage" with output "Some package output 2" has occurred
+	And there is a terminal with height 9
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
+	Then the failing package, failing test, package output will be displayed
+	And this summary will be displayed:
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(Expect expect.F) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		testFuncOutputEvt1 := makeCtestOutputEvent("somePackage", "TestFunc", "Some package output 1")
+		testFuncOutputEvt2 := makeCtestOutputEvent("somePackage", "TestFunc", "Some package output 2")
+
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
+
+		// Given
+		interactor, terminal, _ := setup(9)
+		interactor.HandleTestingStarted(testingStartedEvt)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+		interactor.HandleCtestOutputEvent(testFuncOutputEvt1)
+		interactor.HandleCtestOutputEvent(testFuncOutputEvt2)
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"❌ somePackage\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
+				"\n\nSome package output 1Some package output 2\n" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
+				"Ran all tests.",
+		)
+	}, t)
+
+	Test(`
+	Given that a TestingStartedEvent occured with timestamp t1
+	And a PackageStartedEvent has occurred for "somePackage"
+	And a CtestFailedEvent for test with name "ParentTest/testName" in package "somePackage" has occurred
+	And a CtestFailedEvent for test with name "TestFunc" in package "somePackage" has occurred
+	And a PackageFailedEvent for package "somePackage" occurs
+	And a CtestOutputEvent for test "TestFunc" in package "somePackage" with output "Some package output 1" has occurred
+	And a CtestOutputEvent for test "TestFunc" in package "somePackage" with output "Some package output 2" has occurred
+	And another PackageOutputEvent for package "somePackage" with output "Some package output 2" has occurred
+	And there is a terminal with height 9
+	When a TestingFinishedEvent with a timestamp of t1+1.2s occurs
+	Then the failing package, failing test, package output will be displayed
+	And this summary will be displayed:
+	"\n\nPackages: 1 failed, 1 total\nTests: 1 failed, 1 total\nTime: 1.200s"`, func(Expect expect.F) {
+		t1 := time.Now()
+		testingStartedEvt := events.NewTestingStartedEvent(t1)
+		packStartedEvts := makePackageStartedEvents("somePackage")
+		ctestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest/testName")
+		parentTestFailedEvt := makeCtestFailedEvent("somePackage", "ParentTest")
+		packageFailedEvts := makePackageFailedEvents("somePackage")
+		parentTestOutputEvt1 := makeCtestOutputEvent("somePackage", "ParentTest", "Some package output 1")
+		parentTestOutputEvt2 := makeCtestOutputEvent("somePackage", "ParentTest", "Some package output 2")
+
+		testingFinishedEvt := events.NewTestingFinishedEvent(t1.Add(time.Millisecond * 1200))
+
+		// Given
+		interactor, terminal, _ := setup(9)
+		interactor.HandleTestingStarted(testingStartedEvt)
+		interactor.HandlePackageStartedEvent(packStartedEvts["somePackage"])
+		interactor.HandleCtestFailedEvent(ctestFailedEvt)
+		interactor.HandleCtestFailedEvent(parentTestFailedEvt)
+		interactor.HandlePackageFailed(packageFailedEvts["somePackage"])
+		interactor.HandleCtestOutputEvent(parentTestOutputEvt1)
+		interactor.HandleCtestOutputEvent(parentTestOutputEvt2)
+
+		// When
+		interactor.HandleTestingFinished(testingFinishedEvt)
+
+		// Then
+		Expect(terminal.Text()).ToEqual(
+			"\n\n📋 Tests summary:\n\n" +
+				"❌ somePackage\n\n" +
+				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
+				"\n\nSome package output 1Some package output 2\n" +
+				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.",
 		)
 	}, t)

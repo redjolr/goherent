@@ -73,6 +73,10 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 	}
 }
 
+func (tp BoundedTerminalPresenter) Print(output string) {
+	tp.terminal.Print(output)
+}
+
 func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	hourGlassAndSpaceLength := len(strings.Split("⏳ ", ""))
 	testNameLineCount := utils.StrLinesCount(ctest.Name())
