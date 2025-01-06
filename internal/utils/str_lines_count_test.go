@@ -5,7 +5,7 @@ import (
 
 	"github.com/redjolr/goherent/expect"
 	"github.com/redjolr/goherent/internal/utils"
-	. "github.com/redjolr/goherent/pkg"
+	. "github.com/redjolr/goherent/test"
 )
 
 func TestStrLinesCount(t *testing.T) {

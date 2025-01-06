@@ -12,8 +12,8 @@ import (
 	"github.com/redjolr/goherent/expect"
 	"github.com/redjolr/goherent/internal"
 
-	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
+	. "github.com/redjolr/goherent/test"
 )
 
 func setup() (*sequential_events.Interactor, *fake_ansi_terminal.FakeAnsiTerminal, *ctests_tracker.CtestsTracker) {

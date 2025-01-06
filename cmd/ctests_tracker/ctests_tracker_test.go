@@ -1,6 +1,7 @@
 package ctests_tracker_test
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/expect"
 
-	. "github.com/redjolr/goherent/pkg"
+	. "github.com/redjolr/goherent/test"
 )
 
 func makeCtestRanEvent(packageName, testName string) events.CtestRanEvent {
@@ -445,6 +446,7 @@ func TestInsertCtest(t *testing.T) {
 		Expect(tracker.ContainsPackageUtWithName("packageName")).ToBeTrue()
 		testInPackage := tracker.FindCtestWithNameInPackage("testName", "packageName")
 		Expect(testInPackage).NotToBeNil()
+		fmt.Println("\n\n\n YAYYYYY")
 	}, t)
 
 	Test(`

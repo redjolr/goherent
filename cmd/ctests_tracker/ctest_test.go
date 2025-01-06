@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
-	. "github.com/redjolr/goherent/pkg"
+	. "github.com/redjolr/goherent/test"
 
 	"github.com/redjolr/goherent/expect"
 )

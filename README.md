@@ -59,7 +59,7 @@ package some_test
 import (
 	"testing"
 
-    . "github.com/redjolr/goherent/pkg/goherent"
+    . "github.com/redjolr/goherent/test"
 )
 
 

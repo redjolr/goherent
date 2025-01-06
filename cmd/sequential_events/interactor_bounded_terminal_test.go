@@ -9,8 +9,8 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 	"github.com/redjolr/goherent/cmd/sequential_events"
 	"github.com/redjolr/goherent/expect"
-	. "github.com/redjolr/goherent/pkg"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
+	. "github.com/redjolr/goherent/test"
 )
 
 func setupInteractorWithBoundedTerminal(height int) (
