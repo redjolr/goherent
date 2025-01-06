@@ -9,7 +9,8 @@ import (
 
 func TestSkip(name string, testClosure func(Expect expect.F), t *testing.T) {
 	testName := internal.EncodeGoherentTestName(name)
-	t.Skip(testName, func(t *testing.T) {
+	t.Run(testName, func(t *testing.T) {
+		t.Skip()
 		Expect := expect.New(t)
 		testClosure(Expect)
 	})
