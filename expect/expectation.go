@@ -113,8 +113,8 @@ func (e *expectation) ToBeString() {
 	}
 }
 
-func (e *expectation) ToBeGreaterThan(actual any) {
-	if err := assertions.ToBeGreaterThan(actual, e.checkExpectationAgainst); err != nil {
+func (e *expectation) ToBeGreaterThan(checkIfGreaterAgainst any) {
+	if err := assertions.ToBeGreaterThan(e.checkExpectationAgainst, checkIfGreaterAgainst); err != nil {
 		_, file, line, _ := runtime.Caller(1)
 		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
 		e.print(err.Error(), 6)
