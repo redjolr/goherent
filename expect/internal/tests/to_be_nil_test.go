@@ -7,6 +7,10 @@ import (
 	"github.com/redjolr/goherent/expect/internal/assertions"
 )
 
+type someStruct struct{}
+
+var someStructNil *someStruct = nil
+
 func TestToBeNil(t *testing.T) {
 	var tests = []struct {
 		input          any
@@ -51,6 +55,7 @@ func TestToBeNil(t *testing.T) {
 		{input: struct{}{}, assertionFails: true},
 		{input: struct{ f string }{f: "true"}, assertionFails: true},
 		{input: struct{ f bool }{f: true}, assertionFails: true},
+		{input: someStructNil, assertionFails: false},
 	}
 
 	for _, test := range tests {

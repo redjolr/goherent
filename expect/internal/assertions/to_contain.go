@@ -1,7 +1,6 @@
 package assertions
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -18,10 +17,10 @@ import (
 func ToContain(container, containee any) error {
 	ok, found := containsElement(container, containee)
 	if !ok {
-		return errors.New(fmt.Sprintf("%#v is not a string, slice, array or map.", container))
+		return fmt.Errorf("%#v is not a string, slice, array or map", container)
 	}
 	if !found {
-		return errors.New(fmt.Sprintf("%#v does not contain %#v", container, containee))
+		return fmt.Errorf("%#v does not contain %#v", container, containee)
 	}
 	return nil
 }

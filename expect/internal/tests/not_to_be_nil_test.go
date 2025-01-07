@@ -51,6 +51,7 @@ func TestNotToBeNil(t *testing.T) {
 		{input: struct{}{}, assertionFails: false},
 		{input: struct{ f string }{f: "true"}, assertionFails: false},
 		{input: struct{ f bool }{f: true}, assertionFails: false},
+		{input: someStructNil, assertionFails: true},
 	}
 
 	for _, test := range tests {
