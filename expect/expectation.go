@@ -139,3 +139,12 @@ func (e *expectation) ToBeLessThan(checkIfLessAgainst any) {
 		e.t.Fail()
 	}
 }
+
+func (e *expectation) ToBeLessThanOrEqualTo(checkIfLessAgainst any) {
+	if err := assertions.ToBeLessThanOrEqualTo(e.checkExpectationAgainst, checkIfLessAgainst); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}

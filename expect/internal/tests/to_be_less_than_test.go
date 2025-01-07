@@ -95,7 +95,7 @@ func TestToBeLessThan(t *testing.T) {
 		var testName string
 		if test.assertionFails {
 			testName = fmt.Sprintf(
-				"it should fail the assertion, if we assert that %v(%v) is greater than %v(%v)",
+				"it should fail the assertion, if we assert that %v(%v) is less than %v(%v)",
 				test.isLessCandidate,
 				reflect.TypeOf(test.isLessCandidate),
 				test.checkIfLessAgainst,
@@ -103,7 +103,7 @@ func TestToBeLessThan(t *testing.T) {
 			)
 		} else {
 			testName = fmt.Sprintf(
-				"it should not fail the assertion, if we assert that %v(%v) is greater than %v(%v)",
+				"it should not fail the assertion, if we assert that %v(%v) is less than %v(%v)",
 				test.isLessCandidate,
 				reflect.TypeOf(test.isLessCandidate),
 				test.checkIfLessAgainst,
