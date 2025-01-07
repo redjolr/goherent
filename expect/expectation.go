@@ -103,3 +103,12 @@ func (e *expectation) print(str string, leftPadWhitespace int) {
 		fmt.Println(strings.Repeat(" ", leftPadWhitespace) + line)
 	}
 }
+
+func (e *expectation) ToBeString() {
+	if err := assertions.ToBeString(e.checkExpectationAgainst); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}

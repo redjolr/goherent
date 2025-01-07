@@ -40,7 +40,7 @@ func TestToEqualIntegers(t *testing.T) {
 	When we use the ToEqual assertions
 	Then it should return an error with this text: "expected: 2\nactual:  3",`, func(t *testing.T) {
 		twoEqualsTwoError := assertions.ToEqual(2, 3)
-		expectedErrorMsg := "Not equal:\nexpected: 2\nactual  : 3"
+		expectedErrorMsg := "not equal:\nexpected: 2\nactual  : 3"
 
 		if twoEqualsTwoError == nil {
 			t.Error("2 does not equal 3, but ToEqual() assertion says they do.")
@@ -56,11 +56,11 @@ func TestToEqualIntegers(t *testing.T) {
 	Given that we compare int8(2) and int16(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
-		"Not equal:\nexpected: int8(2)\nactual  : int16(2)".`, func(t *testing.T) {
+		"not equal:\nexpected: int8(2)\nactual  : int16(2)".`, func(t *testing.T) {
 		var twoTypeInt8 int8 = 2
 		var twoTypeInt16 int16 = 2
 		twoEqualsTwoError := assertions.ToEqual(twoTypeInt8, twoTypeInt16)
-		expectedErrorMsg := "Not equal:\nexpected: int8(2)\nactual  : int16(2)"
+		expectedErrorMsg := "not equal:\nexpected: int8(2)\nactual  : int16(2)"
 		if twoEqualsTwoError == nil {
 			t.Error("int8(2) does not equal int16(2), but ToEqual() assertion says they do.")
 		}
@@ -75,11 +75,11 @@ func TestToEqualIntegers(t *testing.T) {
 	Given that we compare int32(2) and int64(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
-		"Not equal:\nexpected: int8(2)\nactual  : int16(2)".`, func(t *testing.T) {
+		"not equal:\nexpected: int8(2)\nactual  : int16(2)".`, func(t *testing.T) {
 		var twoTypeInt32 int32 = 2
 		var twoTypeInt64 int64 = 2
 		twoEqualsTwoError := assertions.ToEqual(twoTypeInt32, twoTypeInt64)
-		expectedErrorMsg := "Not equal:\nexpected: int32(2)\nactual  : int64(2)"
+		expectedErrorMsg := "not equal:\nexpected: int32(2)\nactual  : int64(2)"
 		if twoEqualsTwoError == nil {
 			t.Error("int32(2) does not equal int64(2), but ToEqual() assertion says they do.")
 		}
@@ -94,11 +94,11 @@ func TestToEqualIntegers(t *testing.T) {
 	Given that we compare uint8(2) and int8(2)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
-		"Not equal:\nexpected: uint8(0x2)\nactual  : int8(2)".`, func(t *testing.T) {
+		"not equal:\nexpected: uint8(0x2)\nactual  : int8(2)".`, func(t *testing.T) {
 		var twoTypeInt32 uint8 = 2
 		var twoTypeInt64 int8 = 2
 		twoEqualsTwoError := assertions.ToEqual(twoTypeInt32, twoTypeInt64)
-		expectedErrorMsg := "Not equal:\nexpected: uint8(0x2)\nactual  : int8(2)"
+		expectedErrorMsg := "not equal:\nexpected: uint8(0x2)\nactual  : int8(2)"
 		if twoEqualsTwoError == nil {
 			t.Error("uint8(0x2) does not equal int8(2), but ToEqual() assertion says they do.")
 		}
@@ -139,12 +139,12 @@ func TestToEqualFloatingPointNumbers(t *testing.T) {
 	Given that we compare float32(3.25) and float64(3.25)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
-		"Not equal:\nexpected: float32(3.25)\nactual  : float64(3.25)".`, func(t *testing.T) {
+		"not equal:\nexpected: float32(3.25)\nactual  : float64(3.25)".`, func(t *testing.T) {
 		var firstFloat32 float32 = 3.25
 		var secondFloat64 float64 = 3.25
 
 		floatsEqualsErr := assertions.ToEqual(firstFloat32, secondFloat64)
-		expectedErrorMsg := "Not equal:\nexpected: float32(3.25)\nactual  : float64(3.25)"
+		expectedErrorMsg := "not equal:\nexpected: float32(3.25)\nactual  : float64(3.25)"
 		if floatsEqualsErr == nil {
 			t.Error("float32(3.25) does not equal float64(3.25), but ToEqual() assertion says they do.")
 		}
@@ -159,12 +159,12 @@ func TestToEqualFloatingPointNumbers(t *testing.T) {
 	Given that we compare float32(7) and int(7)
 	When we use the ToEqual assertions
 	Then it should return an error with this text: 
-		"Not equal:\nexpected: float32(7)\nactual  : int(7)".`, func(t *testing.T) {
+		"not equal:\nexpected: float32(7)\nactual  : int(7)".`, func(t *testing.T) {
 		var sevenFloat32 float32 = 7
 		var sevenInt int = 7
 
 		floatsEqualsErr := assertions.ToEqual(sevenFloat32, sevenInt)
-		expectedErrorMsg := "Not equal:\nexpected: float32(7)\nactual  : int(7)"
+		expectedErrorMsg := "not equal:\nexpected: float32(7)\nactual  : int(7)"
 		if floatsEqualsErr == nil {
 			t.Error("float32(7) does not equal int(7), but ToEqual() assertion says they do.")
 		}
@@ -194,9 +194,9 @@ func TestToEqualBooleans(t *testing.T) {
 	t.Run(`
 	Given that we compare true and false
 	When we use the ToEqual assertions
-	Then it should return an error with this text: "Not equal:\nexpected: true\nactual  : false".`, func(t *testing.T) {
+	Then it should return an error with this text: "not equal:\nexpected: true\nactual  : false".`, func(t *testing.T) {
 		boolsEqualErr := assertions.ToEqual(true, false)
-		expectedErrorMsg := "Not equal:\nexpected: true\nactual  : false"
+		expectedErrorMsg := "not equal:\nexpected: true\nactual  : false"
 
 		if boolsEqualErr == nil {
 			t.Error("true does not equal false, but ToEqual() assertion says they do.")
@@ -211,9 +211,9 @@ func TestToEqualBooleans(t *testing.T) {
 	t.Run(`
 	Given that we compare false and true
 	When we use the ToEqual assertions
-	Then it should return an error with this text: "Not equal:\nexpected: false\nactual  : true".`, func(t *testing.T) {
+	Then it should return an error with this text: "not equal:\nexpected: false\nactual  : true".`, func(t *testing.T) {
 		boolsEqualErr := assertions.ToEqual(false, true)
-		expectedErrorMsg := "Not equal:\nexpected: false\nactual  : true"
+		expectedErrorMsg := "not equal:\nexpected: false\nactual  : true"
 
 		if boolsEqualErr == nil {
 			t.Error("false does not equal true, but ToEqual() assertion says they do.")
@@ -254,7 +254,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("D", "E")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"D\"\n" +
 			"actual  : \"E\"\n\n" +
 			"Diff:\n" +
@@ -281,7 +281,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello", "Hallo")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\"\n" +
 			"actual  : \"Hallo\"\n\n" +
 			"Diff:\n" +
@@ -308,7 +308,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello\nWorld", "Hallo\nWorld")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\\nWorld\"\n" +
 			"actual  : \"Hallo\\nWorld\"\n\n" +
 			"Diff:\n" +
@@ -336,7 +336,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello\nWorld", "Hallo\nWelt")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\\nWorld\"\n" +
 			"actual  : \"Hallo\\nWelt\"\n\n" +
 			"Diff:\n" +
@@ -365,7 +365,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello\nThere\nWorld", "Hallo\nThere\nWorld")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\\nThere\\nWorld\"\n" +
 			"actual  : \"Hallo\\nThere\\nWorld\"\n\n" +
 			"Diff:\n" +
@@ -393,7 +393,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello\nThere\nWorld", "Hallo\nThere\nWelt")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\\nThere\\nWorld\"\n" +
 			"actual  : \"Hallo\\nThere\\nWelt\"\n\n" +
 			"Diff:\n" +
@@ -423,7 +423,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("Hello\nThere\nWorld", "Hallo\nDort\nWelt")
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Hello\\nThere\\nWorld\"\n" +
 			"actual  : \"Hallo\\nDort\\nWelt\"\n\n" +
 			"Diff:\n" +
@@ -458,7 +458,7 @@ func TestToEqualStrings(t *testing.T) {
 			"Line1\nLine2\nLine3\nLine4\nLine5\nLine6\nLine7",
 			"Rreshti1\nRreshti2\nRreshti3\nRreshti4\nRreshti5\nRreshti6\nRreshti7",
 		)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: \"Line1\\nLine2\\nLine3\\nLine4\\nLine5\\nLine6\\nLine7\"\n" +
 			"actual  : \"Rreshti1\\nRreshti2\\nRreshti3\\nRreshti4\\nRreshti5\\nRreshti6\\nRreshti7\"\n\n" +
 			"Diff:\n" +
@@ -497,7 +497,7 @@ func TestToEqualStrings(t *testing.T) {
 	Then it should return an error that reports that the values are not equal
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		err := assertions.ToEqual("2", 2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: string(\"2\")\n" +
 			"actual  : int(2)"
 
@@ -519,7 +519,7 @@ func TestToEqualStrings(t *testing.T) {
 	And the Diff should be part of the error.`, func(t *testing.T) {
 		var twoFloat float64 = 2
 		err := assertions.ToEqual("2", twoFloat)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: string(\"2\")\n" +
 			"actual  : float64(2)"
 
@@ -709,7 +709,7 @@ func TestToEqualArrays(t *testing.T) {
 		arr1 := [0]int{}
 		arr2 := [0]uint{}
 		err := assertions.ToEqual(arr1, arr2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: [0]int([0]int{})\n" +
 			"actual  : [0]uint([0]uint{})"
 		if err == nil {
@@ -727,7 +727,7 @@ func TestToEqualArrays(t *testing.T) {
 		arr1 := [1]int32{7}
 		arr2 := [1]int64{7}
 		err := assertions.ToEqual(arr1, arr2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: [1]int32([1]int32{7})\n" +
 			"actual  : [1]int64([1]int64{7})"
 		if err == nil {
@@ -745,7 +745,7 @@ func TestToEqualArrays(t *testing.T) {
 		arr1 := [2]float32{7.4, 3.2}
 		arr2 := [2]float64{7.4, 3.2}
 		err := assertions.ToEqual(arr1, arr2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: [2]float32([2]float32{7.4, 3.2})\n" +
 			"actual  : [2]float64([2]float64{7.4, 3.2})"
 		if err == nil {
@@ -835,7 +835,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice2 := make([]int, 2, 3)
 		slice2[0] = 7
 		slice2[1] = 12
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []int{7, 9}\n" +
 			"actual  : []int{7, 12}\n\n" +
 			"Diff:\n" +
@@ -932,7 +932,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice2 := make([]float64, 2, 3)
 		slice2[0] = 7.333
 		slice2[1] = 9.22
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []float64{7.502, 9.3111}\n" +
 			"actual  : []float64{7.333, 9.22}\n\n" +
 			"Diff:\n" +
@@ -1032,7 +1032,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice2[0] = false
 		slice2[1] = false
 		err := assertions.ToEqual(slice1, slice2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []bool{true, false}\n" +
 			"actual  : []bool{false, false}\n\n" +
 			"Diff:\n" +
@@ -1128,7 +1128,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice2 := make([]string, 2, 3)
 		slice2[0] = "Pershendetje"
 		slice2[1] = "World"
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []string{\"Hello\", \"World\"}\n" +
 			"actual  : []string{\"Pershendetje\", \"World\"}\n\n" +
 			"Diff:\n" +
@@ -1155,7 +1155,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice1 := []int{}
 		slice2 := []uint{}
 		err := assertions.ToEqual(slice1, slice2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []int([]int{})\n" +
 			"actual  : []uint([]uint{})"
 		if err == nil {
@@ -1172,7 +1172,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice1 := []int32{7}
 		slice2 := []int64{7}
 		err := assertions.ToEqual(slice1, slice2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []int32([]int32{7})\n" +
 			"actual  : []int64([]int64{7})"
 		if err == nil {
@@ -1190,7 +1190,7 @@ func TestToEqualSlices(t *testing.T) {
 		slice1 := []float32{7.4, 3.2}
 		slice2 := []float64{7.4, 3.2}
 		err := assertions.ToEqual(slice1, slice2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: []float32([]float32{7.4, 3.2})\n" +
 			"actual  : []float64([]float64{7.4, 3.2})"
 		if err == nil {
@@ -1247,7 +1247,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: 1}
 		s2 := S{field: 2}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:1}\n" +
 			"actual  : tests_test.S{field:2}\n\n" +
 			"Diff:\n" +
@@ -1280,7 +1280,7 @@ func TestToEqualStructs(t *testing.T) {
 		s1 := S1{field: 1}
 		s2 := S2{field: 1}
 		err := assertions.ToEqual(s1, s2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S1(tests_test.S1{field:1})\n" +
 			"actual  : tests_test.S2(tests_test.S2{field:1})"
 		if err == nil {
@@ -1319,7 +1319,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: 2.3}
 		s2 := S{field: 2.7}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:2.3}\n" +
 			"actual  : tests_test.S{field:2.7}\n\n" +
 			"Diff:\n" +
@@ -1367,7 +1367,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: true}
 		s2 := S{field: false}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:true}\n" +
 			"actual  : tests_test.S{field:false}\n\n" +
 			"Diff:\n" +
@@ -1400,7 +1400,7 @@ func TestToEqualStructs(t *testing.T) {
 		s1 := S1{field: true}
 		s2 := S2{field: true}
 		err := assertions.ToEqual(s1, s2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S1(tests_test.S1{field:true})\n" +
 			"actual  : tests_test.S2(tests_test.S2{field:true})"
 		if err == nil {
@@ -1439,7 +1439,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: "Hello"}
 		s2 := S{field: "Hi"}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:\"Hello\"}\n" +
 			"actual  : tests_test.S{field:\"Hi\"}\n\n" +
 			"Diff:\n" +
@@ -1472,7 +1472,7 @@ func TestToEqualStructs(t *testing.T) {
 		s1 := S1{field: "Hello"}
 		s2 := S2{field: "Hello"}
 		err := assertions.ToEqual(s1, s2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S1(tests_test.S1{field:\"Hello\"})\n" +
 			"actual  : tests_test.S2(tests_test.S2{field:\"Hello\"})"
 		if err == nil {
@@ -1511,7 +1511,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: [2]int{10, 20}}
 		s2 := S{field: [2]int{13, 17}}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:[2]int{10, 20}}\n" +
 			"actual  : tests_test.S{field:[2]int{13, 17}}\n\n" +
 			"Diff:\n" +
@@ -1547,7 +1547,7 @@ func TestToEqualStructs(t *testing.T) {
 		s1 := S1{field: [2]int{10, 20}}
 		s2 := S2{field: [2]int{10, 20}}
 		err := assertions.ToEqual(s1, s2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S1(tests_test.S1{field:[2]int{10, 20}})\n" +
 			"actual  : tests_test.S2(tests_test.S2{field:[2]int{10, 20}})"
 		if err == nil {
@@ -1586,7 +1586,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: []int{10, 20}}
 		s2 := S{field: []int{13, 17}}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:[]int{10, 20}}\n" +
 			"actual  : tests_test.S{field:[]int{13, 17}}\n\n" +
 			"Diff:\n" +
@@ -1622,7 +1622,7 @@ func TestToEqualStructs(t *testing.T) {
 		s1 := S1{field: []int{10, 20}}
 		s2 := S2{field: []int{10, 20}}
 		err := assertions.ToEqual(s1, s2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S1(tests_test.S1{field:[]int{10, 20}})\n" +
 			"actual  : tests_test.S2(tests_test.S2{field:[]int{10, 20}})"
 		if err == nil {
@@ -1666,7 +1666,7 @@ func TestToEqualStructs(t *testing.T) {
 		}
 		s1 := S{field: 2}
 		s2 := S{field: 16}
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: tests_test.S{field:2}\n" +
 			"actual  : tests_test.S{field:16}\n\n" +
 			"Diff:\n" +
@@ -1804,7 +1804,7 @@ func TestToEqualMaps(t *testing.T) {
 		map1 := map[string]int{"k1": 2}
 		map2 := map[string]int{"k1": 3}
 		err := assertions.ToEqual(map1, map2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: map[string]int{\"k1\":2}\n" +
 			"actual  : map[string]int{\"k1\":3}\n\n" +
 			"Diff:\n" +
@@ -1830,7 +1830,7 @@ func TestToEqualMaps(t *testing.T) {
 		map1 := map[string]int{"k1": 2}
 		map2 := map[string]int{"k2": 2}
 		err := assertions.ToEqual(map1, map2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: map[string]int{\"k1\":2}\n" +
 			"actual  : map[string]int{\"k2\":2}\n\n" +
 			"Diff:\n" +
@@ -1856,7 +1856,7 @@ func TestToEqualMaps(t *testing.T) {
 		map1 := map[int]int{1: 7}
 		map2 := map[int]int{1: 2}
 		err := assertions.ToEqual(map1, map2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: map[int]int{1:7}\n" +
 			"actual  : map[int]int{1:2}\n\n" +
 			"Diff:\n" +
@@ -1882,7 +1882,7 @@ func TestToEqualMaps(t *testing.T) {
 		map1 := map[bool]string{true: "true"}
 		map2 := map[bool]string{true: "false"}
 		err := assertions.ToEqual(map1, map2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: map[bool]string{true:\"true\"}\n" +
 			"actual  : map[bool]string{true:\"false\"}\n\n" +
 			"Diff:\n" +
@@ -1909,7 +1909,7 @@ func TestToEqualMaps(t *testing.T) {
 		map2 := map[string][]int{"k": {3}}
 		err := assertions.ToEqual(map1, map2)
 
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: map[string][]int{\"k\":[]int{2}}\n" +
 			"actual  : map[string][]int{\"k\":[]int{3}}\n\n" +
 			"Diff:\n" +
@@ -1952,7 +1952,7 @@ func TestNil(t *testing.T) {
 		var ptr1 *int32 = nil
 		var ptr2 *int64 = nil
 		err := assertions.ToEqual(ptr1, ptr2)
-		expectedErrorMsg := "Not equal:\n" +
+		expectedErrorMsg := "not equal:\n" +
 			"expected: *int32((*int32)(nil))\n" +
 			"actual  : *int64((*int64)(nil))"
 		if err == nil {
