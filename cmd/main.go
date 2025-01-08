@@ -31,7 +31,7 @@ func Main(extraCmdArgs []string) int {
 	}
 	testCmd.Wait()
 	router.RouteTestingFinishedEvent(testCmd.RunsTestsConcurrently())
-	return 0
+	return testCmd.ExitCode()
 }
 
 func setup() *Router {

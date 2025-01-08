@@ -95,3 +95,7 @@ func (t *TestCmd) NonVerbose() *TestCmd {
 	}
 	return t
 }
+
+func (t *TestCmd) ExitCode() int {
+	return t.cmd.ProcessState.ExitCode()
+}
