@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"log"
+	"os"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
@@ -36,8 +37,11 @@ func Main(extraCmdArgs []string) int {
 
 func setup() *Router {
 	consoleWidth, consoleHeight := consolesize.GetConsoleSize()
+	isRunnignInCI := os.Getenv("CI") != ""
 	var ansiTerminal terminal.AnsiTerminal
-	if consoleHeight != 0 {
+	if isRunnignInCI {
+		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
+	} else if consoleHeight != 0 {
 		ansiTerminal = terminal.NewBoundedAnsiTerminal(consoleWidth, consoleHeight)
 	} else {
 		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
