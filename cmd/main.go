@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 
@@ -38,6 +39,7 @@ func Main(extraCmdArgs []string) int {
 func setup() *Router {
 	consoleWidth, consoleHeight := consolesize.GetConsoleSize()
 	isRunnignInCI := os.Getenv("CI") != ""
+	fmt.Println(os.Getenv("CI"), isRunnignInCI)
 	var ansiTerminal terminal.AnsiTerminal
 	if isRunnignInCI {
 		ansiTerminal = terminal.NewUnboundedAnsiTerminal()
