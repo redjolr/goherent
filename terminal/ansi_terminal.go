@@ -27,7 +27,7 @@ func NewUnboundedAnsiTerminal() AnsiTerminal {
 }
 
 func (at *AnsiTerminal) IsBounded() bool {
-	return at.height != -1
+	return at.height < math.MaxInt
 }
 
 func (at *AnsiTerminal) Print(text string) {
