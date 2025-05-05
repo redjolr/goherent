@@ -34,6 +34,13 @@ tasks:
     dir: ./.
     cmds:
       - go test ./... {{.CLI_ARGS}} 
+    
+  local-goherent:
+    run: always
+    deps: [prerequisites]
+    dir: ./.
+    cmds:
+      - go run main.go {{.CLI_ARGS}}
 
   goherent:
     run: always

@@ -46,11 +46,11 @@ func (t *TestCmd) Exec() *TestCmd {
 	stdout, err := t.cmd.StdoutPipe()
 
 	if err != nil {
-		panic("Error opening stdout pipe.")
+		panic("Error opening stdout pipe." + err.Error())
 	}
 	err = t.cmd.Start()
 	if err != nil {
-		panic("Could not start command.")
+		panic("Could not start command." + err.Error())
 	}
 	t.scanner = bufio.NewScanner(stdout)
 	t.scanner.Split(bufio.ScanLines)

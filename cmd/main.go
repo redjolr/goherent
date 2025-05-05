@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
+	"os/exec"
+	"slices"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
@@ -13,6 +16,17 @@ import (
 )
 
 func Main(extraCmdArgs []string) int {
+	if os.Getenv("CI") == "true" {
+		args := slices.Concat([]string{"test"}, extraCmdArgs)
+		cmd := exec.Command("go", args...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "command failed: %v\n", err)
+		}
+		return cmd.ProcessState.ExitCode()
+	}
+
 	router := setup()
 
 	testCmd := NewTestCmd(extraCmdArgs)
