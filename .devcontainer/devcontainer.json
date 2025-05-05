@@ -11,7 +11,7 @@
     "DOCKER_TLS_CERTDIR": ""
   },
 	"mounts": [
-		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh",
+		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/tmp/ssh-host,consistency=cached",
 		"type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig"
 	],
 	"customizations": {
