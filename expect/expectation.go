@@ -166,3 +166,12 @@ func (e *expectation) ToBeNegative() {
 		e.t.Fail()
 	}
 }
+
+func (e *expectation) ToHaveLength(length int) {
+	if err := assertions.ToHaveLength(e.checkExpectationAgainst, length); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
