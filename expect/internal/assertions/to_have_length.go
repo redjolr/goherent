@@ -16,7 +16,7 @@ func ToHaveLength(v any, expectedLength int) error {
 		if actualLength == expectedLength {
 			return nil
 		}
-		return fmt.Errorf("expected lenght: %d. actual length: %d ", expectedLength, actualLength)
+		return fmt.Errorf("expected length: %d. actual length: %d ", expectedLength, actualLength)
 	default:
 		typeName := reflect.TypeOf(v).Name()
 		return fmt.Errorf("type %v cannot be passed to the len() function, so it does not have a length", typeName)
