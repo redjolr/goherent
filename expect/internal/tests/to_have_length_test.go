@@ -6,7 +6,7 @@ import (
 	"github.com/redjolr/goherent/expect/internal/assertions"
 )
 
-func TestToHaveLengthStrings(t *testing.T) {
+func TestToHaveLength(t *testing.T) {
 	tests := []struct {
 		name      string
 		value     any
