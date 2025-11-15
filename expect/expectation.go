@@ -25,6 +25,15 @@ func (e *expectation) ToEqual(actual any) {
 	}
 }
 
+func (e *expectation) NotToEqual(actual any) {
+	if err := assertions.NotToEqual(e.checkExpectationAgainst, actual); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
 func (e *expectation) ToContain(containee any) {
 	if err := assertions.ToContain(e.checkExpectationAgainst, containee); err != nil {
 		_, file, line, _ := runtime.Caller(1)
