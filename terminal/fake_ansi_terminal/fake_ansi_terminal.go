@@ -96,17 +96,55 @@ func (fat *FakeAnsiTerminal) Print(t string) {
 		}
 
 		if curSequence.IsPrintable() {
-			if fat.coords.X >= len(fat.lines[fat.coords.Y]) {
-				emptySpacesToAddCount := fat.coords.X - len(fat.lines[fat.coords.Y])
-				emptySpacesToAdd := strings.Split(strings.Repeat(" ", emptySpacesToAddCount), "")
-				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], emptySpacesToAdd...)
-				fat.lines[fat.coords.Y] = append(fat.lines[fat.coords.Y], curSequence.Value())
-				fat.coords.OffsetX(1)
-			} else {
-				fat.lines[fat.coords.Y][fat.coords.X] = curSequence.Value()
-				fat.coords.OffsetX(1)
-			}
+			fat.writeGlyph(curSequence.Value())
 		}
+	}
+}
+
+// wideCharContinuation is the placeholder stored in the second cell of a
+// double-width glyph (emoji, CJK). A real terminal advances the cursor by two
+// columns for such a glyph, so the fake reserves two slice cells for it: the
+// glyph itself, followed by this sentinel. Text() renders the sentinel as
+// nothing.
+const wideCharContinuation = "\x00"
+
+// writeGlyph places a single printable glyph at the cursor, modelling the cell
+// width of a real terminal: a double-width glyph occupies two columns, and
+// overwriting one half of an existing wide glyph blanks its orphaned partner.
+func (fat *FakeAnsiTerminal) writeGlyph(glyph string) {
+	width := displayWidth(glyph)
+	line := fat.coords.Y
+	col := fat.coords.X
+	fat.padLineTo(line, col+width)
+
+	// Landing on the right half of a wide glyph strands its start cell.
+	if col-1 >= 0 && fat.lines[line][col] == wideCharContinuation {
+		fat.lines[line][col-1] = " "
+	}
+	// Writing over the start of a wide glyph strands its continuation cell,
+	// unless we are about to overwrite that cell ourselves.
+	for j := col; j <= col+width-1; j++ {
+		partner := j + 1
+		if displayWidth(fat.lines[line][j]) == 2 &&
+			partner < len(fat.lines[line]) &&
+			fat.lines[line][partner] == wideCharContinuation &&
+			partner > col+width-1 {
+			fat.lines[line][partner] = " "
+		}
+	}
+
+	fat.lines[line][col] = glyph
+	if width == 2 {
+		fat.lines[line][col+1] = wideCharContinuation
+	}
+	fat.coords.OffsetX(width)
+}
+
+// padLineTo right-pads a line with blank cells until it has at least length
+// cells, so that columns up to length-1 can be written.
+func (fat *FakeAnsiTerminal) padLineTo(line, length int) {
+	for len(fat.lines[line]) < length {
+		fat.lines[line] = append(fat.lines[line], " ")
 	}
 }
 
@@ -119,6 +157,9 @@ func (fat *FakeAnsiTerminal) Text() string {
 	text := ""
 	for lineIndex, line := range fat.lines {
 		for _, char := range line {
+			if char == wideCharContinuation {
+				continue
+			}
 			text += char
 		}
 		if lineIndex < len(fat.lines)-1 {

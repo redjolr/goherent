@@ -497,10 +497,12 @@ func TestPrintMoveCursorLeft(t *testing.T) {
 	Test(`
 	Given that there is a terminal with an infinite height and width
 	When we print "⏳"+MoveCursorLeftNCols(1)+"✅".
-	Then the terminal should store "✅".`, func(Expect expect.F) {
+	Then the terminal should store " ✅".
+	(⏳ is two columns wide, so MoveLeft(1) lands on its right half; printing ✅
+	there blanks the orphaned left half — exactly as a real terminal does.)`, func(Expect expect.F) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("⏳" + ansi_escape.MoveCursorLeftNCols(1) + "✅")
-		Expect(fakeTerminal.Text()).ToEqual("✅")
+		Expect(fakeTerminal.Text()).ToEqual(" ✅")
 	}, t)
 
 	Test(`
@@ -1305,5 +1307,68 @@ func TestPrintMoveCursorDown(t *testing.T) {
 		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
 		fakeTerminal.Print("A" + ansi_escape.MoveCursorDownNRows(0) + "C")
 		Expect(fakeTerminal.Text()).ToEqual("A\n C")
+	}, t)
+}
+
+func TestPrintWideCharacters(t *testing.T) {
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "⏳"
+	Then the terminal should store "⏳".`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("⏳")
+		Expect(fakeTerminal.Text()).ToEqual("⏳")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	And a wide glyph "⏳" occupies two columns
+	When we print "⏳" + MoveCursorLeftNCols(2) + "X"
+	Then the terminal should store "X " (X overwrites the whole glyph, blanking its trailing half).`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("⏳" + ansi_escape.MoveCursorLeftNCols(2) + "X")
+		Expect(fakeTerminal.Text()).ToEqual("X ")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "⏳" + MoveCursorLeftNCols(1) + "X"
+	Then the terminal should store " X" (MoveLeft(1) only reaches the glyph's right half).`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("⏳" + ansi_escape.MoveCursorLeftNCols(1) + "X")
+		Expect(fakeTerminal.Text()).ToEqual(" X")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we print "⏳⏳" + MoveCursorLeftNCols(2) + "✅"
+	Then the terminal should store "⏳✅" (MoveLeft(2) lands exactly on the second glyph's start).`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("⏳⏳" + ansi_escape.MoveCursorLeftNCols(2) + "✅")
+		Expect(fakeTerminal.Text()).ToEqual("⏳✅")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	And a CJK glyph "测" occupies two columns
+	When we print "测" + MoveCursorLeftNCols(1) + "x"
+	Then the terminal should store " x".`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("测" + ansi_escape.MoveCursorLeftNCols(1) + "x")
+		Expect(fakeTerminal.Text()).ToEqual(" x")
+	}, t)
+
+	Test(`
+	Given that there is a terminal with an infinite height and width
+	When we replay the BoundedTerminalPresenter's rune-counted overwrite of a
+	running test marker — "⏳ short" + MoveCursorLeftNCols(7) + "✅" + MoveCursorRightNCols(5)
+	Then the terminal should store " ✅short", reproducing the misalignment a real
+	terminal shows (the ⏳ was 3 cells but the presenter moved back only 2 + 5 runes).`, func(Expect expect.F) {
+		fakeTerminal := fake_ansi_terminal.NewFakeAnsiTerminal(math.MaxInt, math.MaxInt)
+		fakeTerminal.Print("⏳ short")
+		fakeTerminal.Print(ansi_escape.MoveCursorLeftNCols(7))
+		fakeTerminal.Print("✅")
+		fakeTerminal.Print(ansi_escape.MoveCursorRightNCols(5))
+		Expect(fakeTerminal.Text()).ToEqual(" ✅short")
 	}, t)
 }

@@ -38,7 +38,7 @@ func (tp BoundedTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Cte
 }
 
 func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
-	hourGlassAndSpaceLength := len(strings.Split("⏳ ", ""))
+	hourGlassAndSpaceLength := utils.DisplayWidth("⏳ ")
 	testNameLineCount := utils.StrLinesCount(ctest.Name())
 	threeDotsLineCount := len("...")
 
@@ -47,7 +47,7 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 		unprintedName := strings.Join(utils.SplitStringByNewLine(ctest.Name())[tp.terminal.Height():], "\n")
 		printedNameLines := utils.SplitStringByNewLine(printedName)
 		lastLine := printedNameLines[len(printedNameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(threeDotsLineCount + lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(tp.terminal.Height())
@@ -60,7 +60,7 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(testNameLineCount - 1)
@@ -78,7 +78,7 @@ func (tp BoundedTerminalPresenter) Print(output string) {
 }
 
 func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
-	hourGlassAndSpaceLength := len(strings.Split("⏳ ", ""))
+	hourGlassAndSpaceLength := utils.DisplayWidth("⏳ ")
 	testNameLineCount := utils.StrLinesCount(ctest.Name())
 	threeDotsLineCount := len("...")
 
@@ -87,7 +87,7 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 		unprintedName := strings.Join(utils.SplitStringByNewLine(ctest.Name())[tp.terminal.Height():], "\n")
 		printedNameLines := utils.SplitStringByNewLine(printedName)
 		lastLine := printedNameLines[len(printedNameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(threeDotsLineCount + lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(tp.terminal.Height())
@@ -100,7 +100,7 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(testNameLineCount - 1)
@@ -114,7 +114,7 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 }
 
 func (tp BoundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
-	hourGlassAndSpaceLength := len(strings.Split("⏳ ", ""))
+	hourGlassAndSpaceLength := utils.DisplayWidth("⏳ ")
 	testNameLineCount := utils.StrLinesCount(ctest.Name())
 	threeDotsLineCount := len("...")
 
@@ -123,7 +123,7 @@ func (tp BoundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 		unprintedName := strings.Join(utils.SplitStringByNewLine(ctest.Name())[tp.terminal.Height():], "\n")
 		printedNameLines := utils.SplitStringByNewLine(printedName)
 		lastLine := printedNameLines[len(printedNameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(threeDotsLineCount + lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(tp.terminal.Height())
@@ -136,7 +136,7 @@ func (tp BoundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
-		lastLineLength := len(strings.Split(lastLine, ""))
+		lastLineLength := utils.DisplayWidth(lastLine)
 		tp.terminal.MoveLeft(lastLineLength + hourGlassAndSpaceLength)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveUp(testNameLineCount - 1)

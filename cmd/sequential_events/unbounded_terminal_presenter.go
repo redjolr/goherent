@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
+	"github.com/redjolr/goherent/internal/utils"
 	"github.com/redjolr/goherent/terminal"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 )
@@ -31,17 +32,17 @@ func (tp UnboundedTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.C
 }
 
 func (tp UnboundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
-	tp.terminal.MoveLeft(1)
+	tp.terminal.MoveLeft(utils.DisplayWidth("⏳"))
 	tp.terminal.Print("✅\n")
 }
 
 func (tp UnboundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
-	tp.terminal.MoveLeft(1)
+	tp.terminal.MoveLeft(utils.DisplayWidth("⏳"))
 	tp.terminal.Print("❌\n")
 }
 
 func (tp UnboundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
-	tp.terminal.MoveLeft(1)
+	tp.terminal.MoveLeft(utils.DisplayWidth("⏳"))
 	tp.terminal.Print("⏩\n")
 }
 
