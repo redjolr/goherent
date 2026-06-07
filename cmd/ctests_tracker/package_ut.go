@@ -132,6 +132,15 @@ func (packageUt *PackageUnderTest) CtestsCount() int {
 	return len(packageUt.ctests)
 }
 
+// Ctests returns pointers to the package's tests, in insertion order.
+func (packageUt *PackageUnderTest) Ctests() []*Ctest {
+	ctests := make([]*Ctest, len(packageUt.ctests))
+	for i := range packageUt.ctests {
+		ctests[i] = &packageUt.ctests[i]
+	}
+	return ctests
+}
+
 func (p *PackageUnderTest) RecordOutputEvtOfParentTest(evt events.CtestOutputEvent) {
 	p.outputEvtsOfParentTests = append(p.outputEvtsOfParentTests, evt)
 }

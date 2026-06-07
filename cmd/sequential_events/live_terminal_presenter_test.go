@@ -1,6 +1,7 @@
 package sequential_events_test
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -226,5 +227,31 @@ func TestLiveFinalSummaryReplacesFooter(t *testing.T) {
 			"Packages: 1 passed, 1 total\n"+
 			"Tests:    1 passed, 1 total (100% passed)\n"+
 			"Time:     1.200s\n"+
-			"Ran all tests.")
+			"Ran all tests.\n\n"+
+			"🐢 1 slowest test:\n"+
+			"  (10ms) ParentTest/testName")
+}
+
+// At the end of a run the slowest tests are listed, slowest first. vtfake strips
+// the (zero-width) color codes, so only the plain durations and names show.
+func TestLiveSlowestTestsReport(t *testing.T) {
+	interactor, term := setupLive(80, 40)
+	t1 := time.Now()
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(t1))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/fast", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/fast", "somePackage", 0.02))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/slow", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/slow", "somePackage", 1.5))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/medium", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/medium", "somePackage", 0.5))
+	interactor.HandleTestingFinished(events.NewTestingFinishedEvent(t1.Add(2 * time.Second)))
+
+	got := term.Text()
+	want := "🐢 3 slowest tests:\n" +
+		"  (1.50s) ParentTest/slow\n" +
+		"  (500ms) ParentTest/medium\n" +
+		"  (20ms) ParentTest/fast"
+	if !strings.Contains(got, want) {
+		t.Errorf("slowest report missing or out of order:\n got  = %q\n want substring = %q", got, want)
+	}
 }

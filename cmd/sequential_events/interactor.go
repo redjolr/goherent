@@ -2,37 +2,14 @@ package sequential_events
 
 import (
 	"errors"
-	"time"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/cmd/events"
 )
 
-// goReportedElapsedResolutionS is the granularity (in seconds) of the per-test
-// Elapsed that Go's test2json reports — it formats test times as "%.2fs", so
-// anything under 5ms rounds to 0.00s. Below this we recover a finer-grained
-// duration ourselves from the run→pass/fail event timestamps.
-const goReportedElapsedResolutionS = 0.01
-
-// ctestDuration returns the test's elapsed time in seconds. It trusts Go's
-// reported Elapsed when it carries information (>= 0.01s), and otherwise falls
-// back to the wall-clock delta between the run event and this end event, which
-// carry full-precision timestamps. The fallback can overestimate t.Parallel()
-// tests (they sit paused between those events), but those are not the sub-10ms
-// tests this branch handles.
-func ctestDuration(ctest *ctests_tracker.Ctest, endTime time.Time, reportedElapsed float64) float64 {
-	if reportedElapsed >= goReportedElapsedResolutionS {
-		return reportedElapsed
-	}
-	ranAt := ctest.RanAt()
-	if ranAt.IsZero() {
-		return reportedElapsed
-	}
-	if measured := endTime.Sub(ranAt).Seconds(); measured > reportedElapsed {
-		return measured
-	}
-	return reportedElapsed
-}
+// slowestTestsReportCount is how many of the slowest tests to list at the end of
+// a run.
+const slowestTestsReportCount = 3
 
 type Interactor struct {
 	output        OutputPort
@@ -79,9 +56,8 @@ func (i *Interactor) HandleCtestPassedEvt(evt events.CtestPassedEvent) error {
 		return nil
 	}
 	if existingCtest.IsRunning() {
-		duration := ctestDuration(existingCtest, evt.Time, evt.Elapsed)
 		existingCtest.MarkAsPassed(evt)
-		i.output.CtestPassed(existingCtest, duration)
+		i.output.CtestPassed(existingCtest, existingCtest.DurationS())
 		return nil
 	}
 	return nil
@@ -104,9 +80,8 @@ func (i *Interactor) HandleCtestFailedEvt(evt events.CtestFailedEvent) error {
 		return errors.New("No running test found for test pass event.")
 	}
 
-	duration := ctestDuration(existingCtest, evt.Time, evt.Elapsed)
 	existingCtest.MarkAsFailed(evt)
-	i.output.CtestFailed(existingCtest, duration)
+	i.output.CtestFailed(existingCtest, existingCtest.DurationS())
 
 	if existingCtest.ContainsOutput() {
 		i.output.CtestOutput(existingCtest)
@@ -164,4 +139,9 @@ func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 		i.output.FailedTestsList(failedPackages)
 	}
 	i.output.TestingFinishedSummary(i.ctestsTracker.TestingSummary())
+
+	slowestTests := i.ctestsTracker.SlowestCtests(slowestTestsReportCount)
+	if len(slowestTests) > 0 {
+		i.output.SlowestTests(slowestTests)
+	}
 }

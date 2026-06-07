@@ -358,6 +358,35 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 	}
 }
 
+// SlowestCtests returns up to n finished (passed or failed) tests with a
+// measurable duration, ordered slowest first. Ties keep insertion order (by
+// package, then by the order tests appeared in each package). Skipped tests and
+// tests with a non-positive duration are excluded.
+func (tracker *CtestsTracker) SlowestCtests(n int) []*Ctest {
+	timed := []*Ctest{}
+	for _, packageUt := range tracker.packagesUnderTest {
+		for _, ctest := range packageUt.Ctests() {
+			if (ctest.HasPassed() || ctest.HasFailed()) && ctest.DurationS() > 0 {
+				timed = append(timed, ctest)
+			}
+		}
+	}
+	slices.SortStableFunc(timed, func(a, b *Ctest) int {
+		switch {
+		case a.DurationS() > b.DurationS():
+			return -1
+		case a.DurationS() < b.DurationS():
+			return 1
+		default:
+			return 0
+		}
+	})
+	if n >= 0 && len(timed) > n {
+		timed = timed[:n]
+	}
+	return timed
+}
+
 func (tracker *CtestsTracker) replacePackageWith(packageName string, replacement *PackageUnderTest) {
 	packageIndex := slices.IndexFunc(tracker.packagesUnderTest, func(packUt *PackageUnderTest) bool {
 		return packUt.name == packageName

@@ -243,6 +243,47 @@ func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary
 	)
 }
 
+// slowTestThresholdS is the elapsed time (in seconds) at or above which a test's
+// duration is highlighted in yellow in the slowest-tests report.
+const slowTestThresholdS = 1.0
+
+func (p *Presenter) SlowestTests(tests []*ctests_tracker.Ctest) {
+	if len(tests) == 0 {
+		return
+	}
+	p.terminal.Print("\n\n" + buildSlowestTestsReport(tests))
+}
+
+// buildSlowestTestsReport renders the "N slowest tests" block shown at the end
+// of a run: a header followed by one line per test with its (colored) duration
+// and the first line of its name.
+func buildSlowestTestsReport(tests []*ctests_tracker.Ctest) string {
+	noun := "tests"
+	if len(tests) == 1 {
+		noun = "test"
+	}
+	report := fmt.Sprintf("🐢 %d slowest %s:", len(tests), noun)
+	for _, ctest := range tests {
+		report += "\n  " + slowestDurationLabel(ctest.DurationS()) + " " + firstLine(ctest.Name())
+	}
+	return report
+}
+
+func slowestDurationLabel(seconds float64) string {
+	color := ansi_escape.DIM
+	if seconds >= slowTestThresholdS {
+		color = ansi_escape.YELLOW
+	}
+	return color + "(" + utils.FormatDuration(seconds) + ")" + ansi_escape.COLOR_RESET
+}
+
+func firstLine(s string) string {
+	if i := strings.IndexByte(s, '\n'); i >= 0 {
+		return s[:i]
+	}
+	return s
+}
+
 func (p *Presenter) EraseScreen() {
 	p.terminal.Print(ansi_escape.CURSOR_TO_HOME)
 	p.terminal.Print(ansi_escape.ERASE_SCREEN)

@@ -7,6 +7,10 @@ import (
 	"github.com/redjolr/goherent/cmd/events"
 )
 
+// slowestTestsReportCount is how many of the slowest tests to list at the end of
+// a run.
+const slowestTestsReportCount = 3
+
 type Interactor struct {
 	output        OutputPort
 	ctestsTracker *ctests_tracker.CtestsTracker
@@ -152,4 +156,5 @@ func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 		i.ctestsTracker.FinishedPackages(),
 	)
 	i.output.TestingFinishedSummary(i.ctestsTracker.TestingSummary())
+	i.output.SlowestTests(i.ctestsTracker.SlowestCtests(slowestTestsReportCount))
 }

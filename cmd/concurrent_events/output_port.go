@@ -16,6 +16,7 @@ type OutputPort interface {
 	RunningTestsSummary(testingSummary ctests_tracker.TestingSummary)
 	TestingFinishedSummaryLabel()
 	TestingFinishedSummary(testingSummary ctests_tracker.TestingSummary)
+	SlowestTests(tests []*ctests_tracker.Ctest)
 	IsViewPortLarge() bool
 	AdvanceSpinner()
 }

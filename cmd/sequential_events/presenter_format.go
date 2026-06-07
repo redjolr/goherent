@@ -2,6 +2,7 @@ package sequential_events
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/redjolr/goherent/cmd/ctests_tracker"
 	"github.com/redjolr/goherent/internal/utils"
@@ -39,6 +40,41 @@ func testingVerdictHeadline(summary ctests_tracker.TestingSummary) string {
 	default:
 		return ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET
 	}
+}
+
+// buildSlowestTestsReport renders the "N slowest tests" block shown at the end
+// of a run: a header followed by one line per test with its (colored) duration
+// and the first line of its name. Returns "" when there are no timed tests.
+func buildSlowestTestsReport(tests []*ctests_tracker.Ctest) string {
+	if len(tests) == 0 {
+		return ""
+	}
+	noun := "tests"
+	if len(tests) == 1 {
+		noun = "test"
+	}
+	report := fmt.Sprintf("🐢 %d slowest %s:", len(tests), noun)
+	for _, ctest := range tests {
+		report += "\n  " + slowestDurationLabel(ctest.DurationS()) + " " + firstLine(ctest.Name())
+	}
+	return report
+}
+
+// slowestDurationLabel formats a "(12ms)" label for the slowest-tests report,
+// yellow for slow tests (see slowTestThresholdS) and dimmed otherwise.
+func slowestDurationLabel(seconds float64) string {
+	color := ansi_escape.DIM
+	if seconds >= slowTestThresholdS {
+		color = ansi_escape.YELLOW
+	}
+	return color + "(" + utils.FormatDuration(seconds) + ")" + ansi_escape.COLOR_RESET
+}
+
+func firstLine(s string) string {
+	if i := strings.IndexByte(s, '\n'); i >= 0 {
+		return s[:i]
+	}
+	return s
 }
 
 // passRateLabel returns a dimmed " (NN% passed)" suffix for the tests summary

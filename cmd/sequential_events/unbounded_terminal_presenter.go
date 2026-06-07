@@ -67,6 +67,10 @@ func (tp UnboundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tr
 	tp.terminal.Print("\n")
 }
 
+func (tp UnboundedTerminalPresenter) SlowestTests(tests []*ctests_tracker.Ctest) {
+	tp.terminal.Print("\n\n" + buildSlowestTestsReport(tests))
+}
+
 // Tick is a no-op: piped/non-TTY output has no animated live region.
 func (tp UnboundedTerminalPresenter) Tick() {}
 

@@ -2951,7 +2951,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.\n",
+				"Ran all tests.\n" +
+				"\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 
@@ -3030,7 +3031,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 
@@ -3074,7 +3076,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 
@@ -3117,7 +3120,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.\n",
+				"Ran all tests.\n" +
+				"\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/test 1",
 		)
 	}, t)
 
@@ -3239,7 +3243,10 @@ func TestTestingFinishedSummary(t *testing.T) {
 				ansi_escape.YELLOW + "7 skipped" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.GREEN + "4 passed" + ansi_escape.COLOR_RESET + ", 14 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 3 slowest tests:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName 8" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName 9" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName 12",
 		)
 	}, t)
 
@@ -3286,7 +3293,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 
@@ -3336,7 +3344,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 
@@ -3389,7 +3398,8 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName",
 		)
 	}, t)
 }

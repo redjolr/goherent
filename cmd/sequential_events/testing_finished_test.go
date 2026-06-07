@@ -93,7 +93,9 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (100% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName",
 		)
 	}, t)
 
@@ -148,7 +150,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (100% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -202,7 +207,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.GREEN + "2 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (100% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -248,7 +256,9 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName",
 		)
 	}, t)
 
@@ -306,7 +316,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -368,7 +381,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -426,7 +442,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (50% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -485,7 +504,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (50% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -673,7 +695,9 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (50% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -738,7 +762,10 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 3 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " + ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 3 total" + ansi_escape.DIM + " (33% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 2 slowest tests:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
 		)
 	}, t)
 
@@ -793,7 +820,9 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "\nPackages:" + ansi_escape.RESET_BOLD + " " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 2 total\n" +
 				ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " + ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", " + ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET + "\n" +
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.",
+				"Ran all tests." +
+				"\n\n🐢 1 slowest test:" +
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1",
 		)
 	}, t)
 }

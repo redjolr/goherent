@@ -16,5 +16,6 @@ type OutputPort interface {
 	CtestOutput(ctest *ctests_tracker.Ctest)
 	FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest)
 	TestingFinishedSummary(summary ctests_tracker.TestingSummary)
+	SlowestTests(tests []*ctests_tracker.Ctest)
 	Tick()
 }
