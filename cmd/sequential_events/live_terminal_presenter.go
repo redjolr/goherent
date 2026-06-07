@@ -37,26 +37,26 @@ func (p *LiveTerminalPresenter) PackageTestsStartedRunning(packageName string) {
 }
 
 func (p *LiveTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
-	p.running = "⏳ " + ctest.Name()
+	p.running = testLine("⏳", ctest.Name(), "")
 	p.region.SetLive(p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.passed++
 	p.running = ""
-	p.region.Render(committedResult("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render(testLine("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.failed++
 	p.running = ""
-	p.region.Render(committedResult("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render(testLine("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	p.skipped++
 	p.running = ""
-	p.region.Render(committedResult("⏩", ctest.Name(), ""), p.liveBlock())
+	p.region.Render(testLine("⏩", ctest.Name(), ""), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
@@ -109,15 +109,32 @@ func (p *LiveTerminalPresenter) footer() string {
 	return strings.Join(parts, " · ")
 }
 
-// committedResult formats a finished test line, placing the duration on the
-// first line of a (possibly multi-line) test name.
-func committedResult(icon, name, durationLabel string) string {
-	lines := utils.SplitStringByNewLine(name)
-	out := icon + " " + lines[0] + durationLabel
-	if len(lines) > 1 {
-		out += "\n" + strings.Join(lines[1:], "\n")
+// testLine formats one test's line(s): the icon and the test name's first line
+// (with the duration appended), then the remaining name lines. Leading and
+// trailing blank lines in the test message are stripped so every test block is
+// separated by exactly one newline, regardless of stray newlines at the start or
+// end of the message.
+func testLine(icon, name, durationLabel string) string {
+	head, body := cleanNameLines(name)
+	out := icon + " " + head + durationLabel
+	if len(body) > 0 {
+		out += "\n" + strings.Join(body, "\n")
 	}
 	return out
+}
+
+// cleanNameLines splits a (possibly multi-line) test name into its first line and
+// the remaining body lines, dropping blank lines at the start of the body and at
+// the very end.
+func cleanNameLines(name string) (head string, body []string) {
+	name = strings.TrimRight(name, " \t\n")
+	lines := utils.SplitStringByNewLine(name)
+	head = lines[0]
+	body = lines[1:]
+	for len(body) > 0 && strings.TrimSpace(body[0]) == "" {
+		body = body[1:]
+	}
+	return head, body
 }
 
 func buildFailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) string {

@@ -133,6 +133,51 @@ func TestLiveMultiLineName(t *testing.T) {
 			"1 passed")
 }
 
+// A trailing newline in the test message must not leave a blank line after the
+// test block.
+func TestLiveTrimsTrailingNewlineInName(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/Func\n  Given X\n", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n  Given X\n", "somePackage", 0.01))
+
+	wantText(t, term,
+		"🚀 Starting...\n\n📦 somePackage\n"+
+			"✅ ParentTest/Func (10ms)\n  Given X\n"+
+			"1 passed")
+}
+
+// Extra leading blank lines in the test message must not leave a blank line
+// after the icon line.
+func TestLiveTrimsLeadingBlankLinesInName(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/Func\n\n  Given X", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n\n  Given X", "somePackage", 0.01))
+
+	wantText(t, term,
+		"🚀 Starting...\n\n📦 somePackage\n"+
+			"✅ ParentTest/Func (10ms)\n  Given X\n"+
+			"1 passed")
+}
+
+// Regardless of stray newlines in individual messages, consecutive test blocks
+// are separated by exactly one newline.
+func TestLiveUniformSpacingBetweenTests(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/T1\n  msg one\n", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/T1\n  msg one\n", "somePackage", 0.01))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/T2\n  msg two", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/T2\n  msg two", "somePackage", 0.01))
+
+	wantText(t, term,
+		"🚀 Starting...\n\n📦 somePackage\n"+
+			"✅ ParentTest/T1 (10ms)\n  msg one\n"+
+			"✅ ParentTest/T2 (10ms)\n  msg two\n"+
+			"2 passed")
+}
+
 // At TestingFinished the live footer is dropped and the final summary is
 // committed as permanent output.
 func TestLiveFinalSummaryReplacesFooter(t *testing.T) {
