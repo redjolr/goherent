@@ -17,11 +17,12 @@ import (
 // footer that updates in place. It carries no cursor bookkeeping of its own —
 // LiveRegion owns that — so it just composes strings.
 type LiveTerminalPresenter struct {
-	region  *liveregion.LiveRegion
-	passed  int
-	failed  int
-	skipped int
-	running string // the running test's line ("⏳ name"), or "" when none is running
+	region       *liveregion.LiveRegion
+	passed       int
+	failed       int
+	skipped      int
+	runningName  string // raw name of the running test, or "" when none is running
+	spinnerFrame int
 }
 
 func NewLiveTerminalPresenter(term terminal.Terminal) *LiveTerminalPresenter {
@@ -37,25 +38,35 @@ func (p *LiveTerminalPresenter) PackageTestsStartedRunning(packageName string) {
 }
 
 func (p *LiveTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
-	p.running = testLine("⏳", ctest.Name(), "")
+	p.runningName = ctest.Name()
+	p.region.SetLive(p.liveBlock())
+}
+
+// Tick advances the running test's spinner and redraws the live block in place.
+// It is a no-op when no test is running.
+func (p *LiveTerminalPresenter) Tick() {
+	if p.runningName == "" {
+		return
+	}
+	p.spinnerFrame++
 	p.region.SetLive(p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.passed++
-	p.running = ""
+	p.runningName = ""
 	p.region.Render("\n"+testLine("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.failed++
-	p.running = ""
+	p.runningName = ""
 	p.region.Render("\n"+testLine("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	p.skipped++
-	p.running = ""
+	p.runningName = ""
 	p.region.Render("\n"+testLine("⏩", ctest.Name(), ""), p.liveBlock())
 }
 
@@ -86,16 +97,25 @@ func (p *LiveTerminalPresenter) TestingFinishedSummary(summary ctests_tracker.Te
 // the run is uniformly separated.
 func (p *LiveTerminalPresenter) liveBlock() string {
 	f := p.footer()
-	switch {
-	case p.running != "" && f != "":
-		return "\n" + p.running + "\n\n" + f
-	case p.running != "":
-		return "\n" + p.running
-	case f != "":
+	if p.runningName == "" {
+		if f == "" {
+			return ""
+		}
 		return "\n" + f
-	default:
-		return ""
 	}
+	running := testLine(p.spinnerIcon(), p.runningName, "")
+	if f == "" {
+		return "\n" + running
+	}
+	return "\n" + running + "\n\n" + f
+}
+
+// spinnerFrames animate the running test's icon. They are double-width so the
+// test name stays aligned with the finished ✅/❌/⏩ lines.
+var spinnerFrames = []string{"🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛"}
+
+func (p *LiveTerminalPresenter) spinnerIcon() string {
+	return spinnerFrames[p.spinnerFrame%len(spinnerFrames)]
 }
 
 func (p *LiveTerminalPresenter) footer() string {

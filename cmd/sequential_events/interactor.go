@@ -151,6 +151,12 @@ func (i *Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
 	i.output.TestingStarted()
 }
 
+// HandleTick drives a periodic redraw so the running test's spinner animates
+// even while a single test runs for a while with no events.
+func (i *Interactor) HandleTick() {
+	i.output.Tick()
+}
+
 func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 	i.ctestsTracker.TestingFinished(evt)
 	failedPackages := i.ctestsTracker.FinishedFailedPackages()

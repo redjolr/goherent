@@ -77,6 +77,8 @@ func (r *Router) RouteTestingStartedEvent(concurrently bool) {
 func (r *Router) RouteTick(concurrently bool) {
 	if concurrently {
 		r.concurrent.Tick()
+	} else {
+		r.sequential.Tick()
 	}
 }
 

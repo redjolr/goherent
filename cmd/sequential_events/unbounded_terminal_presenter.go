@@ -67,6 +67,9 @@ func (tp UnboundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tr
 	tp.terminal.Print("\n")
 }
 
+// Tick is a no-op: piped/non-TTY output has no animated live region.
+func (tp UnboundedTerminalPresenter) Tick() {}
+
 func (tp UnboundedTerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }

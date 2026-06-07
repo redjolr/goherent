@@ -18,6 +18,11 @@ func NewRouter(
 	}
 }
 
+// Tick drives a periodic redraw (animates the running test's spinner).
+func (router Router) Tick() {
+	router.interactor.HandleTick()
+}
+
 func (router Router) Route(unknownEvt any) {
 
 	switch evt := unknownEvt.(type) {

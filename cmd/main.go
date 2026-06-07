@@ -79,7 +79,14 @@ func Main(extraCmdArgs []string) int {
 		close(jsonEvents)
 	}()
 
-	ticker := time.NewTicker(1 * time.Second)
+	// Sequential runs animate a per-test spinner, so they need a fast tick;
+	// concurrent runs only refresh the elapsed-time line, which reads cleanly
+	// once a second.
+	tickInterval := 1 * time.Second
+	if !concurrently {
+		tickInterval = 125 * time.Millisecond
+	}
+	ticker := time.NewTicker(tickInterval)
 	reading := true
 	for reading {
 		select {

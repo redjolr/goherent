@@ -57,14 +57,41 @@ func wantText(t *testing.T, term *vtfake.Terminal, want string) {
 	}
 }
 
-// While a test runs, the live block shows ⏳ + the running test (footer is empty
-// until something finishes).
+// While a test runs, the live block shows the spinner (first frame) + the
+// running test (footer is empty until something finishes).
 func TestLiveRunningTestIsShown(t *testing.T) {
 	interactor, term := setupLive(80, 30)
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
 	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
 
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n⏳ ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/testName")
+}
+
+// Each tick advances the running test's spinner frame, redrawn in place.
+func TestLiveSpinnerAdvancesOnTick(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
+
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/testName")
+	interactor.HandleTick()
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕑 ParentTest/testName")
+	interactor.HandleTick()
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕒 ParentTest/testName")
+}
+
+// A tick does nothing when no test is running.
+func TestLiveTickIsNoopWhenNoTestRunning(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
+	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/testName", "somePackage", 0.01))
+
+	before := term.Text()
+	interactor.HandleTick()
+	if after := term.Text(); after != before {
+		t.Errorf("tick changed output with no test running:\n before = %q\n after  = %q", before, after)
+	}
 }
 
 // A passed test is committed with its duration on the first line, and the footer
