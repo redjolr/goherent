@@ -44,19 +44,19 @@ func (p *LiveTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest)
 func (p *LiveTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.passed++
 	p.running = ""
-	p.region.Render(testLine("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render("\n"+testLine("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.failed++
 	p.running = ""
-	p.region.Render(testLine("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render("\n"+testLine("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	p.skipped++
 	p.running = ""
-	p.region.Render(testLine("⏩", ctest.Name(), ""), p.liveBlock())
+	p.region.Render("\n"+testLine("⏩", ctest.Name(), ""), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
@@ -73,25 +73,28 @@ func (p *LiveTerminalPresenter) Error() {
 
 func (p *LiveTerminalPresenter) FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) {
 	// Testing is finishing: drop the live footer and commit the failed-tests list.
-	p.region.Render(buildFailedTestsList(failedPackages), "")
+	p.region.Render("\n"+buildFailedTestsList(failedPackages), "")
 }
 
 func (p *LiveTerminalPresenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
 	// Drop the live footer and commit the final summary as permanent output.
-	p.region.Render(buildFinalSummary(summary), "")
+	p.region.Render("\n"+buildFinalSummary(summary), "")
 }
 
 // liveBlock is the content of the live region: the running test (if any) and the
-// running tally footer, separated by a blank line.
+// running tally footer. Each part is preceded by a blank line so every entry in
+// the run is uniformly separated.
 func (p *LiveTerminalPresenter) liveBlock() string {
 	f := p.footer()
 	switch {
-	case p.running == "":
-		return f
-	case f == "":
-		return p.running
+	case p.running != "" && f != "":
+		return "\n" + p.running + "\n\n" + f
+	case p.running != "":
+		return "\n" + p.running
+	case f != "":
+		return "\n" + f
 	default:
-		return p.running + "\n\n" + f
+		return ""
 	}
 }
 

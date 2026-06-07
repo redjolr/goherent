@@ -14,6 +14,9 @@ import (
 // codes as zero-width and does not render them, so the assertions are on the
 // plain geometry (what occupies the screen). The presenter still emits the
 // colors; their bytes just aren't part of vtfake's rendered text.
+//
+// Every entry (package header, each test, the footer) is separated by a blank
+// line.
 
 func setupLive(width, height int) (*sequential_events.Interactor, *vtfake.Terminal) {
 	term := vtfake.New(width, height)
@@ -61,7 +64,7 @@ func TestLiveRunningTestIsShown(t *testing.T) {
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
 	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
 
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n⏳ ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n⏳ ParentTest/testName")
 }
 
 // A passed test is committed with its duration on the first line, and the footer
@@ -73,12 +76,13 @@ func TestLivePassedTest(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/testName", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/testName (10ms)\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/testName (10ms)\n\n"+
 			"1 passed")
 }
 
-// Two passed tests: both committed, footer counts up in place (no stacking).
+// Two passed tests: both committed, footer counts up in place (no stacking),
+// with a blank line between every entry.
 func TestLiveTwoPassedTests(t *testing.T) {
 	interactor, term := setupLive(80, 30)
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
@@ -88,9 +92,9 @@ func TestLiveTwoPassedTests(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/test2", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/test1 (10ms)\n"+
-			"✅ ParentTest/test2 (10ms)\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/test1 (10ms)\n\n"+
+			"✅ ParentTest/test2 (10ms)\n\n"+
 			"2 passed")
 }
 
@@ -102,8 +106,8 @@ func TestLiveFailedTest(t *testing.T) {
 	interactor.HandleCtestFailedEvt(failedEvt("ParentTest/testName", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"❌ ParentTest/testName (10ms)\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"❌ ParentTest/testName (10ms)\n\n"+
 			"0 passed · 1 failed")
 }
 
@@ -115,12 +119,13 @@ func TestLiveSkippedTest(t *testing.T) {
 	interactor.HandleCtestSkippedEvt(skippedEvt("ParentTest/testName", "somePackage"))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"⏩ ParentTest/testName\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"⏩ ParentTest/testName\n\n"+
 			"0 passed · 1 skipped")
 }
 
-// A multi-line BDD name keeps the duration on the first line.
+// A multi-line BDD name keeps the duration on the first line; the body lines stay
+// together (no blank line inside the block).
 func TestLiveMultiLineName(t *testing.T) {
 	interactor, term := setupLive(80, 30)
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
@@ -128,13 +133,12 @@ func TestLiveMultiLineName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\nGiven X\nThen Y", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/Func (10ms)\nGiven X\nThen Y\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/Func (10ms)\nGiven X\nThen Y\n\n"+
 			"1 passed")
 }
 
-// A trailing newline in the test message must not leave a blank line after the
-// test block.
+// A trailing newline in the test message must not add an extra blank line.
 func TestLiveTrimsTrailingNewlineInName(t *testing.T) {
 	interactor, term := setupLive(80, 30)
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
@@ -142,12 +146,12 @@ func TestLiveTrimsTrailingNewlineInName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n  Given X\n", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/Func (10ms)\n  Given X\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/Func (10ms)\n  Given X\n\n"+
 			"1 passed")
 }
 
-// Extra leading blank lines in the test message must not leave a blank line
+// Extra leading blank lines in the test message must not add an extra blank line
 // after the icon line.
 func TestLiveTrimsLeadingBlankLinesInName(t *testing.T) {
 	interactor, term := setupLive(80, 30)
@@ -156,13 +160,13 @@ func TestLiveTrimsLeadingBlankLinesInName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n\n  Given X", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/Func (10ms)\n  Given X\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/Func (10ms)\n  Given X\n\n"+
 			"1 passed")
 }
 
 // Regardless of stray newlines in individual messages, consecutive test blocks
-// are separated by exactly one newline.
+// are separated by exactly one blank line.
 func TestLiveUniformSpacingBetweenTests(t *testing.T) {
 	interactor, term := setupLive(80, 30)
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
@@ -172,9 +176,9 @@ func TestLiveUniformSpacingBetweenTests(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/T2\n  msg two", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/T1 (10ms)\n  msg one\n"+
-			"✅ ParentTest/T2 (10ms)\n  msg two\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/T1 (10ms)\n  msg one\n\n"+
+			"✅ ParentTest/T2 (10ms)\n  msg two\n\n"+
 			"2 passed")
 }
 
@@ -189,8 +193,8 @@ func TestLiveFinalSummaryReplacesFooter(t *testing.T) {
 	interactor.HandleTestingFinished(events.NewTestingFinishedEvent(t1.Add(1200 * time.Millisecond)))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n"+
-			"✅ ParentTest/testName (10ms)\n"+
+		"🚀 Starting...\n\n📦 somePackage\n\n"+
+			"✅ ParentTest/testName (10ms)\n\n"+
 			"✓ All tests passed\n"+
 			"Packages: 1 passed, 1 total\n"+
 			"Tests:    1 passed, 1 total (100% passed)\n"+
