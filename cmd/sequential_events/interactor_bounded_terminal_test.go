@@ -300,7 +300,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name",
 		)
 	}, t)
 
@@ -336,7 +336,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/multiline   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer",
 		)
 	}, t)
 
@@ -372,7 +372,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name",
 		)
 	}, t)
 
@@ -408,7 +408,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/multiline\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer",
 		)
 	}, t)
 
@@ -521,7 +521,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/The 1st multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n✅ ParentTest/The second multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/The 1st multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name\n✅ ParentTest/The second multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name",
 		)
 	}, t)
 
@@ -578,7 +578,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/multiline 1   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n✅ ParentTest/multiline 2   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer\n✅ ParentTest/multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer",
 		)
 	}, t)
 
@@ -635,7 +635,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline 1\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n✅ ParentTest/The multiline 2\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/The multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name\n✅ ParentTest/The multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name",
 		)
 	}, t)
 
@@ -692,7 +692,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/multiline 1\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n✅ ParentTest/multiline 2\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer\n✅ ParentTest/multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer",
 		)
 	}, t)
 
@@ -727,7 +727,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/testName Line1\nLine2\nLine3 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/testName Line1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3",
 		)
 	}, t)
 
@@ -763,7 +763,7 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n✅ ParentTest/testName Line1\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n✅ ParentTest/testName Line1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4",
 		)
 	}, t)
 
@@ -821,8 +821,8 @@ func TestCtestPassedEventWithBoundedTerminal(t *testing.T) {
 		// Then
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n" +
-				"✅ ParentTest/The 1st multiline\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n" +
-				"✅ ParentTest/The second multiline\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+				"✅ ParentTest/The 1st multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4\n" +
+				"✅ ParentTest/The second multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4",
 		)
 	}, t)
 
@@ -957,7 +957,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name",
 		)
 	}, t)
 
@@ -993,7 +993,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/multiline   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer",
 		)
 	}, t)
 
@@ -1029,7 +1029,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name",
 		)
 	}, t)
 
@@ -1065,7 +1065,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/multiline\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer",
 		)
 	}, t)
 
@@ -1178,7 +1178,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/The 1st multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n❌ ParentTest/The second multiline   \ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/The 1st multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name\n❌ ParentTest/The second multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name",
 		)
 	}, t)
 
@@ -1235,7 +1235,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/multiline 1   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n❌ ParentTest/multiline 2   \ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer\n❌ ParentTest/multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "   \ntest name longer",
 		)
 	}, t)
 
@@ -1292,7 +1292,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline 1\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n❌ ParentTest/The multiline 2\ntest name " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/The multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name\n❌ ParentTest/The multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name",
 		)
 	}, t)
 
@@ -1349,7 +1349,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/multiline 1\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n❌ ParentTest/multiline 2\ntest name longer " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/multiline 1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer\n❌ ParentTest/multiline 2 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\ntest name longer",
 		)
 	}, t)
 
@@ -1384,7 +1384,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/testName Line1\nLine2\nLine3 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/testName Line1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3",
 		)
 	}, t)
 
@@ -1420,7 +1420,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/testName Line1\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+			"\n\n📦 somePackage\n\n❌ ParentTest/testName Line1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4",
 		)
 	}, t)
 
@@ -1478,8 +1478,8 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 		// Then
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📦 somePackage\n\n" +
-				"❌ ParentTest/The 1st multiline\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n" +
-				"❌ ParentTest/The second multiline\nLine2\nLine3   \nLine4 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET,
+				"❌ ParentTest/The 1st multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4\n" +
+				"❌ ParentTest/The second multiline " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nLine2\nLine3   \nLine4",
 		)
 	}, t)
 
@@ -1756,7 +1756,7 @@ func TestCtestFailedEventWithBoundedTerminal(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n❌ ParentTest/NameLine1\nNameLine2   \nNameLine3 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nSome output 1._Some output 2.",
+			"\n\n📦 somePackage\n\n❌ ParentTest/NameLine1 " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\nNameLine2   \nNameLine3\nSome output 1._Some output 2.",
 		)
 	}, t)
 }

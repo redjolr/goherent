@@ -53,11 +53,13 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveUp(tp.terminal.Height())
 		}
 		tp.terminal.Print("✅ ")
-
-		tp.terminal.Print(printedName + "   ")
+		tp.terminal.Print(printedNameLines[0] + formatDurationLabel(duration))
+		if len(printedNameLines) > 1 {
+			tp.terminal.Print("\n" + strings.Join(printedNameLines[1:], "\n"))
+		}
+		tp.terminal.Print("   ")
 		tp.terminal.Print("\n")
 		tp.terminal.Print(unprintedName)
-		tp.terminal.Print(formatDurationLabel(duration))
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
@@ -67,11 +69,10 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveUp(testNameLineCount - 1)
 		}
 		tp.terminal.Print("✅")
+		tp.printDurationAfterNameHead(nameLines[0], duration)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveDown(testNameLineCount - 1)
 		}
-		tp.terminal.MoveRight(lastLineLength)
-		tp.appendDurationLabel(duration, testNameLineCount)
 	}
 }
 
@@ -79,23 +80,22 @@ func (tp BoundedTerminalPresenter) Print(output string) {
 	tp.terminal.Print(output)
 }
 
-// appendDurationLabel prints the colorized duration suffix at the end of the
-// status line we just overwrote in place. After replacing the ⏳ icon the cursor
-// sits one cell short of a single-line name's end (the icon line carries the
-// "✅ " prefix), but overshoots a multi-line name's last line by the icon width
-// (the icon was redrawn on the first line while the cursor is parked on the
-// last). We correct for each case so the label lands exactly one space past the
-// name.
-func (tp BoundedTerminalPresenter) appendDurationLabel(duration float64, testNameLineCount int) {
+// printDurationAfterNameHead writes the duration label on the test's first line,
+// right after the name head, with the cursor positioned just past the status
+// icon on that line. The label goes here — not after the name's last line —
+// because a multi-line BDD name's last line is often long enough that an
+// appended label would wrap off the right edge of the terminal. The first line
+// (the test function name) is short, so there is reliably room.
+//
+// The "+1" steps over the single space that separates the icon from the name
+// ("✅ <name>"), landing the cursor on the empty cell just past the name head;
+// the label's own leading space then forms the gap before "(…)".
+func (tp BoundedTerminalPresenter) printDurationAfterNameHead(firstLine string, duration float64) {
 	label := formatDurationLabel(duration)
 	if label == "" {
 		return
 	}
-	if testNameLineCount > 1 {
-		tp.terminal.MoveLeft(utils.DisplayWidth("✅"))
-	} else {
-		tp.terminal.MoveRight(1)
-	}
+	tp.terminal.MoveRight(utils.DisplayWidth(firstLine) + 1)
 	tp.terminal.Print(label)
 }
 
@@ -115,11 +115,13 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveUp(tp.terminal.Height())
 		}
 		tp.terminal.Print("❌ ")
-
-		tp.terminal.Print(printedName + "   ")
+		tp.terminal.Print(printedNameLines[0] + formatDurationLabel(duration))
+		if len(printedNameLines) > 1 {
+			tp.terminal.Print("\n" + strings.Join(printedNameLines[1:], "\n"))
+		}
+		tp.terminal.Print("   ")
 		tp.terminal.Print("\n")
 		tp.terminal.Print(unprintedName)
-		tp.terminal.Print(formatDurationLabel(duration))
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
@@ -129,11 +131,10 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveUp(testNameLineCount - 1)
 		}
 		tp.terminal.Print("❌")
+		tp.printDurationAfterNameHead(nameLines[0], duration)
 		if testNameLineCount > 1 {
 			tp.terminal.MoveDown(testNameLineCount - 1)
 		}
-		tp.terminal.MoveRight(lastLineLength)
-		tp.appendDurationLabel(duration, testNameLineCount)
 	}
 }
 

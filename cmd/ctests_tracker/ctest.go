@@ -1,6 +1,8 @@
 package ctests_tracker
 
 import (
+	"time"
+
 	"github.com/redjolr/goherent/cmd/events"
 )
 
@@ -14,6 +16,7 @@ type Ctest struct {
 	hasPassed   bool
 	hasFailed   bool
 	isSkipped   bool
+	ranAt       time.Time
 }
 
 func NewCtest(testName string, packageName string) Ctest {
@@ -37,6 +40,7 @@ func NewRunningCtest(ranEvt events.CtestRanEvent) Ctest {
 		hasPassed:   false,
 		hasFailed:   false,
 		isSkipped:   false,
+		ranAt:       ranEvt.Time,
 	}
 }
 
@@ -90,6 +94,13 @@ func (ctest *Ctest) HasName(name string) bool {
 
 func (ctest *Ctest) IsRunning() bool {
 	return ctest.isRunning
+}
+
+// RanAt is the timestamp of the CtestRanEvent that started this test. It is the
+// zero time for Ctests not created from a run event. Used to recover a
+// finer-grained duration than Go's 0.01s-resolution Elapsed for fast tests.
+func (ctest *Ctest) RanAt() time.Time {
+	return ctest.ranAt
 }
 
 func (ctest *Ctest) IsSkipped() bool {
