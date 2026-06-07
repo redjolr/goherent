@@ -33,12 +33,12 @@ func (tp UnboundedTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.C
 
 func (tp UnboundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	tp.terminal.MoveLeft(utils.DisplayWidth("⏳"))
-	tp.terminal.Print("✅\n")
+	tp.terminal.Print("✅" + formatDurationLabel(duration) + "\n")
 }
 
 func (tp UnboundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	tp.terminal.MoveLeft(utils.DisplayWidth("⏳"))
-	tp.terminal.Print("❌\n")
+	tp.terminal.Print("❌" + formatDurationLabel(duration) + "\n")
 }
 
 func (tp UnboundedTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
@@ -53,7 +53,7 @@ func (tp UnboundedTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 func (tp UnboundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) {
 	tp.terminal.Print("\n\nFailed tests:")
 	for _, packageUt := range failedPackages {
-		tp.terminal.Print("\n\n❌ " + packageUt.Name())
+		tp.terminal.Print("\n\n❌ " + ansi_escape.BOLD + ansi_escape.RED + packageUt.Name() + ansi_escape.COLOR_RESET)
 		for _, ctest := range packageUt.FailedCtests() {
 			tp.terminal.Print("\n\n  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)
 			if ctest.ContainsOutput() {
@@ -113,14 +113,13 @@ func (tp UnboundedTerminalPresenter) TestingFinishedSummary(summary ctests_track
 			ansi_escape.COLOR_RESET + ", "
 	}
 	packagesSummary += fmt.Sprintf("%d total", summary.PackagesCount)
-	testsSummary += fmt.Sprintf("%d total", summary.TestsCount)
+	testsSummary += fmt.Sprintf("%d total", summary.TestsCount) + passRateLabel(summary)
 
+	tp.terminal.Print("\n" + testingVerdictHeadline(summary) + "\n")
 	tp.terminal.Print(
-		fmt.Sprintf(
-			packagesSummary + "\n" +
-				testsSummary + "\n" +
-				timeSummary + "\n" +
-				"Ran all tests.",
-		),
+		packagesSummary + "\n" +
+			testsSummary + "\n" +
+			timeSummary + "\n" +
+			"Ran all tests.",
 	)
 }

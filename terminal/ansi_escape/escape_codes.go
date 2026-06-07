@@ -12,6 +12,8 @@ const COLOR_RESET string = "\033[0m"
 const BOLD string = "\033[1m"
 const RESET_BOLD string = "\033[22m"
 
+const DIM string = "\033[2m"
+
 func MoveCursorUpNRows(n int) string {
 	return fmt.Sprintf("\033[%dA", n)
 }

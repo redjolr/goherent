@@ -57,6 +57,7 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 		tp.terminal.Print(printedName + "   ")
 		tp.terminal.Print("\n")
 		tp.terminal.Print(unprintedName)
+		tp.terminal.Print(formatDurationLabel(duration))
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
@@ -70,11 +71,32 @@ func (tp BoundedTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveDown(testNameLineCount - 1)
 		}
 		tp.terminal.MoveRight(lastLineLength)
+		tp.appendDurationLabel(duration, testNameLineCount)
 	}
 }
 
 func (tp BoundedTerminalPresenter) Print(output string) {
 	tp.terminal.Print(output)
+}
+
+// appendDurationLabel prints the colorized duration suffix at the end of the
+// status line we just overwrote in place. After replacing the ⏳ icon the cursor
+// sits one cell short of a single-line name's end (the icon line carries the
+// "✅ " prefix), but overshoots a multi-line name's last line by the icon width
+// (the icon was redrawn on the first line while the cursor is parked on the
+// last). We correct for each case so the label lands exactly one space past the
+// name.
+func (tp BoundedTerminalPresenter) appendDurationLabel(duration float64, testNameLineCount int) {
+	label := formatDurationLabel(duration)
+	if label == "" {
+		return
+	}
+	if testNameLineCount > 1 {
+		tp.terminal.MoveLeft(utils.DisplayWidth("✅"))
+	} else {
+		tp.terminal.MoveRight(1)
+	}
+	tp.terminal.Print(label)
 }
 
 func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
@@ -97,6 +119,7 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 		tp.terminal.Print(printedName + "   ")
 		tp.terminal.Print("\n")
 		tp.terminal.Print(unprintedName)
+		tp.terminal.Print(formatDurationLabel(duration))
 	} else {
 		nameLines := utils.SplitStringByNewLine(ctest.Name())
 		lastLine := nameLines[len(nameLines)-1]
@@ -110,6 +133,7 @@ func (tp BoundedTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, dura
 			tp.terminal.MoveDown(testNameLineCount - 1)
 		}
 		tp.terminal.MoveRight(lastLineLength)
+		tp.appendDurationLabel(duration, testNameLineCount)
 	}
 }
 
@@ -156,7 +180,7 @@ func (tp BoundedTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 func (tp BoundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) {
 	tp.terminal.Print("\n\nFailed tests:")
 	for _, packageUt := range failedPackages {
-		tp.terminal.Print("\n\n❌ " + packageUt.Name())
+		tp.terminal.Print("\n\n❌ " + ansi_escape.BOLD + ansi_escape.RED + packageUt.Name() + ansi_escape.COLOR_RESET)
 		for _, ctest := range packageUt.FailedCtests() {
 			tp.terminal.Print("\n\n  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)
 			if ctest.ContainsOutput() {
@@ -212,14 +236,13 @@ func (tp BoundedTerminalPresenter) TestingFinishedSummary(summary ctests_tracker
 			ansi_escape.COLOR_RESET + ", "
 	}
 	packagesSummary += fmt.Sprintf("%d total", summary.PackagesCount)
-	testsSummary += fmt.Sprintf("%d total", summary.TestsCount)
+	testsSummary += fmt.Sprintf("%d total", summary.TestsCount) + passRateLabel(summary)
 
+	tp.terminal.Print("\n" + testingVerdictHeadline(summary) + "\n")
 	tp.terminal.Print(
-		fmt.Sprintf(
-			packagesSummary + "\n" +
-				testsSummary + "\n" +
-				timeSummary + "\n" +
-				"Ran all tests.",
-		),
+		packagesSummary + "\n" +
+			testsSummary + "\n" +
+			timeSummary + "\n" +
+			"Ran all tests.",
 	)
 }
