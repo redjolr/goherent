@@ -9,6 +9,7 @@ import (
 	"github.com/redjolr/goherent/terminal"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/liveregion"
+	"github.com/redjolr/goherent/terminal/spinner"
 )
 
 // LiveTerminalPresenter renders a sequential run as a committed area (the run
@@ -110,12 +111,8 @@ func (p *LiveTerminalPresenter) liveBlock() string {
 	return "\n" + running + "\n\n" + f
 }
 
-// spinnerFrames animate the running test's icon. They are double-width so the
-// test name stays aligned with the finished ✅/❌/⏩ lines.
-var spinnerFrames = []string{"🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛"}
-
 func (p *LiveTerminalPresenter) spinnerIcon() string {
-	return spinnerFrames[p.spinnerFrame%len(spinnerFrames)]
+	return spinner.Frame(p.spinnerFrame)
 }
 
 func (p *LiveTerminalPresenter) footer() string {

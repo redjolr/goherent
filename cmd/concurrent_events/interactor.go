@@ -128,6 +128,7 @@ func (i *Interactor) HandleTick() {
 	if !i.ctestsTracker.HasPackages() {
 		return
 	}
+	i.output.AdvanceSpinner()
 	i.output.EraseScreen()
 	i.output.DisplayPackages(
 		i.ctestsTracker.RunningPackages(),

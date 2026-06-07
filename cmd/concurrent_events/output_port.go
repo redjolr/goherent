@@ -17,4 +17,5 @@ type OutputPort interface {
 	TestingFinishedSummaryLabel()
 	TestingFinishedSummary(testingSummary ctests_tracker.TestingSummary)
 	IsViewPortLarge() bool
+	AdvanceSpinner()
 }

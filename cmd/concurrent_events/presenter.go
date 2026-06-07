@@ -10,16 +10,27 @@ import (
 	"github.com/redjolr/goherent/internal/utils"
 	"github.com/redjolr/goherent/terminal"
 	"github.com/redjolr/goherent/terminal/ansi_escape"
+	"github.com/redjolr/goherent/terminal/spinner"
 )
 
 type Presenter struct {
-	terminal terminal.Terminal
+	terminal     terminal.Terminal
+	spinnerFrame int
 }
 
 func NewPresenter(term terminal.Terminal) Presenter {
 	return Presenter{
 		terminal: term,
 	}
+}
+
+// AdvanceSpinner moves the running-package indicator to its next animation frame.
+func (p *Presenter) AdvanceSpinner() {
+	p.spinnerFrame++
+}
+
+func (p *Presenter) spinnerIcon() string {
+	return spinner.Frame(p.spinnerFrame)
 }
 
 func (p *Presenter) IsViewPortLarge() bool {
@@ -112,7 +123,7 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 		if i != 0 {
 			p.terminal.Print("\n")
 		}
-		p.terminal.Print("⏳ " + packageUt.Name())
+		p.terminal.Print(p.spinnerIcon() + " " + packageUt.Name())
 	}
 }
 
@@ -146,7 +157,7 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 		if i != 0 {
 			p.terminal.Print("\n")
 		}
-		p.terminal.Print("⏳ " + packageut.Name())
+		p.terminal.Print(p.spinnerIcon() + " " + packageut.Name())
 	}
 }
 
