@@ -8,8 +8,10 @@ import (
 func Setup(ansiTerminal *terminal.AnsiTerminal) *Router {
 	var sequentialEventsOutputPort OutputPort
 	if ansiTerminal.IsBounded() {
-		sequentialEventsOutputPort = NewBoundedTerminalPresenter(ansiTerminal)
+		// Interactive terminal: live footer that updates in place.
+		sequentialEventsOutputPort = NewLiveTerminalPresenter(ansiTerminal)
 	} else {
+		// Piped / non-TTY output: plain sequential printing, no cursor control.
 		sequentialEventsOutputPort = NewUnboundedTerminalPresenter(ansiTerminal)
 	}
 	ctestsTracker := ctests_tracker.NewCtestsTracker()
