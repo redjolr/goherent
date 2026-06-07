@@ -94,7 +94,7 @@ func (p *LiveTerminalPresenter) TestingFinishedSummary(summary ctests_tracker.Te
 }
 
 func (p *LiveTerminalPresenter) SlowestTests(tests []*ctests_tracker.Ctest) {
-	p.region.Render("\n"+buildSlowestTestsReport(tests), "")
+	p.region.Render("\n"+buildSlowestTestsReport(tests)+"\n\n", "")
 }
 
 // liveBlock is the content of the live region: the running test (if any) and the

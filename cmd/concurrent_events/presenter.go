@@ -251,7 +251,7 @@ func (p *Presenter) SlowestTests(tests []*ctests_tracker.Ctest) {
 	if len(tests) == 0 {
 		return
 	}
-	p.terminal.Print("\n\n" + buildSlowestTestsReport(tests))
+	p.terminal.Print("\n\n" + buildSlowestTestsReport(tests) + "\n\n")
 }
 
 // buildSlowestTestsReport renders the "N slowest tests" block shown at the end

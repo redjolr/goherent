@@ -95,7 +95,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName" + "\n\n",
 		)
 	}, t)
 
@@ -153,7 +153,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -210,7 +210,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -258,7 +258,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName" + "\n\n",
 		)
 	}, t)
 
@@ -319,7 +319,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -384,7 +384,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -445,7 +445,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -507,7 +507,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -697,7 +697,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -765,7 +765,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				"Ran all tests." +
 				"\n\n🐢 2 slowest tests:" +
 				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 2" + "\n\n",
 		)
 	}, t)
 
@@ -822,7 +822,7 @@ func TestHandleTestingFinished(t *testing.T) {
 				ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:" +
-				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1",
+				"\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " testName 1" + "\n\n",
 		)
 	}, t)
 }

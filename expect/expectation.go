@@ -43,6 +43,51 @@ func (e *expectation) ToContain(containee any) {
 	}
 }
 
+func (e *expectation) ToContainElement(element any) {
+	if err := assertions.ToContainElement(e.checkExpectationAgainst, element); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
+func (e *expectation) ToHaveKey(key any) {
+	if err := assertions.ToHaveKey(e.checkExpectationAgainst, key); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
+func (e *expectation) ToMatch(pattern string) {
+	if err := assertions.ToMatch(e.checkExpectationAgainst, pattern); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
+func (e *expectation) ToPanic() {
+	if err := assertions.ToPanic(e.checkExpectationAgainst); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
+func (e *expectation) ToBeCloseTo(target any, tolerance any) {
+	if err := assertions.ToBeCloseTo(e.checkExpectationAgainst, target, tolerance); err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		e.print(fmt.Sprintf(ansi_escape.YELLOW+"%s:%d"+ansi_escape.COLOR_RESET, file, line), 4)
+		e.print(err.Error(), 6)
+		e.t.Fail()
+	}
+}
+
 func (e *expectation) ToBeError() {
 	if err := assertions.ToBeError(e.checkExpectationAgainst); err != nil {
 		_, file, line, _ := runtime.Caller(1)
