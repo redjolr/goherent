@@ -48,7 +48,7 @@ func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUn
 		if packageUt.HasPassed() {
 			p.terminal.Print("✅ " + packageUt.Name())
 		} else if packageUt.HasAtLeastOneFailedTest() {
-			p.terminal.Print("❌ " + ansi_escape.BOLD + ansi_escape.RED + packageUt.Name() + ansi_escape.COLOR_RESET)
+			p.terminal.Print("❌ " + packageUt.Name())
 			for _, ctest := range packageUt.FailedCtests() {
 				p.terminal.Print("\n\n")
 				p.terminal.Print("  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)

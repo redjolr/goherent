@@ -12,6 +12,7 @@ import (
 	"github.com/redjolr/goherent/expect"
 	"github.com/redjolr/goherent/internal"
 
+	"github.com/redjolr/goherent/terminal/ansi_escape"
 	"github.com/redjolr/goherent/terminal/fake_ansi_terminal"
 	. "github.com/redjolr/goherent/test"
 )
@@ -141,7 +142,7 @@ func TestCtestPassedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n",
 		)
 	}, t)
 
@@ -203,7 +204,7 @@ func TestCtestPassedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ✅ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n",
 		)
 	}, t)
 
@@ -275,7 +276,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n",
 		)
 	}, t)
 
@@ -347,7 +348,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n",
 		)
 	}, t)
 
@@ -442,7 +443,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\nThis is some output.",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌ " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + "\n\nThis is some output.",
 		)
 	}, t)
 
@@ -500,7 +501,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\nSome output 1._Some output 2.",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\nSome output 1._Some output 2.",
 		)
 	}, t)
 
@@ -547,7 +548,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌\n\ntestName output",
+			"\n\n📦 somePackage\n\n   • ParentTest/testName    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\ntestName output",
 		)
 	}, t)
 
@@ -605,7 +606,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n",
 		)
 	}, t)
 
@@ -675,7 +676,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -756,7 +757,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
@@ -848,7 +849,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -919,7 +920,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -1001,7 +1002,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
@@ -1094,7 +1095,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -1185,7 +1186,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 
@@ -1288,7 +1289,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\noutput that should be printed_Should be printed too",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed_Should be printed too",
 		)
 	}, t)
 
@@ -1359,7 +1360,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌\n\nParentTest/Some tes_output that should be printed_t name",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some test name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\nParentTest/Some tes_output that should be printed_t name",
 		)
 	}, t)
 
@@ -1429,7 +1430,7 @@ func TestCtestFailedEvent(t *testing.T) {
 
 		// Then
 		Expect(terminal.Text()).ToEqual(
-			"\n\n📦 somePackage\n\n   • ParentTest/Some \ntest name    ❌\n\noutput that should be printed",
+			"\n\n📦 somePackage\n\n   • ParentTest/Some \ntest name    ❌ " + ansi_escape.YELLOW + "(2.30s)" + ansi_escape.COLOR_RESET + "\n\noutput that should be printed",
 		)
 	}, t)
 }
