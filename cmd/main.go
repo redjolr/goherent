@@ -79,7 +79,7 @@ func Main(extraCmdArgs []string) int {
 		close(jsonEvents)
 	}()
 
-	ticker := time.NewTicker(100 * time.Millisecond)
+	ticker := time.NewTicker(1 * time.Second)
 	reading := true
 	for reading {
 		select {
