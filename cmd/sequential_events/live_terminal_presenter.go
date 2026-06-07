@@ -100,6 +100,12 @@ func (p *LiveTerminalPresenter) SlowestTests(tests []*ctests_tracker.Ctest) {
 // liveBlock is the content of the live region: the running test (if any) and the
 // running tally footer. Each part is preceded by a blank line so every entry in
 // the run is uniformly separated.
+//
+// The running test is shown as a single line (its first line only), even for a
+// multi-line BDD name. The live block is rewritten in place via relative cursor
+// moves, which can't reach above the top of the viewport, so it must stay short
+// enough to fit; LiveRegion clamps it as a final safeguard. The test's full
+// multi-line message is shown when it finishes, as committed output that scrolls.
 func (p *LiveTerminalPresenter) liveBlock() string {
 	f := p.footer()
 	if p.runningName == "" {
@@ -108,7 +114,8 @@ func (p *LiveTerminalPresenter) liveBlock() string {
 		}
 		return "\n" + f
 	}
-	running := testLine(p.spinnerIcon(), p.runningName, "")
+	head, _ := cleanNameLines(p.runningName)
+	running := p.spinnerIcon() + " " + head
 	if f == "" {
 		return "\n" + running
 	}

@@ -68,6 +68,17 @@ func TestLiveRunningTestIsShown(t *testing.T) {
 	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/testName")
 }
 
+// While a multi-line (BDD) test runs, the live block shows only its first line,
+// so the live region stays short enough to redraw in place. The full message is
+// committed once the test finishes.
+func TestLiveRunningMultiLineNameIsCompact(t *testing.T) {
+	interactor, term := setupLive(80, 30)
+	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
+	interactor.HandleCtestRanEvt(ranEvt("ParentTest/Func\nGiven X\nThen Y", "somePackage"))
+
+	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/Func")
+}
+
 // Each tick advances the running test's spinner frame, redrawn in place.
 func TestLiveSpinnerAdvancesOnTick(t *testing.T) {
 	interactor, term := setupLive(80, 30)

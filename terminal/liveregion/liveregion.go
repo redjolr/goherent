@@ -33,6 +33,7 @@ func New(t terminal.Terminal) *LiveRegion {
 // (re)draws the live block as `live`. Pass committed == "" to update only the
 // live block in place.
 func (r *LiveRegion) Render(committed, live string) {
+	live = r.fit(live)
 	if r.hasLive {
 		// Move to the top-left of the live block and clear it (and anything
 		// below). Only the live block's own lines are moved over, so committed
@@ -49,6 +50,24 @@ func (r *LiveRegion) Render(committed, live string) {
 	r.terminal.Print(live)
 	r.live = live
 	r.hasLive = true
+}
+
+// fit clamps the live block so it never exceeds the terminal's height. The
+// in-place redraw repositions with a relative MoveUp, which cannot travel above
+// the top of the viewport; a live block taller than the screen would leave its
+// first lines scrolled off and corrupt every subsequent redraw. When the block
+// is too tall its bottom lines are kept (the footer / tally is the most useful
+// part). A non-positive height (an unbounded terminal) disables clamping.
+func (r *LiveRegion) fit(live string) string {
+	height := r.terminal.Height()
+	if height <= 0 {
+		return live
+	}
+	lines := strings.Split(live, "\n")
+	if len(lines) <= height {
+		return live
+	}
+	return strings.Join(lines[len(lines)-height:], "\n")
 }
 
 // Commit is shorthand for committing a line while leaving the live block as-is.

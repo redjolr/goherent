@@ -111,3 +111,31 @@ func TestFirstRenderWithCommitted(t *testing.T) {
 	r.Render("🚀 Starting...", "0 passed")
 	vis(t, term, "🚀 Starting...", "0 passed", "", "", "")
 }
+
+// A live block taller than the viewport is clamped to its bottom lines so the
+// in-place redraw stays correct (it can't move above the top of the screen).
+func TestLiveBlockTallerThanViewportIsClamped(t *testing.T) {
+	term := vtfake.New(20, 2)
+	r := liveregion.New(term)
+	r.SetLive("running\n\nfooter") // 3 lines into a height-2 viewport
+	vis(t, term, "", "footer")     // bottom 2 lines kept
+}
+
+// And it still updates in place once clamped — no stacking from an over-tall
+// block whose top scrolled off.
+func TestClampedLiveBlockUpdatesInPlace(t *testing.T) {
+	term := vtfake.New(20, 2)
+	r := liveregion.New(term)
+	r.SetLive("running\n\nfooter1")
+	r.SetLive("running\n\nfooter2")
+	vis(t, term, "", "footer2")
+	scrollEq(t, term)
+}
+
+// Down to a single-row viewport, only the last line survives.
+func TestLiveBlockClampedToSingleRow(t *testing.T) {
+	term := vtfake.New(20, 1)
+	r := liveregion.New(term)
+	r.SetLive("a\nb\nc")
+	vis(t, term, "c")
+}
