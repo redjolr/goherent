@@ -71,6 +71,15 @@ func (r *Router) RouteTestingStartedEvent(concurrently bool) {
 	}
 }
 
+// RouteTick triggers a periodic redraw. Only concurrent mode has a live summary
+// to refresh; sequential mode renders per test in place, so a tick is a no-op
+// there.
+func (r *Router) RouteTick(concurrently bool) {
+	if concurrently {
+		r.concurrent.Tick()
+	}
+}
+
 func (r *Router) RouteTestingFinishedEvent(concurrently bool) {
 	testingFinishedEvt := events.NewTestingFinishedEvent(time.Now())
 	if concurrently {

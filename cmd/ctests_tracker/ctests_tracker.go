@@ -332,6 +332,15 @@ func (tracker *CtestsTracker) RunningCtestsCount() int {
 }
 
 func (tracker *CtestsTracker) TestingSummary() TestingSummary {
+	// While tests are still running (no finish timestamp yet) report the live
+	// wall-clock time since the run started, so the concurrent "Time:" line ticks
+	// up instead of sitting at 0.000s. Once finished, use the fixed span. When no
+	// run has started (e.g. in unit tests that don't emit a TestingStartedEvent)
+	// testingStartedAt is the zero time and the duration stays 0.
+	duration := tracker.testingFinishedAt.Sub(tracker.testingStartedAt)
+	if tracker.testingFinishedAt.IsZero() && !tracker.testingStartedAt.IsZero() {
+		duration = time.Since(tracker.testingStartedAt)
+	}
 	return TestingSummary{
 		PackagesCount:        tracker.PackagesCount(),
 		PassedPackagesCount:  tracker.PassedPackagesCount(),
@@ -345,7 +354,7 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 		SkippedTestsCount: tracker.SkippedCtestsCount(),
 		RunningTestsCount: tracker.RunningCtestsCount(),
 
-		DurationS: float32(tracker.testingFinishedAt.Sub(tracker.testingStartedAt).Seconds()),
+		DurationS: float32(duration.Seconds()),
 	}
 }
 

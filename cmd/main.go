@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"slices"
 	"sync"
+	"time"
 
 	"github.com/redjolr/goherent/cmd/concurrent_events"
 	"github.com/redjolr/goherent/cmd/events"
@@ -57,19 +58,45 @@ func Main(extraCmdArgs []string) int {
 	testCmd.
 		NonVerbose().
 		Exec()
-	router.RouteTestingStartedEvent(testCmd.RunsTestsConcurrently())
-	for testCmd.IsRunning() {
-		var jsonEvt events.JsonEvent
-		output := testCmd.Output()
-		err := json.Unmarshal([]byte(output), &jsonEvt)
+	concurrently := testCmd.RunsTestsConcurrently()
+	router.RouteTestingStartedEvent(concurrently)
 
-		if err != nil {
-			log.Fatalf("Unable to marshal JSON due to %s", err)
+	// Read and parse events on a separate goroutine so the main loop can also
+	// wake on a ticker and periodically redraw — that keeps the concurrent
+	// "Time:" line advancing even when no events arrive for a while. Only this
+	// goroutine touches testCmd; only the main loop touches the router/terminal,
+	// so there is no shared-state race.
+	jsonEvents := make(chan events.JsonEvent)
+	go func() {
+		for testCmd.IsRunning() {
+			var jsonEvt events.JsonEvent
+			output := testCmd.Output()
+			if err := json.Unmarshal([]byte(output), &jsonEvt); err != nil {
+				log.Fatalf("Unable to marshal JSON due to %s", err)
+			}
+			jsonEvents <- jsonEvt
 		}
-		router.Route(jsonEvt, testCmd.RunsTestsConcurrently())
+		close(jsonEvents)
+	}()
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+	reading := true
+	for reading {
+		select {
+		case jsonEvt, ok := <-jsonEvents:
+			if !ok {
+				reading = false
+				break
+			}
+			router.Route(jsonEvt, concurrently)
+		case <-ticker.C:
+			router.RouteTick(concurrently)
+		}
 	}
+	ticker.Stop()
+
 	testCmd.Wait()
-	router.RouteTestingFinishedEvent(testCmd.RunsTestsConcurrently())
+	router.RouteTestingFinishedEvent(concurrently)
 	return testCmd.ExitCode()
 }
 

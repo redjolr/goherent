@@ -153,7 +153,7 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSummary) {
 	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
-	timeSummary := ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     0.000s"
+	timeSummary := fmt.Sprintf(ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     %.3fs", testingSummary.DurationS)
 	runningPackagesCount := testingSummary.RunningPackagesCount
 	passedPackagesCount := testingSummary.PassedPackagesCount
 	failedPackagesCount := testingSummary.FailedPackagesCount

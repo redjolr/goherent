@@ -120,6 +120,24 @@ func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFou
 	return nil
 }
 
+// HandleTick re-renders the current state without any new event. It lets the
+// caller drive a periodic redraw so the running "Time:" line keeps ticking up
+// even while tests run silently (no events arriving). It is a no-op until at
+// least one package is known, so it never wipes the initial "Starting..." line.
+func (i *Interactor) HandleTick() {
+	if !i.ctestsTracker.HasPackages() {
+		return
+	}
+	i.output.EraseScreen()
+	i.output.DisplayPackages(
+		i.ctestsTracker.RunningPackages(),
+		i.ctestsTracker.FinishedPackages(),
+	)
+	if i.output.IsViewPortLarge() {
+		i.output.RunningTestsSummary(i.ctestsTracker.TestingSummary())
+	}
+}
+
 func (i Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
 	i.ctestsTracker.TestingStarted(evt)
 	i.output.TestingStarted()

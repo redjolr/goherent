@@ -17,6 +17,12 @@ func NewRouter(interactor *Interactor) Router {
 	}
 }
 
+// Tick drives a periodic redraw of the current state (no new event), so the
+// running "Time:" keeps advancing during quiet stretches.
+func (router *Router) Tick() {
+	router.interactor.HandleTick()
+}
+
 func (router *Router) Route(unknwonEvt any) {
 	switch evt := unknwonEvt.(type) {
 	case events.CtestPassedEvent:
