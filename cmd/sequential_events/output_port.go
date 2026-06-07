@@ -14,5 +14,6 @@ type OutputPort interface {
 	CtestSkipped(ctest *ctests_tracker.Ctest)
 	CtestStartedRunning(ctest *ctests_tracker.Ctest)
 	CtestOutput(ctest *ctests_tracker.Ctest)
+	FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest)
 	TestingFinishedSummary(summary ctests_tracker.TestingSummary)
 }

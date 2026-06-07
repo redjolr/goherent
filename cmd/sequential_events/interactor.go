@@ -124,5 +124,9 @@ func (i *Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {
 
 func (i Interactor) HandleTestingFinished(evt events.TestingFinishedEvent) {
 	i.ctestsTracker.TestingFinished(evt)
+	failedPackages := i.ctestsTracker.FinishedFailedPackages()
+	if len(failedPackages) > 0 {
+		i.output.FailedTestsList(failedPackages)
+	}
 	i.output.TestingFinishedSummary(i.ctestsTracker.TestingSummary())
 }

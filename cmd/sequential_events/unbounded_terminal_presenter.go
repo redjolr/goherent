@@ -50,6 +50,23 @@ func (tp UnboundedTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
 	tp.terminal.Print("\n" + ctest.Output())
 }
 
+func (tp UnboundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) {
+	tp.terminal.Print("\n\nFailed tests:")
+	for _, packageUt := range failedPackages {
+		tp.terminal.Print("\n\n❌ " + packageUt.Name())
+		for _, ctest := range packageUt.FailedCtests() {
+			tp.terminal.Print("\n\n  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)
+			if ctest.ContainsOutput() {
+				tp.terminal.Print("\n\n  " + ctest.Output())
+			}
+		}
+		if packageUt.HasOutputOfParentTests() {
+			tp.terminal.Print("\n\n" + packageUt.ParentTestsOutput())
+		}
+	}
+	tp.terminal.Print("\n")
+}
+
 func (tp UnboundedTerminalPresenter) Error() {
 	tp.terminal.Print("\n\n❗ Error.")
 }
