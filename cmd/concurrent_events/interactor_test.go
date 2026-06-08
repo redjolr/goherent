@@ -2991,7 +2991,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
-				"Ran all tests.\n",
+				"Ran all tests.",
 		)
 	}, t)
 
@@ -3156,7 +3156,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    0 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
-				"Ran all tests.\n",
+				"Ran all tests.",
 		)
 	}, t)
 
