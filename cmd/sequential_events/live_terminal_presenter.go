@@ -24,7 +24,13 @@ type LiveTerminalPresenter struct {
 	skipped      int
 	runningName  string // raw name of the running test, or "" when none is running
 	spinnerFrame int
+	boxOpen      bool // whether a package "box" is currently open
+	boxWidth     int  // display width of the open box's header, for the closing rule
 }
+
+// boxBranch indents a line so it reads as a member of the currently open package
+// box (the "│" left edge plus padding to clear the "📦" in the header).
+const boxBranch = "│   "
 
 func NewLiveTerminalPresenter(term terminal.Terminal) *LiveTerminalPresenter {
 	return &LiveTerminalPresenter{region: liveregion.New(term)}
@@ -35,7 +41,41 @@ func (p *LiveTerminalPresenter) TestingStarted() {
 }
 
 func (p *LiveTerminalPresenter) PackageTestsStartedRunning(packageName string) {
-	p.region.Render("\n📦 "+packageName, p.liveBlock())
+	p.openBox(packageName)
+}
+
+// openBox closes any previously open package box and commits the header that
+// starts a new one. Each test that follows is rendered as a member of this box
+// until the next package starts or the run ends.
+func (p *LiveTerminalPresenter) openBox(packageName string) {
+	p.closeBox()
+	header := "╭─ 📦 " + packageName
+	p.boxWidth = utils.DisplayWidth(header)
+	p.boxOpen = true
+	p.region.Render("\n"+header, p.liveBlock())
+}
+
+// closeBox commits the bottom rule of the open package box, if any. It is
+// idempotent, so it is safe to call from each of the run's terminal steps.
+func (p *LiveTerminalPresenter) closeBox() {
+	if !p.boxOpen {
+		return
+	}
+	p.boxOpen = false
+	p.region.Render("\n╰"+strings.Repeat("─", max(p.boxWidth-1, 1)), p.liveBlock())
+}
+
+// inBox indents every line of a committed entry so it reads as a member of the
+// open package box. It is a no-op when no box is open.
+func (p *LiveTerminalPresenter) inBox(entry string) string {
+	if !p.boxOpen {
+		return entry
+	}
+	lines := strings.Split(entry, "\n")
+	for i, line := range lines {
+		lines[i] = boxBranch + line
+	}
+	return strings.Join(lines, "\n")
 }
 
 func (p *LiveTerminalPresenter) CtestStartedRunning(ctest *ctests_tracker.Ctest) {
@@ -56,19 +96,19 @@ func (p *LiveTerminalPresenter) Tick() {
 func (p *LiveTerminalPresenter) CtestPassed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.passed++
 	p.runningName = ""
-	p.region.Render("\n"+testLine("✅", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render("\n"+p.inBox(testLine("✅", ctest.Name(), formatDurationLabel(duration))), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestFailed(ctest *ctests_tracker.Ctest, duration float64) {
 	p.failed++
 	p.runningName = ""
-	p.region.Render("\n"+testLine("❌", ctest.Name(), formatDurationLabel(duration)), p.liveBlock())
+	p.region.Render("\n"+p.inBox(testLine("❌", ctest.Name(), formatDurationLabel(duration))), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestSkipped(ctest *ctests_tracker.Ctest) {
 	p.skipped++
 	p.runningName = ""
-	p.region.Render("\n"+testLine("⏩", ctest.Name(), ""), p.liveBlock())
+	p.region.Render("\n"+p.inBox(testLine("⏩", ctest.Name(), "")), p.liveBlock())
 }
 
 func (p *LiveTerminalPresenter) CtestOutput(ctest *ctests_tracker.Ctest) {
@@ -84,12 +124,16 @@ func (p *LiveTerminalPresenter) Error() {
 }
 
 func (p *LiveTerminalPresenter) FailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) {
-	// Testing is finishing: drop the live footer and commit the failed-tests list.
+	// Testing is finishing: close the open package box, then drop the live footer
+	// and commit the failed-tests list.
+	p.closeBox()
 	p.region.Render("\n"+buildFailedTestsList(failedPackages), "")
 }
 
 func (p *LiveTerminalPresenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
-	// Drop the live footer and commit the final summary as permanent output.
+	// Close the open package box (no-op if FailedTestsList already did), drop the
+	// live footer, and commit the final summary as permanent output.
+	p.closeBox()
 	p.region.Render("\n"+buildFinalSummary(summary), "")
 }
 
@@ -116,6 +160,10 @@ func (p *LiveTerminalPresenter) liveBlock() string {
 	}
 	head, _ := cleanNameLines(p.runningName)
 	running := p.spinnerIcon() + " " + head
+	if p.boxOpen {
+		// Align the in-progress test with the committed test lines inside the box.
+		running = boxBranch + running
+	}
 	if f == "" {
 		return "\n" + running
 	}

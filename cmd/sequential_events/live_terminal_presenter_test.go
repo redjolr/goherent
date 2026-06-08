@@ -65,7 +65,7 @@ func TestLiveRunningTestIsShown(t *testing.T) {
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
 	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
 
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n╭─ 📦 somePackage\n\n│   🕐 ParentTest/testName")
 }
 
 // While a multi-line (BDD) test runs, the live block shows only its first line,
@@ -76,7 +76,7 @@ func TestLiveRunningMultiLineNameIsCompact(t *testing.T) {
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
 	interactor.HandleCtestRanEvt(ranEvt("ParentTest/Func\nGiven X\nThen Y", "somePackage"))
 
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/Func")
+	wantText(t, term, "🚀 Starting...\n\n╭─ 📦 somePackage\n\n│   🕐 ParentTest/Func")
 }
 
 // Each tick advances the running test's spinner frame, redrawn in place.
@@ -85,11 +85,11 @@ func TestLiveSpinnerAdvancesOnTick(t *testing.T) {
 	interactor.HandleTestingStarted(events.NewTestingStartedEvent(time.Now()))
 	interactor.HandleCtestRanEvt(ranEvt("ParentTest/testName", "somePackage"))
 
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕐 ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n╭─ 📦 somePackage\n\n│   🕐 ParentTest/testName")
 	interactor.HandleTick()
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕑 ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n╭─ 📦 somePackage\n\n│   🕑 ParentTest/testName")
 	interactor.HandleTick()
-	wantText(t, term, "🚀 Starting...\n\n📦 somePackage\n\n🕒 ParentTest/testName")
+	wantText(t, term, "🚀 Starting...\n\n╭─ 📦 somePackage\n\n│   🕒 ParentTest/testName")
 }
 
 // A tick does nothing when no test is running.
@@ -115,8 +115,8 @@ func TestLivePassedTest(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/testName", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/testName (10ms)\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/testName (10ms)\n\n"+
 			"1 passed")
 }
 
@@ -131,9 +131,9 @@ func TestLiveTwoPassedTests(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/test2", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/test1 (10ms)\n\n"+
-			"✅ ParentTest/test2 (10ms)\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/test1 (10ms)\n\n"+
+			"│   ✅ ParentTest/test2 (10ms)\n\n"+
 			"2 passed")
 }
 
@@ -145,8 +145,8 @@ func TestLiveFailedTest(t *testing.T) {
 	interactor.HandleCtestFailedEvt(failedEvt("ParentTest/testName", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"❌ ParentTest/testName (10ms)\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ❌ ParentTest/testName (10ms)\n\n"+
 			"0 passed · 1 failed")
 }
 
@@ -158,8 +158,8 @@ func TestLiveSkippedTest(t *testing.T) {
 	interactor.HandleCtestSkippedEvt(skippedEvt("ParentTest/testName", "somePackage"))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"⏩ ParentTest/testName\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ⏩ ParentTest/testName\n\n"+
 			"0 passed · 1 skipped")
 }
 
@@ -172,8 +172,8 @@ func TestLiveMultiLineName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\nGiven X\nThen Y", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/Func (10ms)\nGiven X\nThen Y\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/Func (10ms)\n│   Given X\n│   Then Y\n\n"+
 			"1 passed")
 }
 
@@ -185,8 +185,8 @@ func TestLiveTrimsTrailingNewlineInName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n  Given X\n", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/Func (10ms)\n  Given X\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/Func (10ms)\n│     Given X\n\n"+
 			"1 passed")
 }
 
@@ -199,8 +199,8 @@ func TestLiveTrimsLeadingBlankLinesInName(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/Func\n\n  Given X", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/Func (10ms)\n  Given X\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/Func (10ms)\n│     Given X\n\n"+
 			"1 passed")
 }
 
@@ -215,9 +215,9 @@ func TestLiveUniformSpacingBetweenTests(t *testing.T) {
 	interactor.HandleCtestPassedEvt(passedEvt("ParentTest/T2\n  msg two", "somePackage", 0.01))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/T1 (10ms)\n  msg one\n\n"+
-			"✅ ParentTest/T2 (10ms)\n  msg two\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/T1 (10ms)\n│     msg one\n\n"+
+			"│   ✅ ParentTest/T2 (10ms)\n│     msg two\n\n"+
 			"2 passed")
 }
 
@@ -232,8 +232,10 @@ func TestLiveFinalSummaryReplacesFooter(t *testing.T) {
 	interactor.HandleTestingFinished(events.NewTestingFinishedEvent(t1.Add(1200 * time.Millisecond)))
 
 	wantText(t, term,
-		"🚀 Starting...\n\n📦 somePackage\n\n"+
-			"✅ ParentTest/testName (10ms)\n\n"+
+		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
+			"│   ✅ ParentTest/testName (10ms)\n\n"+
+			// Closing rule spans the header width: DisplayWidth("╭─ 📦 somePackage") == 17.
+			"╰" + strings.Repeat("─", 16) + "\n\n"+
 			"✓ All tests passed\n"+
 			"Packages: 1 passed, 1 total\n"+
 			"Tests:    1 passed, 1 total (100% passed)\n"+
