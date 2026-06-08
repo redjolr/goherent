@@ -235,7 +235,7 @@ func TestLiveFinalSummaryReplacesFooter(t *testing.T) {
 		"🚀 Starting...\n\n╭─ 📦 somePackage\n\n"+
 			"│   ✅ ParentTest/testName (10ms)\n\n"+
 			// Closing rule spans the header width: DisplayWidth("╭─ 📦 somePackage") == 17.
-			"╰" + strings.Repeat("─", 16) + "\n\n"+
+			"╰"+strings.Repeat("─", 16)+"\n\n"+
 			"✓ All tests passed\n"+
 			"Packages: 1 passed, 1 total\n"+
 			"Tests:    1 passed, 1 total (100% passed)\n"+

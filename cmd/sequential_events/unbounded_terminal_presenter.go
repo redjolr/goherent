@@ -128,7 +128,7 @@ func (tp UnboundedTerminalPresenter) TestingFinishedSummary(summary ctests_track
 	packagesSummary += fmt.Sprintf("%d total", summary.PackagesCount)
 	testsSummary += fmt.Sprintf("%d total", summary.TestsCount) + passRateLabel(summary)
 
-	tp.terminal.Print("\n" + testingVerdictHeadline(summary) + "\n")
+	tp.terminal.Print("\n" + testingVerdictHeadline(summary) + buildFailuresNote(summary) + "\n")
 	tp.terminal.Print(
 		packagesSummary + "\n" +
 			testsSummary + "\n" +

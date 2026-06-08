@@ -265,7 +265,7 @@ func buildFinalSummary(summary ctests_tracker.TestingSummary) string {
 	packagesSummary += fmt.Sprintf("%d total", summary.PackagesCount)
 	testsSummary += fmt.Sprintf("%d total", summary.TestsCount) + passRateLabel(summary)
 
-	return testingVerdictHeadline(summary) + "\n" +
+	return testingVerdictHeadline(summary) + buildFailuresNote(summary) + "\n" +
 		packagesSummary + "\n" +
 		testsSummary + "\n" +
 		timeSummary + "\n" +

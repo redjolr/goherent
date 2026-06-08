@@ -306,6 +306,18 @@ func (tracker *CtestsTracker) SkippedPackagesCount() int {
 	return count
 }
 
+// BuildFailedPackagesCount is the number of packages that failed to compile, so
+// none of their tests ran. They are a subset of the failed packages.
+func (tracker *CtestsTracker) BuildFailedPackagesCount() int {
+	count := 0
+	for _, packageUt := range tracker.packagesUnderTest {
+		if packageUt.HasBuildFailure() {
+			count++
+		}
+	}
+	return count
+}
+
 func (tracker *CtestsTracker) RunningPackagesCount() int {
 	count := 0
 	for _, pack := range tracker.packagesUnderTest {
@@ -357,11 +369,12 @@ func (tracker *CtestsTracker) TestingSummary() TestingSummary {
 		duration = time.Since(tracker.testingStartedAt)
 	}
 	return TestingSummary{
-		PackagesCount:        tracker.PackagesCount(),
-		PassedPackagesCount:  tracker.PassedPackagesCount(),
-		FailedPackagesCount:  tracker.FailedPackagesCount(),
-		SkippedPackagesCount: tracker.SkippedPackagesCount(),
-		RunningPackagesCount: tracker.RunningPackagesCount(),
+		PackagesCount:            tracker.PackagesCount(),
+		PassedPackagesCount:      tracker.PassedPackagesCount(),
+		FailedPackagesCount:      tracker.FailedPackagesCount(),
+		SkippedPackagesCount:     tracker.SkippedPackagesCount(),
+		RunningPackagesCount:     tracker.RunningPackagesCount(),
+		BuildFailedPackagesCount: tracker.BuildFailedPackagesCount(),
 
 		TestsCount:        tracker.CtestsCount(),
 		PassedTestsCount:  tracker.PassedCtestsCount(),

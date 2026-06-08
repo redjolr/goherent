@@ -78,11 +78,33 @@ func firstLine(s string) string {
 }
 
 // passRateLabel returns a dimmed " (NN% passed)" suffix for the tests summary
-// line, or an empty string when no tests ran.
+// line, or an empty string when no tests ran. It is also omitted when some
+// packages failed to build: the percentage is computed only over tests that
+// actually ran, so showing "100% passed" next to a package whose tests never
+// compiled would be misleading. The build-failure note carries that context
+// instead.
 func passRateLabel(summary ctests_tracker.TestingSummary) string {
-	if summary.TestsCount == 0 {
+	if summary.TestsCount == 0 || summary.BuildFailedPackagesCount > 0 {
 		return ""
 	}
 	passRate := summary.PassedTestsCount * 100 / summary.TestsCount
 	return ansi_escape.DIM + fmt.Sprintf(" (%d%% passed)", passRate) + ansi_escape.COLOR_RESET
+}
+
+// buildFailuresNote returns a yellow warning line, prefixed with a newline so it
+// sits under the verdict headline, calling out packages that failed to build and
+// therefore ran none of their tests. It is what makes the "N total" test counts
+// honest — without it, a green pass rate hides that whole packages never ran.
+// Returns "" when every package built.
+func buildFailuresNote(summary ctests_tracker.TestingSummary) string {
+	n := summary.BuildFailedPackagesCount
+	if n == 0 {
+		return ""
+	}
+	pkgWord, possessive := "package", "its"
+	if n > 1 {
+		pkgWord, possessive = "packages", "their"
+	}
+	msg := fmt.Sprintf("⚠ %d %s failed to build; %s tests did not run", n, pkgWord, possessive)
+	return "\n" + ansi_escape.YELLOW + msg + ansi_escape.COLOR_RESET
 }
