@@ -74,9 +74,11 @@ func (i *Interactor) HandlePackageFailed(evt events.PackageFailedEvent) error {
 		i.output.Error()
 		return errors.New("No existing test found for test pass event.")
 	}
+	// A package can fail without any test failing: it failed to build, so no tests
+	// ran at all. Treat that as a build failure (reported as failed, not skipped)
+	// rather than an error. The compiler output is attached later from stderr.
 	if !existingPackageUt.HasAtLeastOneFailedTest() {
-		i.output.Error()
-		return errors.New("No failing test found for the package that received a PackageFailedEvent.")
+		existingPackageUt.MarkAsBuildFailed()
 	}
 	existingPackageUt.MarkAsFinished()
 	i.output.EraseScreen()
@@ -100,6 +102,13 @@ func (i Interactor) HandleCtestPassedEvent(evt events.CtestPassedEvent) {
 
 func (i *Interactor) HandleCtestSkippedEvent(evt events.CtestSkippedEvent) {
 	i.ctestsTracker.HandleCtestSkippedEvent(evt)
+}
+
+// HandleBuildFailure records that a package failed to compile, attaching the
+// captured compiler output so it can be shown to the user. It is driven by the
+// runner's stderr (parsed after the run) rather than by a JSON event.
+func (i *Interactor) HandleBuildFailure(packageName string, buildOutput string) {
+	i.ctestsTracker.MarkPackageAsBuildFailed(packageName, buildOutput)
 }
 
 func (i *Interactor) HandleNoPackageTestsFoundEvent(evt events.NoPackageTestsFoundEvent) error {

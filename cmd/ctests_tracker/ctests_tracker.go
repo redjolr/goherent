@@ -72,11 +72,26 @@ func (tracker *CtestsTracker) PassedPackages() []*PackageUnderTest {
 func (tracker *CtestsTracker) FinishedFailedPackages() []*PackageUnderTest {
 	runningPackages := []*PackageUnderTest{}
 	for _, pack := range tracker.packagesUnderTest {
-		if pack.HasAtLeastOneFailedTest() && !pack.TestsAreRunning() {
+		if (pack.HasAtLeastOneFailedTest() || pack.HasBuildFailure()) && !pack.TestsAreRunning() {
 			runningPackages = append(runningPackages, pack)
 		}
 	}
 	return runningPackages
+}
+
+// MarkPackageAsBuildFailed flags a package as having failed to compile, creating
+// the package entry if no events have been seen for it yet (a build failure
+// emits no per-test events). Any captured build error output is attached so it
+// can be shown to the user.
+func (tracker *CtestsTracker) MarkPackageAsBuildFailed(packageName string, buildOutput string) {
+	if !tracker.ContainsPackageUtWithName(packageName) {
+		tracker.InsertPackageUt(packageName)
+	}
+	packUt := tracker.FindPackageWithName(packageName)
+	packUt.MarkAsBuildFailed()
+	if buildOutput != "" {
+		packUt.RecordBuildOutput(buildOutput)
+	}
 }
 
 func (tracker *CtestsTracker) InsertPackageUt(name string) PackageUnderTest {
@@ -274,7 +289,7 @@ func (tracker *CtestsTracker) PassedPackagesCount() int {
 func (tracker *CtestsTracker) FailedPackagesCount() int {
 	count := 0
 	for _, packageUt := range tracker.packagesUnderTest {
-		if packageUt.HasAtLeastOneFailedTest() {
+		if packageUt.HasAtLeastOneFailedTest() || packageUt.HasBuildFailure() {
 			count += 1
 		}
 	}

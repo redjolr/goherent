@@ -54,6 +54,12 @@ func (tp UnboundedTerminalPresenter) FailedTestsList(failedPackages []*ctests_tr
 	tp.terminal.Print("\n\nFailed tests:")
 	for _, packageUt := range failedPackages {
 		tp.terminal.Print("\n\n❌ " + ansi_escape.BOLD + ansi_escape.RED + packageUt.Name() + ansi_escape.COLOR_RESET)
+		if packageUt.HasBuildFailure() {
+			tp.terminal.Print("  " + ansi_escape.RED + "[build failed]" + ansi_escape.COLOR_RESET)
+			if packageUt.BuildOutput() != "" {
+				tp.terminal.Print("\n\n  " + packageUt.BuildOutput())
+			}
+		}
 		for _, ctest := range packageUt.FailedCtests() {
 			tp.terminal.Print("\n\n  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET)
 			if ctest.ContainsOutput() {

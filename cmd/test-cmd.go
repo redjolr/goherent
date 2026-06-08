@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"io"
 	"os/exec"
 	"slices"
 	"time"
@@ -13,6 +14,7 @@ type TestCmd struct {
 
 	cmd     *exec.Cmd
 	scanner *bufio.Scanner
+	stderr  io.ReadCloser
 
 	startTime  time.Time
 	endTime    time.Time
@@ -48,6 +50,13 @@ func (t *TestCmd) Exec() *TestCmd {
 	if err != nil {
 		panic("Error opening stdout pipe." + err.Error())
 	}
+	// Compiler/build errors are written to stderr (not the -json stdout stream), so
+	// capture it too — it's the only place the reason for a build failure appears.
+	stderr, err := t.cmd.StderrPipe()
+	if err != nil {
+		panic("Error opening stderr pipe." + err.Error())
+	}
+	t.stderr = stderr
 	err = t.cmd.Start()
 	if err != nil {
 		panic("Could not start command." + err.Error())
@@ -55,6 +64,13 @@ func (t *TestCmd) Exec() *TestCmd {
 	t.scanner = bufio.NewScanner(stdout)
 	t.scanner.Split(bufio.ScanLines)
 	return t
+}
+
+// StderrReader returns the running command's stderr stream. It must be drained
+// concurrently with the stdout scanner to avoid the child blocking on a full
+// pipe.
+func (t *TestCmd) StderrReader() io.Reader {
+	return t.stderr
 }
 
 func (t *TestCmd) Wait() {

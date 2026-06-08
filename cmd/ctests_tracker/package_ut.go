@@ -11,6 +11,8 @@ type PackageUnderTest struct {
 	ctests                  []Ctest
 	outputEvtsOfParentTests []events.CtestOutputEvent
 	testingFinished         bool
+	buildFailed             bool
+	buildOutput             string
 }
 
 func NewPackageUnderTest(name string) PackageUnderTest {
@@ -19,6 +21,8 @@ func NewPackageUnderTest(name string) PackageUnderTest {
 		ctests:                  []Ctest{},
 		outputEvtsOfParentTests: []events.CtestOutputEvent{},
 		testingFinished:         false,
+		buildFailed:             false,
+		buildOutput:             "",
 	}
 	return newPack
 }
@@ -125,7 +129,34 @@ func (packageUt *PackageUnderTest) HasPassed() bool {
 }
 
 func (packageUt *PackageUnderTest) IsSkipped() bool {
-	return !packageUt.TestsAreRunning() && packageUt.SkippedCtestsCount() == len(packageUt.ctests)
+	// A package that failed to build ran no tests, so its skipped/total counts are
+	// both zero — without this guard it would be misreported as "skipped". A build
+	// failure is a failure, not a skip, so exclude it explicitly.
+	return !packageUt.TestsAreRunning() &&
+		!packageUt.buildFailed &&
+		packageUt.SkippedCtestsCount() == len(packageUt.ctests)
+}
+
+// MarkAsBuildFailed records that this package failed to compile, so it ran no
+// tests. A build-failed package is reported as failed (not skipped) so the
+// summary stays honest with `go test`'s non-zero exit code.
+func (packageUt *PackageUnderTest) MarkAsBuildFailed() {
+	packageUt.buildFailed = true
+}
+
+func (packageUt *PackageUnderTest) HasBuildFailure() bool {
+	return packageUt.buildFailed
+}
+
+// RecordBuildOutput appends compiler/build error text (captured from the test
+// runner's stderr) so it can be shown under the failed package, telling the user
+// why the build failed.
+func (packageUt *PackageUnderTest) RecordBuildOutput(output string) {
+	packageUt.buildOutput += output
+}
+
+func (packageUt *PackageUnderTest) BuildOutput() string {
+	return packageUt.buildOutput
 }
 
 func (packageUt *PackageUnderTest) CtestsCount() int {

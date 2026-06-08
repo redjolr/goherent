@@ -23,6 +23,12 @@ func (router Router) Tick() {
 	router.interactor.HandleTick()
 }
 
+// RouteBuildFailure records that a package failed to build, with its captured
+// compiler output, so it is reported as failed (not skipped).
+func (router Router) RouteBuildFailure(packageName string, buildOutput string) {
+	router.interactor.HandleBuildFailure(packageName, buildOutput)
+}
+
 func (router Router) Route(unknownEvt any) {
 
 	switch evt := unknownEvt.(type) {

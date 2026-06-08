@@ -1334,8 +1334,8 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 	Test(`
 	 Given that a PackageStartedEvent has occurred for "somePackage"
 	 And there is a terminal with height 7
-	 When a PackageFailedEvent for package "somePackage" occurs
-	 And the user will be informed that the package tests have passed.`, func(Expect expect.F) {
+	 When a PackageFailedEvent for package "somePackage" occurs without any failed test
+	 Then the package is reported as a build failure "❌ somePackage" (not an error).`, func(Expect expect.F) {
 		packStartedEvts := makePackageStartedEvents("somePackage")
 		packFailedEvts := makePackageFailedEvents("somePackage")
 
@@ -1347,8 +1347,8 @@ func TestHandlePackageFailedEvent_TerminalHeightLessThanOrEqualTo7(t *testing.T)
 		err := eventsHandler.HandlePackageFailed(packFailedEvts["somePackage"])
 
 		// Then
-		Expect(err).ToBeError()
-		Expect(terminal.Text()).ToContain("❗ Error.")
+		Expect(err).ToBeNil()
+		Expect(terminal.Text()).ToContain("❌ somePackage")
 	}, t)
 
 	Test(`

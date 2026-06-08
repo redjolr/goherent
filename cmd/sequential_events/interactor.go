@@ -115,10 +115,22 @@ func (i *Interactor) HandleCtestOutputEvent(evt events.CtestOutputEvent) {
 
 func (i *Interactor) HandlePackageFailedEvt(evt events.PackageFailedEvent) {
 	packUt := i.ctestsTracker.PackageUnderTest(evt.PackageName)
-	if packUt == nil {
+	// A package can fail without any of its tests failing: it failed to build, so
+	// no per-test events were ever emitted and the package was never tracked. Mark
+	// it as a build failure so it is reported (as failed, with the compiler output
+	// attached from stderr) instead of vanishing from the run.
+	if packUt == nil || !packUt.HasAtLeastOneFailedTest() {
+		i.ctestsTracker.MarkPackageAsBuildFailed(evt.PackageName, "")
 		return
 	}
 	i.output.Print("\n\n" + packUt.ParentTestsOutput())
+}
+
+// HandleBuildFailure records that a package failed to compile, attaching the
+// captured compiler output so it can be shown to the user. It is driven by the
+// runner's stderr (parsed after the run) rather than by a JSON event.
+func (i *Interactor) HandleBuildFailure(packageName string, buildOutput string) {
+	i.ctestsTracker.MarkPackageAsBuildFailed(packageName, buildOutput)
 }
 
 func (i *Interactor) HandleTestingStarted(evt events.TestingStartedEvent) {

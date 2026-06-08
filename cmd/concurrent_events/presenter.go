@@ -58,6 +58,12 @@ func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUn
 		}
 		if packageUt.HasPassed() {
 			p.terminal.Print("✅ " + packageUt.Name())
+		} else if packageUt.HasBuildFailure() {
+			p.terminal.Print("❌ " + packageUt.Name() + "  " + ansi_escape.RED + "[build failed]" + ansi_escape.COLOR_RESET)
+			if packageUt.BuildOutput() != "" {
+				p.terminal.Print("\n\n  " + packageUt.BuildOutput())
+			}
+			p.terminal.Print("\n")
 		} else if packageUt.HasAtLeastOneFailedTest() {
 			p.terminal.Print("❌ " + packageUt.Name())
 			for _, ctest := range packageUt.FailedCtests() {
@@ -108,7 +114,7 @@ func (p *Presenter) displayPackagesInLargeTerminal(
 			}
 			if packageUt.HasPassed() {
 				p.terminal.Print("✅ " + packageUt.Name())
-			} else if packageUt.HasAtLeastOneFailedTest() {
+			} else if packageUt.HasAtLeastOneFailedTest() || packageUt.HasBuildFailure() {
 				p.terminal.Print("❌ " + packageUt.Name())
 			} else if packageUt.IsSkipped() {
 				p.terminal.Print("⏩ " + packageUt.Name())
@@ -142,7 +148,7 @@ func (p *Presenter) displayPackagesInSmallTerminal(
 			}
 			if packageUt.HasPassed() {
 				p.terminal.Print("✅ " + packageUt.Name())
-			} else if packageUt.HasAtLeastOneFailedTest() {
+			} else if packageUt.HasAtLeastOneFailedTest() || packageUt.HasBuildFailure() {
 				p.terminal.Print("❌ " + packageUt.Name())
 			} else if packageUt.IsSkipped() {
 				p.terminal.Print("⏩ " + packageUt.Name())

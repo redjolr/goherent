@@ -62,6 +62,20 @@ func (r *Router) Route(jsonEvt events.JsonEvent, concurrently bool) {
 	}
 }
 
+// RouteBuildErrors attaches compiler output captured from the runner's stderr to
+// the packages that failed to build, so the user is told why. It must run after
+// all JSON events are processed and before the testing-finished summary is
+// rendered.
+func (r *Router) RouteBuildErrors(stderr string, concurrently bool) {
+	for packageName, output := range parseBuildErrors(stderr) {
+		if concurrently {
+			r.concurrent.RouteBuildFailure(packageName, output)
+		} else {
+			r.sequential.RouteBuildFailure(packageName, output)
+		}
+	}
+}
+
 func (r *Router) RouteTestingStartedEvent(concurrently bool) {
 	testingStartedEvt := events.NewTestingStartedEvent(time.Now())
 	if concurrently {

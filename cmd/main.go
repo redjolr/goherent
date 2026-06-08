@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"slices"
+	"strings"
 	"sync"
 	"time"
 
@@ -79,6 +80,20 @@ func Main(extraCmdArgs []string) int {
 		close(jsonEvents)
 	}()
 
+	// Drain stderr concurrently with stdout. Compiler/build errors land here, not
+	// on the -json stream, and the pipe must be read or the child can block once it
+	// fills. The lines are accumulated and, after the run, mapped back to the
+	// packages that failed to build.
+	stderrLines := make(chan string)
+	go func() {
+		scanner := bufio.NewScanner(testCmd.StderrReader())
+		scanner.Buffer(make([]byte, 0, 64*1024), 1024*1024)
+		for scanner.Scan() {
+			stderrLines <- scanner.Text()
+		}
+		close(stderrLines)
+	}()
+
 	// Sequential runs animate a per-test spinner, so they need a fast tick;
 	// concurrent runs only refresh the elapsed-time line, which reads cleanly
 	// once a second.
@@ -87,15 +102,22 @@ func Main(extraCmdArgs []string) int {
 		tickInterval = 125 * time.Millisecond
 	}
 	ticker := time.NewTicker(tickInterval)
-	reading := true
-	for reading {
+	var stderrOutput strings.Builder
+	for jsonEvents != nil || stderrLines != nil {
 		select {
 		case jsonEvt, ok := <-jsonEvents:
 			if !ok {
-				reading = false
-				break
+				jsonEvents = nil
+				continue
 			}
 			router.Route(jsonEvt, concurrently)
+		case line, ok := <-stderrLines:
+			if !ok {
+				stderrLines = nil
+				continue
+			}
+			stderrOutput.WriteString(line)
+			stderrOutput.WriteByte('\n')
 		case <-ticker.C:
 			router.RouteTick(concurrently)
 		}
@@ -103,6 +125,7 @@ func Main(extraCmdArgs []string) int {
 	ticker.Stop()
 
 	testCmd.Wait()
+	router.RouteBuildErrors(stderrOutput.String(), concurrently)
 	router.RouteTestingFinishedEvent(concurrently)
 	return testCmd.ExitCode()
 }

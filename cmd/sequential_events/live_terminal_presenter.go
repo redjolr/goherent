@@ -172,6 +172,12 @@ func buildFailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) str
 	out := "Failed tests:"
 	for _, packageUt := range failedPackages {
 		out += "\n\n❌ " + ansi_escape.BOLD + ansi_escape.RED + packageUt.Name() + ansi_escape.COLOR_RESET
+		if packageUt.HasBuildFailure() {
+			out += "  " + ansi_escape.RED + "[build failed]" + ansi_escape.COLOR_RESET
+			if packageUt.BuildOutput() != "" {
+				out += "\n\n  " + packageUt.BuildOutput()
+			}
+		}
 		for _, ctest := range packageUt.FailedCtests() {
 			out += "\n\n  " + ansi_escape.RED + "● " + ctest.Name() + ansi_escape.COLOR_RESET
 			if ctest.ContainsOutput() {
