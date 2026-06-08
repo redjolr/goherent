@@ -2946,10 +2946,10 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"✅ somePackage" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.GREEN + "✓ All tests passed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (100% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.\n" +
 				"\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",
@@ -2986,10 +2986,10 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"⏩ somePackage" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.GREEN + "✓ All tests passed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
 				"Ran all tests.\n",
 		)
@@ -3029,7 +3029,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",
@@ -3074,7 +3074,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",
@@ -3114,11 +3114,11 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"✅ somePackage" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.GREEN + "✓ All tests passed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
-				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" +
+				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 2 total" + ansi_escape.DIM + " (50% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests.\n" +
 				"\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/test 1" + "\n\n",
@@ -3152,7 +3152,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 		Expect(terminal.Text()).ToEqual(
 			"\n\n📋 Tests summary:\n\n" +
 				"⏩ somePackage" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.YELLOW + "⚠ No tests ran" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    0 total" +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
@@ -3241,7 +3241,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "3 failed" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.YELLOW + "7 skipped" + ansi_escape.COLOR_RESET + ", " +
-				ansi_escape.GREEN + "4 passed" + ansi_escape.COLOR_RESET + ", 14 total" +
+				ansi_escape.GREEN + "4 passed" + ansi_escape.COLOR_RESET + ", 14 total" + ansi_escape.DIM + " (28% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.372s\n" +
 				"Ran all tests." +
 				"\n\n🐢 3 slowest tests:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName 8" +
@@ -3291,7 +3291,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",
@@ -3342,7 +3342,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",
@@ -3396,7 +3396,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
-				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
+				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" + ansi_escape.DIM + " (0% passed)" + ansi_escape.COLOR_RESET +
 				"\n" + ansi_escape.BOLD + "Time:" + ansi_escape.RESET_BOLD + "     1.200s\n" +
 				"Ran all tests." +
 				"\n\n🐢 1 slowest test:\n  " + ansi_escape.YELLOW + "(1.20s)" + ansi_escape.COLOR_RESET + " ParentTest/testName" + "\n\n",

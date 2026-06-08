@@ -205,15 +205,33 @@ func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSum
 	p.terminal.Print(templates.RunningTestsSummary(packagesSummary, testsSummary, timeSummary))
 }
 
-// buildVerdictHeadline returns a bold red "✗ Tests failed" line (terminated by a
-// newline so it sits above the packages tally) when anything failed — a failed
-// test or a package that failed to build. Returns "" for a clean run, where the
-// green tallies already say everything passed.
+// buildVerdictHeadline returns a bold, colored one-line verdict (terminated by a
+// newline so it sits above the packages tally): yellow "⚠ No tests ran" when
+// nothing ran, green "✓ All tests passed" when everything passed, red
+// "✗ Tests failed" otherwise. Mirrors the sequential presenter's verdict.
 func buildVerdictHeadline(summary ctests_tracker.TestingSummary) string {
-	if summary.FailedTestsCount > 0 || summary.FailedPackagesCount > 0 {
-		return ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n"
+	var headline string
+	switch {
+	case summary.TestsCount == 0:
+		headline = ansi_escape.BOLD + ansi_escape.YELLOW + "⚠ No tests ran" + ansi_escape.COLOR_RESET
+	case summary.FailedTestsCount == 0 && summary.FailedPackagesCount == 0:
+		headline = ansi_escape.BOLD + ansi_escape.GREEN + "✓ All tests passed" + ansi_escape.COLOR_RESET
+	default:
+		headline = ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET
 	}
-	return ""
+	return headline + "\n"
+}
+
+// passRateLabel returns a dimmed " (NN% passed)" suffix for the tests tally. It is
+// omitted when no tests ran or when a package failed to build — the rate is over
+// tests that actually ran, so "100% passed" beside an uncompiled package would
+// mislead; the build-failure note carries that context instead.
+func passRateLabel(summary ctests_tracker.TestingSummary) string {
+	if summary.TestsCount == 0 || summary.BuildFailedPackagesCount > 0 {
+		return ""
+	}
+	passRate := summary.PassedTestsCount * 100 / summary.TestsCount
+	return ansi_escape.DIM + fmt.Sprintf(" (%d%% passed)", passRate) + ansi_escape.COLOR_RESET
 }
 
 // buildFailuresNote returns a yellow warning line (terminated by a newline so it
@@ -273,7 +291,7 @@ func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary
 			ansi_escape.COLOR_RESET + ", "
 	}
 	packagesSummary += fmt.Sprintf("%d total", summary.PackagesCount)
-	testsSummary += fmt.Sprintf("%d total", summary.TestsCount)
+	testsSummary += fmt.Sprintf("%d total", summary.TestsCount) + passRateLabel(summary)
 
 	p.terminal.Print(
 		templates.TestingFinishedSummary(packagesSummary, testsSummary, timeSummary),
