@@ -3026,7 +3026,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 			"\n\n📋 Tests summary:\n\n" +
 				"❌ somePackage\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET + "\n" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
@@ -3071,7 +3071,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"❌ somePackage\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET + "\n\n" +
 				"  Some output\n" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
@@ -3234,7 +3234,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"❌ pack 3\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName 14" + ansi_escape.COLOR_RESET + "\n\n" +
 				"⏩ pack 4" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "2 failed" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.YELLOW + "1 skipped" + ansi_escape.COLOR_RESET + ", " +
 				ansi_escape.GREEN + "1 passed" + ansi_escape.COLOR_RESET + ", 4 total" +
@@ -3288,7 +3288,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"❌ somePackage\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
 				"\n\nSome package output\n" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
@@ -3339,7 +3339,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"❌ somePackage\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
 				"\n\nSome package output 1Some package output 2\n" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
@@ -3393,7 +3393,7 @@ func TestTestingFinishedSummary(t *testing.T) {
 				"❌ somePackage\n\n" +
 				"  " + ansi_escape.RED + "● ParentTest/testName" + ansi_escape.COLOR_RESET +
 				"\n\nSome package output 1Some package output 2\n" +
-				"\n\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
+				"\n\n" + ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n" + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +
 				"\n" + ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    " +
 				ansi_escape.RED + "1 failed" + ansi_escape.COLOR_RESET + ", 1 total" +

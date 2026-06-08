@@ -205,6 +205,17 @@ func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSum
 	p.terminal.Print(templates.RunningTestsSummary(packagesSummary, testsSummary, timeSummary))
 }
 
+// buildVerdictHeadline returns a bold red "✗ Tests failed" line (terminated by a
+// newline so it sits above the packages tally) when anything failed — a failed
+// test or a package that failed to build. Returns "" for a clean run, where the
+// green tallies already say everything passed.
+func buildVerdictHeadline(summary ctests_tracker.TestingSummary) string {
+	if summary.FailedTestsCount > 0 || summary.FailedPackagesCount > 0 {
+		return ansi_escape.BOLD + ansi_escape.RED + "✗ Tests failed" + ansi_escape.COLOR_RESET + "\n"
+	}
+	return ""
+}
+
 // buildFailuresNote returns a yellow warning line (terminated by a newline so it
 // sits on its own line above the packages tally) naming how many packages failed
 // to build and therefore ran none of their tests. Returns "" when every package
@@ -226,7 +237,7 @@ func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary
 	// A build failure runs none of its package's tests, so the test counts below
 	// reflect only packages that compiled. Call that out explicitly, otherwise
 	// "612 passed, 612 total" reads as a clean run next to "1 failed".
-	packagesSummary := buildFailuresNote(summary) + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
+	packagesSummary := buildVerdictHeadline(summary) + buildFailuresNote(summary) + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 	timeSummary := fmt.Sprintf(ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     %.3fs", summary.DurationS)
 
