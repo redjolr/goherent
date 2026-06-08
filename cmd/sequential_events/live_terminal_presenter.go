@@ -223,7 +223,7 @@ func buildFailedTestsList(failedPackages []*ctests_tracker.PackageUnderTest) str
 		if packageUt.HasBuildFailure() {
 			out += "  " + ansi_escape.RED + "[build failed]" + ansi_escape.COLOR_RESET
 			if packageUt.BuildOutput() != "" {
-				out += "\n\n  " + packageUt.BuildOutput()
+				out += "\n\n" + utils.IndentLines(packageUt.BuildOutput(), "  ")
 			}
 		}
 		for _, ctest := range packageUt.FailedCtests() {

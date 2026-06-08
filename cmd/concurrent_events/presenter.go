@@ -61,7 +61,7 @@ func (p *Presenter) DisplayFinishedPackages(packages []*ctests_tracker.PackageUn
 		} else if packageUt.HasBuildFailure() {
 			p.terminal.Print("❌ " + packageUt.Name() + "  " + ansi_escape.RED + "[build failed]" + ansi_escape.COLOR_RESET)
 			if packageUt.BuildOutput() != "" {
-				p.terminal.Print("\n\n  " + packageUt.BuildOutput())
+				p.terminal.Print("\n\n" + utils.IndentLines(packageUt.BuildOutput(), "  "))
 			}
 			p.terminal.Print("\n")
 		} else if packageUt.HasAtLeastOneFailedTest() {
@@ -205,8 +205,28 @@ func (p *Presenter) RunningTestsSummary(testingSummary ctests_tracker.TestingSum
 	p.terminal.Print(templates.RunningTestsSummary(packagesSummary, testsSummary, timeSummary))
 }
 
+// buildFailuresNote returns a yellow warning line (terminated by a newline so it
+// sits on its own line above the packages tally) naming how many packages failed
+// to build and therefore ran none of their tests. Returns "" when every package
+// built.
+func buildFailuresNote(summary ctests_tracker.TestingSummary) string {
+	n := summary.BuildFailedPackagesCount
+	if n == 0 {
+		return ""
+	}
+	pkgWord, possessive := "package", "its"
+	if n > 1 {
+		pkgWord, possessive = "packages", "their"
+	}
+	msg := fmt.Sprintf("⚠ %d %s failed to build; %s tests did not run", n, pkgWord, possessive)
+	return ansi_escape.YELLOW + msg + ansi_escape.COLOR_RESET + "\n"
+}
+
 func (p *Presenter) TestingFinishedSummary(summary ctests_tracker.TestingSummary) {
-	packagesSummary := ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
+	// A build failure runs none of its package's tests, so the test counts below
+	// reflect only packages that compiled. Call that out explicitly, otherwise
+	// "612 passed, 612 total" reads as a clean run next to "1 failed".
+	packagesSummary := buildFailuresNote(summary) + ansi_escape.BOLD + "Packages:" + ansi_escape.RESET_BOLD + " "
 	testsSummary := ansi_escape.BOLD + "Tests:" + ansi_escape.RESET_BOLD + "    "
 	timeSummary := fmt.Sprintf(ansi_escape.BOLD+"Time:"+ansi_escape.RESET_BOLD+"     %.3fs", summary.DurationS)
 
